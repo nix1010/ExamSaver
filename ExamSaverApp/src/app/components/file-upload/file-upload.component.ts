@@ -25,7 +25,18 @@ export class FileUploadComponent implements OnInit {
     }
 
     onFormClick() {
+        this.fileInput.nativeElement.value = '';
         this.fileInput.nativeElement.click();
+    }
+
+    getFormattedFileSize(): string {
+        if (this.file.size >= 1000000) {
+            return `${Math.round((this.file.size / 1000000 + Number.EPSILON) * 100) / 100}MB`;
+        } else if (this.file.size >= 1000) {
+            return `${Math.round((this.file.size / 1000 + Number.EPSILON) * 100) / 100}KB`;
+        }
+
+        return `${this.file.size}B`;
     }
 
     uploadFile(fileList: FileList): void {
@@ -36,6 +47,7 @@ export class FileUploadComponent implements OnInit {
         this.fileSetForUpload = true;
         this.uploadInProgress = true;
         const formData: FormData = new FormData();
+        
 
         for (let i = 0; i < fileList.length; ++i) {
             this.file = fileList[i];
@@ -49,6 +61,8 @@ export class FileUploadComponent implements OnInit {
                 else if (event.type === HttpEventType.Response) {
                     this.uploadSuccess = true;
                     this.uploadInProgress = false;
+
+
                 }
             }, error => {
                 this.errorMessage = getErrorResponseMessage(error);
