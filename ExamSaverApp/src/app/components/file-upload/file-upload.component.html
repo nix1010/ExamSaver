@@ -1,0 +1,38 @@
+<div class="wrapper">
+    <header class="text-center">Upload exam file</header>
+    <form class="text-center upload-form" (click)="onFormClick()">
+        <input class="file-input" type="file" name="file" hidden #fileInput (change)="uploadFile(fileInput.files)">
+        <i class="fas fa-cloud-upload-alt cloud-icon"></i>
+        <p>Browse File to Upload</p>
+    </form>
+    <ng-container *ngIf="fileSetForUpload">
+        <div *ngIf="uploadInProgress; else showFileUploadStatus" class="upload-in-progress">
+            <div class="file-container">
+                <i class="fas fa-file-alt file-icon"></i>
+                <div class="content">
+                    <div class="details">
+                        <span class="name">{{file.name}} • Uploading</span>
+                        <span class="percent">{{progress}}%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress" [ngStyle]="{'width': progress + '%'}"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <ng-template #showFileUploadStatus>
+            <div class="upload-not-in-progress">
+                <div class="file-container">
+                    <i class="fas fa-file-alt file-icon"></i>
+                    <div class="content">
+                        <div class="details">
+                            <span class="name">{{file.name}} • Uploaded</span>
+                            <span class="size">{{file.size}}</span>
+                        </div>
+                        <i class="fas fa-check"></i>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </ng-container>
+</div>
