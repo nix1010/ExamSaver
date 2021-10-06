@@ -44,6 +44,7 @@ export class FileUploadComponent implements OnInit {
             return;
         }
 
+        this.progress = 0;
         this.fileSetForUpload = true;
         this.uploadInProgress = true;
         const formData: FormData = new FormData();
