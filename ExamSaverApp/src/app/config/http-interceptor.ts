@@ -11,7 +11,7 @@ export class HttpRequestInterceptor implements HttpInterceptor {
         let headers: HttpHeaders = request.headers;
         headers = headers.set('Authorization', `Bearer ${localStorage.getItem(USER_AUTHENTICATION_TOKEN_KEY)}`);
 
-        let updatedRequest = request.clone({
+        const updatedRequest = request.clone({
             url: `http://${HOST}:${PORT}/api/${request.url}`,
             headers: headers
         });

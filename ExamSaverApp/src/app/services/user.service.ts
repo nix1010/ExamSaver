@@ -34,10 +34,11 @@ export class UserService {
     }
 
     isAuthenticated(): boolean {
-        let token: string = localStorage.getItem(USER_AUTHENTICATION_TOKEN_KEY);
+        const token: string = localStorage.getItem(USER_AUTHENTICATION_TOKEN_KEY);
         if (token) {
             return !this.jwtHelperService.isTokenExpired(token);
         }
+        
         return false;
     }
 
@@ -45,7 +46,7 @@ export class UserService {
         let decodedToken: DecodedToken = this.decodedToken;
 
         if (decodedToken === null) {
-            let token: string = localStorage.getItem(USER_AUTHENTICATION_TOKEN_KEY);
+            const token: string = localStorage.getItem(USER_AUTHENTICATION_TOKEN_KEY);
             if (token) {
                 decodedToken = this.jwtHelperService.decodeToken(token);
             }

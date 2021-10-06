@@ -43,7 +43,7 @@ namespace ExamSaver.Controllers
         {
             examService.SaveWork(form, examId, Util.GetJWTToken(Request.Headers));
 
-            return NoContent();
+            return Created(string.Empty, null);
         }
     }
 }

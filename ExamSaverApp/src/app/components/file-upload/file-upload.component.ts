@@ -1,7 +1,6 @@
-import { HttpEvent } from '@angular/common/http';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
+import { HttpClient, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { HttpClient, HttpEventType, HttpHeaders } from '@angular/common/http';
+import { getErrorResponseMessage } from 'src/app/utils/utils';
 
 @Component({
     selector: 'app-file-upload',
@@ -47,8 +46,9 @@ export class FileUploadComponent implements OnInit {
         this.progress = 0;
         this.fileSetForUpload = true;
         this.uploadInProgress = true;
-        const formData: FormData = new FormData();
+        this.errorMessage = null;
 
+        const formData: FormData = new FormData();
 
         for (let i = 0; i < fileList.length; ++i) {
             this.file = fileList[i];
@@ -57,17 +57,16 @@ export class FileUploadComponent implements OnInit {
 
         this.httpClient.post('exams/1', formData, { reportProgress: true, observe: 'events' })
             .subscribe((event: HttpEvent<Object>) => {
-                if (event.type === HttpEventType.UploadProgress)
+                if (event.type === HttpEventType.UploadProgress) {
                     this.progress = Math.round(100 * event.loaded / event.total);
+                }
                 else if (event.type === HttpEventType.Response) {
                     this.uploadSuccess = true;
                     this.uploadInProgress = false;
-
-
                 }
             }, error => {
+                this.uploadInProgress = false;
                 this.errorMessage = getErrorResponseMessage(error);
-                console.log(this.errorMessage);
             });
     }
 }
