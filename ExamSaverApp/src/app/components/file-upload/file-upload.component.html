@@ -1,6 +1,6 @@
 <div class="wrapper">
     <header class="text-center">Upload exam file</header>
-    <form class="text-center upload-form" (click)="onFormClick()">
+    <form class="text-center upload-form" (click)="onFormClick()" DragAndDrop (fileDropped)="uploadFile($event)">
         <input class="file-input" type="file" name="file" hidden #fileInput (change)="uploadFile(fileInput.files)">
         <i class="fas fa-cloud-upload-alt cloud-icon"></i>
         <p>Browse File to Upload</p>

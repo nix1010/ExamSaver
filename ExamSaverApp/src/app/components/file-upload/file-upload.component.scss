@@ -32,6 +32,7 @@ $theme-color: #6990f2;
         border: 2px dashed $theme-color;
 
         .cloud-icon {
+            position: relative;
             font-size: 50px;
         }
 
@@ -105,6 +106,29 @@ $theme-color: #6990f2;
         .details {
             margin-left: 15px;
             flex-direction: column;
+        }
+    }
+
+    .file-over .cloud-icon {
+        animation: up-down 0.8s;
+        animation-iteration-count: infinite;
+    }
+
+    @keyframes up-down {
+        0% {
+            top: 0;
+        }
+        25% {
+            top: -5px;
+        }
+        50% {
+            top: -10px;
+        }
+        75% {
+            top: -5px;
+        }
+        100% {
+            top: 0;
         }
     }
 }

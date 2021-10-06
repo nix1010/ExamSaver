@@ -13,6 +13,7 @@ import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { HttpRequestInterceptor } from './config/http-interceptor';
 import { RoleGuardService } from './services/role-guard.service';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
+import { DragAndDropDirective } from './directives/drag-and-drop.directive';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { FileUploadComponent } from './components/file-upload/file-upload.compon
     NavBarComponent,
     PageNotFoundComponent,
     DashboardComponent,
-    FileUploadComponent
+    FileUploadComponent,
+    DragAndDropDirective
   ],
   imports: [
     BrowserModule,
