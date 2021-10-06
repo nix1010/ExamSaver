@@ -30,13 +30,13 @@ export class FileUploadComponent implements OnInit {
     }
 
     getFormattedFileSize(): string {
-        if (this.file.size >= 1000000) {
-            return `${Math.round((this.file.size / 1000000 + Number.EPSILON) * 100) / 100}MB`;
-        } else if (this.file.size >= 1000) {
-            return `${Math.round((this.file.size / 1000 + Number.EPSILON) * 100) / 100}KB`;
-        }
+        const kilobyte = 1000;
+        const bytes = this.file.size;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        const sizeIndex = Math.floor(Math.log(bytes) / Math.log(kilobyte));
+        const convertedBytes = bytes / Math.pow(kilobyte, sizeIndex);
 
-        return `${this.file.size}B`;
+        return `${Math.round((convertedBytes + Number.EPSILON) * 100) / 100} ${sizes[sizeIndex]}`;
     }
 
     uploadFile(fileList: FileList): void {
@@ -47,7 +47,7 @@ export class FileUploadComponent implements OnInit {
         this.fileSetForUpload = true;
         this.uploadInProgress = true;
         const formData: FormData = new FormData();
-        
+
 
         for (let i = 0; i < fileList.length; ++i) {
             this.file = fileList[i];
