@@ -97,9 +97,9 @@ namespace ExamSaver.Services
 
             foreach (string role in userDTO.Roles)
             {
-                if (!RoleType.ALL_ROLES.Contains(role.Trim()))
+                if (!RoleType.ALL_ROLES.Contains(role))
                 {
-                    throw new BadRequestException($"Role '{role}' is not valid");
+                    throw new BadRequestException($"Role '{role}' is not recognized");
                 }
             }
         }

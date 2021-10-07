@@ -26,14 +26,5 @@ namespace ExamSaver.Controllers
         {
             return userService.Authenticate(userDTO);
         }
-        
-        [Authorize(Roles = RoleType.ADMIN)]
-        [HttpPost]
-        [Route("register")]
-        public IActionResult Register([FromBody] UserDTO userDTO)
-        {
-            userService.Register(userDTO);
-            return NoContent();
-        }
     }
 }

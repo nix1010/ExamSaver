@@ -50,10 +50,8 @@ export class FileUploadComponent implements OnInit {
 
         const formData: FormData = new FormData();
 
-        for (let i = 0; i < fileList.length; ++i) {
-            this.file = fileList[i];
-            formData.append(fileList[i].name, fileList[i], fileList[i].name);
-        }
+        this.file = fileList[0];
+        formData.append(this.file.name, this.file, this.file.name);
 
         this.httpClient.post('exams/1', formData, { reportProgress: true, observe: 'events' })
             .subscribe((event: HttpEvent<Object>) => {

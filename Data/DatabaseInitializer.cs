@@ -24,10 +24,6 @@ namespace ExamSaver.Data
             {
                 new Role()
                 {
-                    Name = RoleType.ADMIN
-                },
-                new Role()
-                {
                     Name = RoleType.PROFESSOR
                 },
                 new Role()
@@ -83,7 +79,7 @@ namespace ExamSaver.Data
                     LastName = "Petrovic",
                     Email = "petar@gmail.com",
                     Password = Util.Encrypt("pass1"),
-                    Roles = new List<Role>(new Role[]{ roles[1] })
+                    Roles = new List<Role>(new Role[]{ roles[0] })
                 },
                 new User()
                 {
@@ -91,7 +87,7 @@ namespace ExamSaver.Data
                     LastName = "Milakovic",
                     Email = "milos@gmail.com",
                     Password = Util.Encrypt("pass1"),
-                    Roles = new List<Role>(new Role[]{ roles[1], roles[2] })
+                    Roles = new List<Role>(new Role[]{ roles[0], roles[1] })
                 },
                 new User()
                 {
@@ -99,7 +95,7 @@ namespace ExamSaver.Data
                     LastName = "Ljubic",
                     Email = "ljuba@gmail.com",
                     Password = Util.Encrypt("pass1"),
-                    Roles = new List<Role>(new Role[]{ roles[2] })
+                    Roles = new List<Role>(new Role[]{ roles[1] })
                 }
             };
 
@@ -191,9 +187,42 @@ namespace ExamSaver.Data
                 },
             };
 
-            foreach(UserSubject userSubject in userSubjects)
+            foreach (UserSubject userSubject in userSubjects)
             {
                 databaseContext.UsersSubjects.Add(userSubject);
+            }
+
+            Exam[] exams = new Exam[]
+            {
+                new Exam()
+                {
+                    StartTime = DateTime.Now,
+                    EndTime = DateTime.Now.AddHours(3),
+                    Subject = subjects[0]
+                },
+                new Exam()
+                {
+                    StartTime = DateTime.Now.AddHours(-2),
+                    EndTime = DateTime.Now.AddSeconds(-5),
+                    Subject = subjects[1]
+                },
+                new Exam()
+                {
+                    StartTime = DateTime.Now,
+                    EndTime = DateTime.Now.AddHours(4),
+                    Subject = subjects[2]
+                },
+                new Exam()
+                {
+                    StartTime = DateTime.Now,
+                    EndTime = DateTime.Now.AddHours(3),
+                    Subject = subjects[3]
+                }
+            };
+
+            foreach (Exam exam in exams)
+            {
+                databaseContext.Add(exam);
             }
 
             databaseContext.SaveChanges();

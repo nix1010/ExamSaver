@@ -7,13 +7,11 @@ namespace ExamSaver.Models
 {
     public static class RoleType
     {
-        public const string ADMIN = "ADMIN";
         public const string PROFESSOR = "PROFESSOR";
         public const string STUDENT = "STUDENT";
 
         public static readonly string[] ALL_ROLES =
         {
-            ADMIN,
             PROFESSOR,
             STUDENT
         };
