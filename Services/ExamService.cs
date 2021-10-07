@@ -128,11 +128,23 @@ namespace ExamSaver.Services
 
         private void ExtractZipFile(string filePath)
         {
-            ZipArchive zipArchive = ZipFile.Open(filePath, ZipArchiveMode.Read);
-
-            foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
+            try
             {
-                
+                ZipArchive zipArchive = ZipFile.Open(filePath, ZipArchiveMode.Read);
+
+                foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
+                {
+
+                }
+            }
+            catch (Exception ex)
+            {
+                if (ex is NotSupportedException || ex is InvalidDataException)
+                {
+                    throw new BadRequestException(ex.Message, ex);
+                }
+
+                throw;
             }
         }
     }
