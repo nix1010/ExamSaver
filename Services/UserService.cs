@@ -34,7 +34,8 @@ namespace ExamSaver.Services
         {
             string encryptedPassword = Util.Encrypt(userDTO.Password);
 
-            User user = databaseContext.Users
+            User user = databaseContext
+                .Users
                 .Include(user => user.Roles)
                 .Where(user => user.Email == userDTO.Email && user.Password == encryptedPassword)
                 .FirstOrDefault();
@@ -53,55 +54,6 @@ namespace ExamSaver.Services
                 ExpiresAt = expiringDateTime,
                 Roles = user.Roles.Select(role => role.Name).ToList()
             };
-        }
-
-        public void Register(UserDTO userDTO)
-        {
-            ValidateUser(userDTO);
-
-            User user = databaseContext
-                .Users
-                .Where(user => user.Email == userDTO.Email)
-                .FirstOrDefault();
-
-            if (user != null)
-            {
-                throw new BadRequestException("User already exists");
-            }
-
-            List<Role> roleEntities = databaseContext.Roles.Where(role => userDTO.Roles.Contains(role.Name)).ToList();
-
-            databaseContext.Users.Add(new User()
-            {
-                FirstName = userDTO.FirstName,
-                LastName = userDTO.LastName,
-                Email = userDTO.Email,
-                Password = Util.Encrypt(userDTO.Password),
-                Roles = roleEntities
-            });
-
-            databaseContext.SaveChanges();
-        }
-
-        private void ValidateUser(UserDTO userDTO)
-        {
-            if (userDTO.Email == null || userDTO.Email.Trim().Length == 0)
-            {
-                throw new BadRequestException("Email is required");
-            }
-
-            if (userDTO.Roles == null || userDTO.Roles.Count == 0)
-            {
-                throw new BadRequestException("At least one role is required");
-            }
-
-            foreach (string role in userDTO.Roles)
-            {
-                if (!RoleType.ALL_ROLES.Contains(role))
-                {
-                    throw new BadRequestException($"Role '{role}' is not recognized");
-                }
-            }
         }
 
         private string GenerateJWTToken(User user, DateTime expiryDateTime)

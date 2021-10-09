@@ -164,6 +164,12 @@ namespace ExamSaver.Data
                 new UserSubject()
                 {
                     User = users[1],
+                    Subject = subjects[2],
+                    SubjectRelation = SubjectRelationType.TEACHING
+                },
+                new UserSubject()
+                {
+                    User = users[1],
                     Subject = subjects[4],
                     SubjectRelation = SubjectRelationType.ATTENDING
                 },
@@ -171,6 +177,12 @@ namespace ExamSaver.Data
                 {
                     User = users[2],
                     Subject = subjects[0],
+                    SubjectRelation = SubjectRelationType.ATTENDING
+                },
+                new UserSubject()
+                {
+                    User = users[2],
+                    Subject = subjects[2],
                     SubjectRelation = SubjectRelationType.ATTENDING
                 },
                 new UserSubject()

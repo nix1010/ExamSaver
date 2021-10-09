@@ -30,20 +30,54 @@ namespace ExamSaver.Controllers
             this.examService = examService;
         }
 
-        [HttpGet]
-        public string Test()
-        {
-            return "OK";
-        }
-
-        [Authorize(Roles = RoleType.STUDENT)]
         [HttpPost]
-        [Route("{examId}")]
-        public IActionResult UploadWork([FromForm] IFormCollection form, [FromRoute] int examId)
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult SetExam([FromBody] ExamDTO examDTO)
         {
-            examService.SaveWork(form, examId, Util.GetJWTToken(Request.Headers));
+            examService.SetExam(Util.GetJWTToken(Request.Headers), examDTO);
 
             return Created(string.Empty, null);
+        }
+
+        [Route("{examId}")]
+        [HttpPost]
+        [Authorize(Roles = RoleType.STUDENT)]
+        public IActionResult UploadExam([FromForm] IFormCollection form, [FromRoute] int examId)
+        {
+            examService.SaveExam(form, examId, Util.GetJWTToken(Request.Headers));
+
+            return Created(string.Empty, null);
+        }
+
+        [Route("taking")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.STUDENT)]
+        public IList<ExamDTO> GetTakingExams()
+        {
+            return examService.GetTakingExams(Util.GetJWTToken(Request.Headers));
+        }
+
+        [Route("holding")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IList<ExamDTO> GetHoldingExams()
+        {
+            return examService.GetHoldingExams(Util.GetJWTToken(Request.Headers));
+        }
+
+        [Route("{examId}/students")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IList<StudentExamDTO> GetStudentExams([FromRoute] int examId)
+        {
+            return examService.GetStudentExams(Util.GetJWTToken(Request.Headers), examId);
+        }
+
+        [Route("{examId}/students/{studentId}/{**url}")]
+        [HttpGet]
+        public string GetStudentExam([FromRoute] int examId, [FromRoute] int studentId)
+        {
+            return "OK";
         }
     }
 }
