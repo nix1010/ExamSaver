@@ -55,7 +55,11 @@ namespace ExamSaver
                 };
             });
 
-            services.AddDbContext<DatabaseContext>();
+            services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
+
+            services.AddSingleton<UserService>();
+            services.AddSingleton<ExamService>();
+            services.AddSingleton<FileService>();
 
             services.Configure<FormOptions>(config =>
             {
@@ -63,9 +67,6 @@ namespace ExamSaver
                 config.MultipartBodyLengthLimit = int.MaxValue;
                 config.MemoryBufferThreshold = int.MaxValue;
             });
-
-            services.AddScoped<UserService>();
-            services.AddScoped<ExamService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -91,7 +92,7 @@ namespace ExamSaver
                 .AllowAnyHeader();
             });
 
-            app.UseMiddleware<ErrorHandlerMiddleware>();
+            app.UseMiddleware<ExceptionHandlerMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

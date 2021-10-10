@@ -1,9 +1,11 @@
-﻿using ExamSaver.Exceptions;
+﻿using ExamSaver.Configs;
+using ExamSaver.Exceptions;
 using ExamSaver.Models.Entity;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Security.Cryptography;
@@ -28,6 +30,15 @@ namespace ExamSaver.Utils
             headerDictionary.TryGetValue("Authorization", out StringValues token);
 
             return token.ToString().Replace("Bearer", "").Trim();
+        }
+
+        public static string GetStudentExamDirectoryPath(Student student, int examId)
+        {
+            string resourcesDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.EXAMS_DIRECTORY_PATH);
+            string studentResourceIdentifier = GetStudentResourceIdentifier(student, examId);
+            string studentExamDirectoryPath = Path.Combine(resourcesDirectoryPath, studentResourceIdentifier);
+
+            return studentExamDirectoryPath;
         }
 
         public static string GetStudentResourceIdentifier(Student student, int examId)

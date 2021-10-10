@@ -47,6 +47,7 @@ namespace ExamSaver.Services
 
             DateTime issuedDate = DateTime.Now;
             DateTime expiringDateTime = issuedDate.AddHours(8);
+
             return new JWTTokenDTO()
             {
                 Token = GenerateJWTToken(user, expiringDateTime),
@@ -92,7 +93,16 @@ namespace ExamSaver.Services
             {
                 if (claim.Type.Equals(JwtRegisteredClaimNames.NameId))
                 {
-                    return Convert.ToInt32(claim.Value);
+                    int userId = Convert.ToInt32(claim.Value);
+
+                    if (databaseContext.Users.Find(userId) != null)
+                    {
+                        return userId;
+                    }
+                    else
+                    {
+                        break;
+                    }
                 }
             }
 

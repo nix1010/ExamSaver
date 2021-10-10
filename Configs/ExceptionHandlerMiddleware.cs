@@ -12,11 +12,11 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Configs
 {
-    public class ErrorHandlerMiddleware
+    public class ExceptionHandlerMiddleware
     {
         private readonly RequestDelegate next;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ExceptionHandlerMiddleware(RequestDelegate next)
         {
             this.next = next;
         }

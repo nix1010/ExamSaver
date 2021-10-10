@@ -30,21 +30,32 @@ namespace ExamSaver.Controllers
             this.examService = examService;
         }
 
+        [Route("create")]
         [HttpPost]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult SetExam([FromBody] ExamDTO examDTO)
+        public IActionResult CreateExam([FromBody] ExamDTO examDTO)
         {
-            examService.SetExam(Util.GetJWTToken(Request.Headers), examDTO);
+            examService.CreateExam(Util.GetJWTToken(Request.Headers), examDTO);
 
             return Created(string.Empty, null);
         }
 
-        [Route("{examId}")]
+        [Route("{examId}/update")]
+        [HttpPut]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult UpdateExam([FromBody] ExamDTO examDTO, [FromRoute] int examId)
+        {
+            examService.UpdateExam(Util.GetJWTToken(Request.Headers), examDTO, examId);
+
+            return NoContent();
+        }
+
+        [Route("{examId}/submit")]
         [HttpPost]
         [Authorize(Roles = RoleType.STUDENT)]
         public IActionResult UploadExam([FromForm] IFormCollection form, [FromRoute] int examId)
         {
-            examService.SaveExam(form, examId, Util.GetJWTToken(Request.Headers));
+            examService.SubmitExam(Util.GetJWTToken(Request.Headers), form, examId);
 
             return Created(string.Empty, null);
         }
@@ -68,16 +79,25 @@ namespace ExamSaver.Controllers
         [Route("{examId}/students")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IList<StudentExamDTO> GetStudentExams([FromRoute] int examId)
+        public IList<StudentExamDTO> GetExamStudents([FromRoute] int examId)
         {
-            return examService.GetStudentExams(Util.GetJWTToken(Request.Headers), examId);
+            return examService.GetExamStudents(Util.GetJWTToken(Request.Headers), examId);
         }
 
-        [Route("{examId}/students/{studentId}/{**url}")]
+        [Route("{examId}/students/{studentId}/tree/{**fileTreePath}")]
         [HttpGet]
-        public string GetStudentExam([FromRoute] int examId, [FromRoute] int studentId)
+        [Authorize(Roles = RoleType.PROFESSOR + "," + RoleType.STUDENT)]
+        public IList<FileInfoDTO> GetStudentExamFileStructure([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
         {
-            return "OK";
+            return examService.GetStudentExamFileTree(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
+        }
+
+        [Route("{examId}/students/{studentId}/file/{**fileTreePath}")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR + "," + RoleType.STUDENT)]
+        public FileDTO GetStudentExamFile([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
+        {
+            return examService.GetStudentExamFile(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
         }
     }
 }

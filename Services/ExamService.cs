@@ -25,18 +25,20 @@ namespace ExamSaver.Services
     {
         private readonly DatabaseContext databaseContext;
         private readonly UserService userService;
+        private readonly FileService fileService;
 
-        public ExamService(DatabaseContext databaseContext, UserService userService)
+        public ExamService(DatabaseContext databaseContext, UserService userService, FileService fileService)
         {
             this.databaseContext = databaseContext;
             this.userService = userService;
+            this.fileService = fileService;
         }
 
-        public void SetExam(string token, ExamDTO examDTO)
+        public void CreateExam(string token, ExamDTO examDTO)
         {
             int userId = userService.GetUserIdFromToken(token);
 
-            CheckExamSetValidity(examDTO, userId);
+            CheckExamCreationValidity(examDTO, userId);
 
             databaseContext.Add(new Exam()
             {
@@ -48,14 +50,29 @@ namespace ExamSaver.Services
             databaseContext.SaveChanges();
         }
 
-        private void CheckExamSetValidity(ExamDTO examDTO, int userId)
+        public void UpdateExam(string token, ExamDTO examDTO, int examId)
         {
-            if (examDTO.StartTime >= examDTO.EndTime)
-            {
-                throw new BadRequestException("Starting time must be greater than ending time");
-            }
+            int userId = userService.GetUserIdFromToken(token);
 
-            CheckUserTeachesSubject(userId, examDTO.SubjectId);
+            CheckExamUpdateValidity(examDTO, userId);
+
+            Exam exam = new Exam()
+            {
+                Id = examId,
+                StartTime = examDTO.StartTime,
+                EndTime = examDTO.EndTime,
+                SubjectId = examDTO.SubjectId
+            };
+
+            databaseContext.Attach(exam);
+            databaseContext.Update(exam);
+
+            databaseContext.SaveChanges();
+        }
+
+        private void CheckExamCreationValidity(ExamDTO examDTO, int userId)
+        {
+            CheckExamUpdateValidity(examDTO, userId);
 
             Exam exam = databaseContext
                 .Exams
@@ -66,6 +83,16 @@ namespace ExamSaver.Services
             if (exam != null)
             {
                 throw new BadRequestException("Exam is already created and not finished yet");
+            }
+        }
+
+        private void CheckExamUpdateValidity(ExamDTO examDTO, int userId)
+        {
+            CheckUserTeachesSubject(userId, examDTO.SubjectId);
+            
+            if (examDTO.StartTime >= examDTO.EndTime)
+            {
+                throw new BadRequestException("Starting time must be greater than ending time");
             }
         }
 
@@ -111,7 +138,7 @@ namespace ExamSaver.Services
             }).ToList();
         }
 
-        public IList<StudentExamDTO> GetStudentExams(string token, int examId)
+        public IList<StudentExamDTO> GetExamStudents(string token, int examId)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -119,7 +146,7 @@ namespace ExamSaver.Services
 
             if (exam == null)
             {
-                throw new BadRequestException($"Exam with id '{examId}' doesn't exist");
+                throw new NotFoundException($"Exam with id '{examId}' doesn't exist");
             }
 
             CheckUserTeachesSubject(userId, exam.SubjectId);
@@ -146,7 +173,6 @@ namespace ExamSaver.Services
         {
             UserSubject userSubject = databaseContext
                .UsersSubjects
-               .Include(userSubject => userSubject.Subject)
                .Where(userSubject => userSubject.UserId == userId
                                   && userSubject.SubjectId == subjectId
                                   && userSubject.SubjectRelation == SubjectRelationType.TEACHING)
@@ -158,9 +184,49 @@ namespace ExamSaver.Services
             }
         }
 
-        public void SaveExam(IFormCollection form, int examId, string token)
+        public IList<FileInfoDTO> GetStudentExamFileTree(string token, int examId, int studentId, string fileTreePath)
         {
             int userId = userService.GetUserIdFromToken(token);
+
+            //TODO Check if can access this resource
+
+            StudentExam studentExam = GetStudentExam(examId, studentId);
+
+            
+            return fileService.GetFileTree(fileTreePath, studentExam);
+        }
+
+        public FileDTO GetStudentExamFile(string token, int examId, int studentId, string fileTreePath)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            StudentExam studentExam = GetStudentExam(examId, studentId);
+
+            return fileService.GetFile(fileTreePath, studentExam);
+        }
+
+        private StudentExam GetStudentExam(int examId, int studentId)
+        {
+            StudentExam studentExam = databaseContext
+                .StudentsExams
+                .Include(studentExam => studentExam.Student)
+                .ThenInclude(student => student.User)
+                .Where(studentExam => studentExam.ExamId == examId
+                                   && studentExam.StudentId == studentId)
+                .FirstOrDefault();
+
+            if (studentExam == null)
+            {
+                throw new NotFoundException("Exam for requested student is not found");
+            }
+
+            return studentExam;
+        }
+
+        public void SubmitExam(string token, IFormCollection form, int examId)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
             Student student = databaseContext
                 .Students
                 .Include(student => student.User)
@@ -174,74 +240,41 @@ namespace ExamSaver.Services
 
             Exam exam = databaseContext
                 .Exams
-                .Include(exam => exam.Subject)
                 .FirstOrDefault(exam => exam.Id == examId);
 
             CheckExamSubmitValidity(form, exam, student);
 
-            foreach (IFormFile file in form.Files)
+            fileService.SaveFile(form.Files[0], exam, student, out string studentExamFilePath);
+
+            StudentExam studentExam = new StudentExam()
             {
-                string resourcesPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.EXAMS_DIRECTORY_PATH);
-                string studentResourceIdentifier = Util.GetStudentResourceIdentifier(student, examId);
-                string studentExamPath = Path.Combine(resourcesPath, studentResourceIdentifier);
+                Exam = exam,
+                ExamPath = studentExamFilePath,
+                Student = student,
+                UploadTime = DateTime.Now
+            };
 
-                if (!Directory.Exists(studentExamPath))
-                {
-                    Directory.CreateDirectory(studentExamPath);
-                }
-                else
-                {
-                    DeleteExistingContent(studentExamPath);
-                }
+            AddUpdateStudentExam(studentExam);
 
-                string filePath = Path.Combine(studentExamPath, $"{studentResourceIdentifier}.zip");
-
-                using (FileStream fileStream = new FileStream(filePath, FileMode.Create))
-                {
-                    file.CopyTo(fileStream);
-                }
-
-                string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                string fileExtension = Path.GetExtension(fileName);
-
-                if (fileExtension == ".zip")
-                {
-                    ExtractZipFile(filePath);
-                }
-
-                databaseContext.Add(new StudentExam()
-                {
-                    Exam = exam,
-                    ExamPath = studentExamPath,
-                    Student = student,
-                    UploadTime = DateTime.Now
-                });
-
-                //TODO UNCOMMENT
-                //databaseContext.SaveChanges();
-            }
+            databaseContext.SaveChanges();
         }
 
-        //TODO Check if files should be extracted or kept in .zip format
-        private void ExtractZipFile(string filePath)
+        private void AddUpdateStudentExam(StudentExam studentExamModified)
         {
-            try
+            StudentExam studentExamFound = databaseContext
+                .StudentsExams
+                .Where(studentExam => studentExam.ExamId == studentExamModified.Exam.Id
+                                   && studentExam.StudentId == studentExamModified.Student.Id)
+                .FirstOrDefault();
+
+            if (studentExamFound == null)
             {
-                ZipArchive zipArchive = ZipFile.Open(filePath, ZipArchiveMode.Read);
-
-                foreach (ZipArchiveEntry zipArchiveEntry in zipArchive.Entries)
-                {
-
-                }
+                databaseContext.Add(studentExamModified);
             }
-            catch (Exception ex)
+            else
             {
-                if (ex is NotSupportedException || ex is InvalidDataException)
-                {
-                    throw new BadRequestException(ex.Message, ex);
-                }
-
-                throw;
+                studentExamFound.ExamPath = studentExamModified.ExamPath;
+                studentExamFound.UploadTime = DateTime.Now;
             }
         }
 
@@ -254,14 +287,14 @@ namespace ExamSaver.Services
 
             if (exam == null)
             {
-                throw new BadRequestException("Exam not found");
+                throw new NotFoundException("Exam not found");
             }
 
             UserSubject userSubject = databaseContext
                 .UsersSubjects
                 .Where(userSubject => userSubject.UserId == student.Id
-                                        && userSubject.SubjectId == exam.SubjectId
-                                        && userSubject.SubjectRelation == SubjectRelationType.ATTENDING)
+                                   && userSubject.SubjectId == exam.SubjectId
+                                   && userSubject.SubjectRelation == SubjectRelationType.ATTENDING)
                 .FirstOrDefault();
 
             if (userSubject == null)
@@ -277,21 +310,6 @@ namespace ExamSaver.Services
             if (exam.EndTime < DateTime.Now)
             {
                 throw new BadRequestException("Exam has ended");
-            }
-        }
-
-        private void DeleteExistingContent(string directoryPath)
-        {
-            DirectoryInfo directoryInfo = new DirectoryInfo(directoryPath);
-
-            foreach (FileInfo file in directoryInfo.EnumerateFiles())
-            {
-                file.Delete();
-            }
-
-            foreach (DirectoryInfo subDirectory in directoryInfo.EnumerateDirectories())
-            {
-                subDirectory.Delete(true);
             }
         }
     }
