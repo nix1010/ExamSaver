@@ -1,12 +1,11 @@
+import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
-import { USER_AUTHENTICATION_TOKEN_KEY } from 'src/app/config/constants';
-import { AuthenticationResponse } from 'src/app/models/authentication-response';
+import { finalize } from 'rxjs/operators';
 import { User } from 'src/app/models/user-credentials.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { UserService } from './../../services/user.service';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-login',
@@ -19,10 +18,12 @@ export class LoginComponent implements OnInit {
     public errorMessage: string = null;
     public loginProcess: boolean = false;
 
-    constructor(private userService: UserService, private router: Router) { }
+    constructor(private userService: UserService,
+        private router: Router,
+        private location: Location) { }
 
     ngOnInit(): void {
-        this.routeToMainPageIfAuthenticated();
+        this.routeToPreviousPageIfAuthenticated();
     }
 
     authenticate() {
@@ -30,15 +31,22 @@ export class LoginComponent implements OnInit {
         this.userService.authenticate(new User(this.email, this.password))
             .pipe(finalize(() => this.loginProcess = false))
             .subscribe(() => {
-                this.routeToMainPageIfAuthenticated();
+                this.routeToPreviousPageIfAuthenticated();
             }, (err: HttpErrorResponse) => {
                 this.errorMessage = getErrorResponseMessage(err);
             });
     }
 
-    routeToMainPageIfAuthenticated(): void {
+    routeToPreviousPageIfAuthenticated(): void {
         if (this.userService.isAuthenticated()) {
-            this.router.navigate(['/']);
+            const state: any = this.location.getState();
+            let url: string = '/';
+
+            if (state && state.requestedUrl) {
+                url = state.requestedUrl;
+            }
+
+            this.router.navigate([url]);
         }
     }
 }

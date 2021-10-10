@@ -119,10 +119,12 @@ namespace ExamSaver.Services
                     userSubject => userSubject.SubjectId,
                     (exam, userSubject) => new { exam, userSubject }
                 )
-                .Where(res => res.userSubject.UserId == studentId
-                           && res.userSubject.SubjectRelation == subjectRelationType
-                           && (subjectRelationType == SubjectRelationType.TEACHING || res.exam.StartTime <= now && res.exam.EndTime >= now))
+                .Where(selection => selection.userSubject.UserId == studentId
+                           && selection.userSubject.SubjectRelation == subjectRelationType
+                           && (subjectRelationType == SubjectRelationType.TEACHING
+                               || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
                 .Select(res => res.exam)
+                .OrderByDescending(exam => exam.StartTime)
                 .ToList();
 
             return exams.Select((exam) =>

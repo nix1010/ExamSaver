@@ -6,14 +6,16 @@ import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { PageNotFoundComponent } from './components/error-pages/page-not-found/page-not-found.component';
+import { ErrorPageComponent } from './components/error-pages/error-page/error-page.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { HttpRequestInterceptor } from './config/http-interceptor';
 import { RoleGuardService } from './services/role-guard.service';
 import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
+import { CreateExamComponent } from './components/exam/create-exam/create-exam.component';
+import { ExamsComponent } from './components/exam/exams/exams.component';
+import { UpdateExamComponent } from './components/exam/update-exam/update-exam.component';
 
 
 @NgModule({
@@ -21,10 +23,12 @@ import { DragAndDropDirective } from './directives/drag-and-drop.directive';
     AppComponent,
     LoginComponent,
     NavBarComponent,
-    PageNotFoundComponent,
-    DashboardComponent,
+    ErrorPageComponent,
+    ExamsComponent,
     FileUploadComponent,
-    DragAndDropDirective
+    DragAndDropDirective,
+    CreateExamComponent,
+    UpdateExamComponent
   ],
   imports: [
     BrowserModule,

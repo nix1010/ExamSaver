@@ -3,15 +3,16 @@ import { Injectable } from "@angular/core";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Observable } from "rxjs";
 import { map } from "rxjs/internal/operators/map";
-
 import { AuthenticationResponse } from 'src/app/models/authentication-response';
+import { USER_AUTHENTICATION_TOKEN_KEY } from '../config/constants';
 import { Role } from "../models/role.model";
 import { User } from '../models/user-credentials.model';
-import { USER_AUTHENTICATION_TOKEN_KEY } from '../config/constants';
 import { DecodedToken } from './../interfaces/decoded-token.interface';
+
 
 @Injectable()
 export class UserService {
+
     private jwtHelperService = new JwtHelperService();
     private decodedToken: DecodedToken = null;
 
@@ -38,7 +39,7 @@ export class UserService {
         if (token) {
             return !this.jwtHelperService.isTokenExpired(token);
         }
-        
+
         return false;
     }
 
@@ -64,7 +65,7 @@ export class UserService {
                 }
             }
         }
-        
+
         return false;
     }
 }

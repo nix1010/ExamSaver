@@ -8,6 +8,7 @@ import { getErrorResponseMessage } from 'src/app/utils/utils';
     styleUrls: ['./file-upload.component.scss']
 })
 export class FileUploadComponent implements OnInit {
+    
     public progress: number = 0;
     public errorMessage: string = null;
     public fileSetForUpload: boolean = false;
@@ -59,8 +60,8 @@ export class FileUploadComponent implements OnInit {
                     this.progress = Math.round(100 * event.loaded / event.total);
                 }
                 else if (event.type === HttpEventType.Response) {
-                    this.uploadSuccess = true;
                     this.uploadInProgress = false;
+                    this.uploadSuccess = true;
                 }
             }, error => {
                 this.uploadInProgress = false;
