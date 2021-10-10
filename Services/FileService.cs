@@ -17,13 +17,6 @@ namespace ExamSaver.Services
 {
     public class FileService
     {
-        private readonly DatabaseContext databaseContext;
-
-        public FileService(DatabaseContext databaseContext)
-        {
-            this.databaseContext = databaseContext;
-        }
-
         public IList<FileInfoDTO> GetFileTree(string fileTreePath, StudentExam studentExam)
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
