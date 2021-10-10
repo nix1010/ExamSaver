@@ -169,6 +169,49 @@ namespace ExamSaver.Services
                 .ToList();
         }
 
+        public IList<FileInfoDTO> GetStudentExamFileTree(string token, int examId, int studentId, string fileTreePath)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            Subject subject = GetExamSubject(examId);
+
+            CheckUserTeachesSubject(userId, subject.Id);
+
+            StudentExam studentExam = GetStudentExam(examId, studentId);
+
+            return fileService.GetFileTree(fileTreePath, studentExam);
+        }
+
+        public FileDTO GetStudentExamFile(string token, int examId, int studentId, string fileTreePath)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            Subject subject = GetExamSubject(examId);
+
+            CheckUserTeachesSubject(userId, subject.Id);
+
+            StudentExam studentExam = GetStudentExam(examId, studentId);
+
+            return fileService.GetFile(fileTreePath, studentExam);
+        }
+
+        private Subject GetExamSubject(int examId)
+        {
+            Subject subject = databaseContext
+                .Exams
+                .Include(exam => exam.Subject)
+                .Where(exam => exam.Id == examId)
+                .Select(exam => exam.Subject)
+                .FirstOrDefault();
+
+            if (subject == null)
+            {
+                throw new NotFoundException($"Exam with id '{examId}' not found");
+            }
+
+            return subject;
+        }
+
         private void CheckUserTeachesSubject(int userId, int subjectId)
         {
             UserSubject userSubject = databaseContext
@@ -180,29 +223,8 @@ namespace ExamSaver.Services
 
             if (userSubject == null)
             {
-                throw new BadRequestException("User doesn't teach provided subject");
+                throw new BadRequestException($"User with id '{userId}' doesn't teach subject with id '{subjectId}'");
             }
-        }
-
-        public IList<FileInfoDTO> GetStudentExamFileTree(string token, int examId, int studentId, string fileTreePath)
-        {
-            int userId = userService.GetUserIdFromToken(token);
-
-            //TODO Check if can access this resource
-
-            StudentExam studentExam = GetStudentExam(examId, studentId);
-
-            
-            return fileService.GetFileTree(fileTreePath, studentExam);
-        }
-
-        public FileDTO GetStudentExamFile(string token, int examId, int studentId, string fileTreePath)
-        {
-            int userId = userService.GetUserIdFromToken(token);
-
-            StudentExam studentExam = GetStudentExam(examId, studentId);
-
-            return fileService.GetFile(fileTreePath, studentExam);
         }
 
         private StudentExam GetStudentExam(int examId, int studentId)
@@ -217,7 +239,7 @@ namespace ExamSaver.Services
 
             if (studentExam == null)
             {
-                throw new NotFoundException("Exam for requested student is not found");
+                throw new NotFoundException($"Exam with id '{examId}' for student with id '{studentId}' not found");
             }
 
             return studentExam;
@@ -241,6 +263,11 @@ namespace ExamSaver.Services
             Exam exam = databaseContext
                 .Exams
                 .FirstOrDefault(exam => exam.Id == examId);
+
+            if (exam == null)
+            {
+                throw new NotFoundException($"Exam with id '{examId}' not found");
+            }
 
             CheckExamSubmitValidity(form, exam, student);
 
@@ -283,11 +310,6 @@ namespace ExamSaver.Services
             if (form.Files.Count == 0 || form.Files.Count > 1)
             {
                 throw new BadRequestException("One file must be provided");
-            }
-
-            if (exam == null)
-            {
-                throw new NotFoundException("Exam not found");
             }
 
             UserSubject userSubject = databaseContext

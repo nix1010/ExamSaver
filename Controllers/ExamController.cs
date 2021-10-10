@@ -86,7 +86,7 @@ namespace ExamSaver.Controllers
 
         [Route("{examId}/students/{studentId}/tree/{**fileTreePath}")]
         [HttpGet]
-        [Authorize(Roles = RoleType.PROFESSOR + "," + RoleType.STUDENT)]
+        [Authorize(Roles = RoleType.PROFESSOR)]
         public IList<FileInfoDTO> GetStudentExamFileStructure([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
         {
             return examService.GetStudentExamFileTree(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
@@ -94,7 +94,7 @@ namespace ExamSaver.Controllers
 
         [Route("{examId}/students/{studentId}/file/{**fileTreePath}")]
         [HttpGet]
-        [Authorize(Roles = RoleType.PROFESSOR + "," + RoleType.STUDENT)]
+        [Authorize(Roles = RoleType.PROFESSOR)]
         public FileDTO GetStudentExamFile([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
         {
             return examService.GetStudentExamFile(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);

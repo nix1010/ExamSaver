@@ -30,7 +30,7 @@ namespace ExamSaver.Services
 
             if (!File.Exists(studentExamFilePath))
             {
-                throw new NotFoundException("Student resource file not found");
+                throw new NotFoundException("Student resource file is not found on the disk");
             }
 
             using ZipArchive zipArchive = ZipFile.Open(studentExamFilePath, ZipArchiveMode.Read);

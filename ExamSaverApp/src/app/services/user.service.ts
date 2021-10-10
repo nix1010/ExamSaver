@@ -21,10 +21,10 @@ export class UserService {
 
     authenticate(user: User): Observable<AuthenticationResponse> {
         return this.httpClient.post<AuthenticationResponse>('users/authenticate', user)
-            .pipe(map((observer: AuthenticationResponse) => {
-                localStorage.setItem(USER_AUTHENTICATION_TOKEN_KEY, observer.token);
+            .pipe(map((response: AuthenticationResponse) => {
+                localStorage.setItem(USER_AUTHENTICATION_TOKEN_KEY, response.token);
                 this.decodedToken = this.getAuthenticatedUser();
-                return observer;
+                return response;
             }));
     }
 

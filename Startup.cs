@@ -60,13 +60,6 @@ namespace ExamSaver
             services.AddSingleton<UserService>();
             services.AddSingleton<ExamService>();
             services.AddSingleton<FileService>();
-
-            services.Configure<FormOptions>(config =>
-            {
-                config.ValueLengthLimit = int.MaxValue;
-                config.MultipartBodyLengthLimit = int.MaxValue;
-                config.MemoryBufferThreshold = int.MaxValue;
-            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
