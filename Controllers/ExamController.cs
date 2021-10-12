@@ -1,21 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
-using ExamSaver.Configs;
-using ExamSaver.Exceptions;
-using ExamSaver.Models;
+﻿using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Services;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Primitives;
+using System.Collections.Generic;
 
 namespace ExamSaver.Controllers
 {
@@ -30,12 +20,12 @@ namespace ExamSaver.Controllers
             this.examService = examService;
         }
 
-        [Route("create")]
+        [Route("add")]
         [HttpPost]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult CreateExam([FromBody] ExamDTO examDTO)
+        public IActionResult AddExam([FromBody] ExamDTO examDTO)
         {
-            examService.CreateExam(Util.GetJWTToken(Request.Headers), examDTO);
+            examService.AddExam(Util.GetJWTToken(Request.Headers), examDTO);
 
             return Created(string.Empty, null);
         }
@@ -68,12 +58,28 @@ namespace ExamSaver.Controllers
             return examService.GetTakingExams(Util.GetJWTToken(Request.Headers));
         }
 
+        [Route("taking/{examId}")]
+        [HttpGet]
+        [Authorize]
+        public ExamDTO GetTakingExam(int examId)
+        {
+            return examService.GetTakingExam(Util.GetJWTToken(Request.Headers), examId);
+        }
+
         [Route("holding")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IList<ExamDTO> GetHoldingExams()
         {
             return examService.GetHoldingExams(Util.GetJWTToken(Request.Headers));
+        }
+
+        [Route("holding/{examId}")]
+        [HttpGet]
+        [Authorize]
+        public ExamDTO GetHoldingExam(int examId)
+        {
+            return examService.GetHoldingExam(Util.GetJWTToken(Request.Headers), examId);
         }
 
         [Route("{examId}/students")]

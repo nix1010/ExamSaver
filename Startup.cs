@@ -60,6 +60,7 @@ namespace ExamSaver
             services.AddSingleton<UserService>();
             services.AddSingleton<ExamService>();
             services.AddSingleton<FileService>();
+            services.AddSingleton<SubjectService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

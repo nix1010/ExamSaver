@@ -39,7 +39,7 @@ namespace ExamSaver.Services
 
                 if (zipArchiveEntry == null || !IsDirectory(zipArchiveEntry))
                 {
-                    throw new NotFoundException("Requested directory not found");
+                    throw new NotFoundException("Requested directory is not found");
                 }
             }
 
@@ -70,7 +70,7 @@ namespace ExamSaver.Services
 
             if (zipArchiveEntry == null || IsDirectory(zipArchiveEntry))
             {
-                throw new NotFoundException("Requested file not found");
+                throw new NotFoundException("Requested file is not found");
             }
 
             using StreamReader streamReader = new StreamReader(zipArchiveEntry.Open());
@@ -114,6 +114,11 @@ namespace ExamSaver.Services
 
         public void SaveFile(IFormFile file, Exam exam, Student student, out string examFilePath)
         {
+            if (!Equals(GetFileExtension(file), ".zip"))
+            {
+                throw new BadRequestException("Only zip files are allowed");
+            }
+
             string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(student, exam.Id);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(student, exam.Id);
 
@@ -132,14 +137,12 @@ namespace ExamSaver.Services
             {
                 file.CopyTo(fileStream);
             }
+        }
 
+        public string GetFileExtension(IFormFile file)
+        {
             string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-            string fileExtension = Path.GetExtension(fileName);
-
-            if (Equals(fileExtension, ".zip"))
-            {
-                //TODO Check if files should be stored in .zip format or plain
-            }
+            return Path.GetExtension(fileName);
         }
 
         private void DeleteExistingContent(string directoryPath)

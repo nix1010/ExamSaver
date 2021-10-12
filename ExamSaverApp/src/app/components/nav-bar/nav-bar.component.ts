@@ -1,3 +1,4 @@
+import { Role } from './../../models/role.model';
 import { Router } from '@angular/router';
 import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
@@ -10,7 +11,12 @@ import { LOGIN_ABSOLUTE_ROUTE } from 'src/app/config/constants';
 })
 export class NavBarComponent implements OnInit {
 
-    constructor(public userService: UserService, private router: Router) { }
+    public Role = Role;
+
+    constructor(
+        public userService: UserService,
+        private router: Router
+    ) { }
 
     ngOnInit(): void {
     }

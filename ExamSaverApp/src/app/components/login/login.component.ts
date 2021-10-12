@@ -18,9 +18,11 @@ export class LoginComponent implements OnInit {
     public errorMessage: string = null;
     public loginProcess: boolean = false;
 
-    constructor(private userService: UserService,
+    constructor(
+        private userService: UserService,
         private router: Router,
-        private location: Location) { }
+        private location: Location
+    ) { }
 
     ngOnInit(): void {
         this.routeToPreviousPageIfAuthenticated();

@@ -1,5 +1,5 @@
-import { UserService } from './services/user.service';
-import { AuthGuardService } from './services/auth-guard.service';
+import { ExamService } from './services/exam.service';
+import { SubjectService } from './services/subject.service';
 import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { FormsModule } from '@angular/forms';
@@ -7,41 +7,54 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ErrorPageComponent } from './components/error-pages/error-page/error-page.component';
+import { AddUpdateExamComponent } from './components/exam/add-update-exam/add-update-exam.component';
+import { ExamComponent } from './components/exam/exam.component';
+import { FileUploadComponent } from './components/exam/file-upload/file-upload.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
 import { HttpRequestInterceptor } from './config/http-interceptor';
-import { RoleGuardService } from './services/role-guard.service';
-import { FileUploadComponent } from './components/file-upload/file-upload.component';
 import { DragAndDropDirective } from './directives/drag-and-drop.directive';
-import { CreateExamComponent } from './components/exam/create-exam/create-exam.component';
-import { ExamsComponent } from './components/exam/exams/exams.component';
-import { UpdateExamComponent } from './components/exam/update-exam/update-exam.component';
+import { AuthGuardService } from './services/auth-guard.service';
+import { RoleGuardService } from './services/role-guard.service';
+import { UserService } from './services/user.service';
+import { ExamListComponent } from './components/exam/exam-list/exam-list.component';
+import { FileExplorerComponent } from './components/exam/file-explorer/file-explorer.component';
+import { FileViewerComponent } from './components/exam/file-viewer/file-viewer.component';
+import { StudentListComponent } from './components/exam/student-list/student-list.component';
+import { LoadSpinnerComponent } from './components/load-spinner/load-spinner.component';
 
 
 @NgModule({
-  declarations: [
-    AppComponent,
-    LoginComponent,
-    NavBarComponent,
-    ErrorPageComponent,
-    ExamsComponent,
-    FileUploadComponent,
-    DragAndDropDirective,
-    CreateExamComponent,
-    UpdateExamComponent
-  ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    FormsModule,
-    HttpClientModule
-  ],
-  providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
-    AuthGuardService,
-    RoleGuardService,
-    UserService
-  ],
-  bootstrap: [AppComponent]
+    declarations: [
+        AppComponent,
+        LoginComponent,
+        ExamComponent,
+        FileUploadComponent,
+        AddUpdateExamComponent,
+        NavBarComponent,
+        ErrorPageComponent,
+        FileUploadComponent,
+        DragAndDropDirective,
+        ExamListComponent,
+        FileExplorerComponent,
+        FileViewerComponent,
+        StudentListComponent,
+        LoadSpinnerComponent,
+    ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        FormsModule,
+        HttpClientModule
+    ],
+    providers: [
+        { provide: HTTP_INTERCEPTORS, useClass: HttpRequestInterceptor, multi: true },
+        AuthGuardService,
+        RoleGuardService,
+        UserService,
+        SubjectService,
+        ExamService
+    ],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

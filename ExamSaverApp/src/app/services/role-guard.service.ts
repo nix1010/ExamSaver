@@ -7,8 +7,10 @@ import { UserService } from "./user.service";
 @Injectable()
 export class RoleGuardService implements CanActivate {
 
-    constructor(private userService: UserService,
-        private authGuardService: AuthGuardService) { }
+    constructor(
+        private userService: UserService,
+        private authGuardService: AuthGuardService
+    ) { }
 
     canActivate(route: ActivatedRouteSnapshot, _state: RouterStateSnapshot): boolean | UrlTree | Observable<boolean | UrlTree> | Promise<boolean | UrlTree> {
         let canActivate: boolean = this.authGuardService.canActivate(route, _state);

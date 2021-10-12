@@ -1,10 +1,7 @@
-﻿using ExamSaver.Models;
-using ExamSaver.Models.API;
-using ExamSaver.Models.Entity;
+﻿using ExamSaver.Models.API;
 using ExamSaver.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
 
 namespace ExamSaver.Controllers
 {

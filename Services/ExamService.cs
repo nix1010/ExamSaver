@@ -1,23 +1,13 @@
-﻿using ExamSaver.Configs;
-using ExamSaver.Data;
+﻿using ExamSaver.Data;
 using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
-using ExamSaver.Utils;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
-using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Net.Http.Headers;
-using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
@@ -34,11 +24,11 @@ namespace ExamSaver.Services
             this.fileService = fileService;
         }
 
-        public void CreateExam(string token, ExamDTO examDTO)
+        public void AddExam(string token, ExamDTO examDTO)
         {
             int userId = userService.GetUserIdFromToken(token);
 
-            CheckExamCreationValidity(examDTO, userId);
+            CheckExamAddValidity(examDTO, userId);
 
             databaseContext.Add(new Exam()
             {
@@ -54,42 +44,46 @@ namespace ExamSaver.Services
         {
             int userId = userService.GetUserIdFromToken(token);
 
+            Exam exam = databaseContext
+                .Exams
+                .Find(examId);
+
+            if (exam == null)
+            {
+                throw new NotFoundException($"Exam with id '{examId}' is not found");
+            }
+
             CheckExamUpdateValidity(examDTO, userId);
 
-            Exam exam = new Exam()
-            {
-                Id = examId,
-                StartTime = examDTO.StartTime,
-                EndTime = examDTO.EndTime,
-                SubjectId = examDTO.SubjectId
-            };
+            exam.StartTime = examDTO.StartTime;
+            exam.EndTime = examDTO.EndTime;
 
-            databaseContext.Attach(exam);
             databaseContext.Update(exam);
 
             databaseContext.SaveChanges();
         }
 
-        private void CheckExamCreationValidity(ExamDTO examDTO, int userId)
+        private void CheckExamAddValidity(ExamDTO examDTO, int userId)
         {
             CheckExamUpdateValidity(examDTO, userId);
 
             Exam exam = databaseContext
                 .Exams
                 .Where(exam => exam.SubjectId == examDTO.SubjectId
-                            && exam.EndTime > DateTime.Now)
+                            && (examDTO.StartTime >= exam.StartTime && examDTO.StartTime <= exam.EndTime
+                               || examDTO.EndTime >= exam.StartTime && examDTO.EndTime <= exam.EndTime))
                 .FirstOrDefault();
 
             if (exam != null)
             {
-                throw new BadRequestException("Exam is already created and not finished yet");
+                throw new BadRequestException("Exam is overlapping with existing exam");
             }
         }
 
         private void CheckExamUpdateValidity(ExamDTO examDTO, int userId)
         {
             CheckUserTeachesSubject(userId, examDTO.SubjectId);
-            
+
             if (examDTO.StartTime >= examDTO.EndTime)
             {
                 throw new BadRequestException("Starting time must be greater than ending time");
@@ -98,16 +92,43 @@ namespace ExamSaver.Services
 
         public IList<ExamDTO> GetHoldingExams(string token)
         {
-            return GetExams(userService.GetUserIdFromToken(token), SubjectRelationType.TEACHING);
+            return GetExams(token, SubjectRelationType.TEACHING);
+        }
+
+        public ExamDTO GetHoldingExam(string token, int examId)
+        {
+            return GetExam(token, examId, SubjectRelationType.TEACHING);
         }
 
         public IList<ExamDTO> GetTakingExams(string token)
         {
-            return GetExams(userService.GetUserIdFromToken(token), SubjectRelationType.ATTENDING);
+            return GetExams(token, SubjectRelationType.ATTENDING);
         }
 
-        public IList<ExamDTO> GetExams(int studentId, SubjectRelationType subjectRelationType)
+        public ExamDTO GetTakingExam(string token, int examId)
         {
+            return GetExam(token, examId, SubjectRelationType.ATTENDING);
+        }
+
+        public ExamDTO GetExam(string token, int examId, SubjectRelationType subjectRelationType)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            ExamDTO examDTO = GetExams(token, subjectRelationType)
+                .Where(examDTO => examDTO.Id == examId)
+                .FirstOrDefault();
+
+            if (examDTO == null)
+            {
+                throw new NotFoundException($"Exam with id '{examId}' is not found for user with id '{userId}'");
+            }
+
+            return examDTO;
+        }
+
+        public IList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType)
+        {
+            int userId = userService.GetUserIdFromToken(token);
             DateTime now = DateTime.Now;
 
             IList<Exam> exams = databaseContext
@@ -119,7 +140,7 @@ namespace ExamSaver.Services
                     userSubject => userSubject.SubjectId,
                     (exam, userSubject) => new { exam, userSubject }
                 )
-                .Where(selection => selection.userSubject.UserId == studentId
+                .Where(selection => selection.userSubject.UserId == userId
                            && selection.userSubject.SubjectRelation == subjectRelationType
                            && (subjectRelationType == SubjectRelationType.TEACHING
                                || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
@@ -208,7 +229,7 @@ namespace ExamSaver.Services
 
             if (subject == null)
             {
-                throw new NotFoundException($"Exam with id '{examId}' not found");
+                throw new NotFoundException($"Exam with id '{examId}' is not found");
             }
 
             return subject;
@@ -241,7 +262,7 @@ namespace ExamSaver.Services
 
             if (studentExam == null)
             {
-                throw new NotFoundException($"Exam with id '{examId}' for student with id '{studentId}' not found");
+                throw new NotFoundException($"Exam with id '{examId}' for student with id '{studentId}' is not found");
             }
 
             return studentExam;
@@ -259,7 +280,7 @@ namespace ExamSaver.Services
 
             if (student == null)
             {
-                throw new UserNotFoundException($"Student with id '{userId}' not found");
+                throw new UserNotFoundException($"Student with id '{userId}' is not found");
             }
 
             Exam exam = databaseContext
@@ -268,7 +289,7 @@ namespace ExamSaver.Services
 
             if (exam == null)
             {
-                throw new NotFoundException($"Exam with id '{examId}' not found");
+                throw new NotFoundException($"Exam with id '{examId}' is not found");
             }
 
             CheckExamSubmitValidity(form, exam, student);

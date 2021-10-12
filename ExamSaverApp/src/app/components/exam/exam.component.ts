@@ -2,10 +2,10 @@ import { Component, OnInit } from '@angular/core';
 
 @Component({
   selector: 'app-exams',
-  templateUrl: './exams.component.html',
-  styleUrls: ['./exams.component.scss']
+  templateUrl: './exam.component.html',
+  styleUrls: ['./exam.component.scss']
 })
-export class ExamsComponent implements OnInit {
+export class ExamComponent implements OnInit {
 
   constructor() { }
 
