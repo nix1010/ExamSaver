@@ -1,0 +1,35 @@
+.wrapper {
+    .no-content {
+        margin-top: 3em;
+        color: #96958f;
+        font-size: 1.2rem;
+    }
+
+    a {
+        text-decoration: none;
+        color: black;
+    }
+    .content {
+        border-radius: 5px;
+        background-color: white;
+        padding: 15px;
+        box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.2);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        
+        .name {
+            font-size: 1.1rem;
+        }
+
+        .duration {
+            font-size: 0.75rem;
+        }
+
+        .options {
+            i {
+                font-size: 1.3em;
+            }
+        }
+    }
+}

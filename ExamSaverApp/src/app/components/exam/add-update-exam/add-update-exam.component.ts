@@ -1,5 +1,6 @@
+import { Subject } from './../../../models/subject.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
-import { DATE_FORMAT } from './../../../config/constants';
+import { INPUT_DATE_TIME_FORMAT } from './../../../config/constants';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ExamService } from './../../../services/exam.service';
 import { SubjectService } from './../../../services/subject.service';
@@ -16,11 +17,13 @@ import { finalize } from 'rxjs/operators';
 export class AddUpdateExamComponent implements OnInit {
 
     public exam: Exam = new Exam();
+    public subjects: Subject[] = [];
+    public examId: number;
     public update: boolean = false;
-    public showError: boolean = false;
+
+    public showErrorPage: boolean = false;
     public showContent: boolean = false;
     public showSpinner: boolean = false;
-    public examId: number;
     public errorMessage: string = null;
     public submitProcess: boolean = false;
     public submitProcessSuccess: boolean = false;
@@ -28,38 +31,49 @@ export class AddUpdateExamComponent implements OnInit {
     @ViewChild('form')
     public formElement: ElementRef<any>;
 
-    public DATE_FORMAT = DATE_FORMAT;
+    public DATE_FORMAT = INPUT_DATE_TIME_FORMAT;
 
     constructor(
-        private route: ActivatedRoute,
+        private activatedRoute: ActivatedRoute,
         public subjectService: SubjectService,
         private examService: ExamService
     ) { }
 
     ngOnInit(): void {
-        let examId = this.route.snapshot.paramMap.get('examId');
+        this.getSubjects();
 
         this.showContent = true;
 
+        let examId = this.activatedRoute.snapshot.paramMap.get('examId');
         if (examId !== null) {
-            this.update = true;
-            this.examId = Number(examId);
+            this.getExamForUpdate(examId);
+        }
+    }
 
-            if (Number.isNaN(this.examId)) {
-                this.showError = true;
-            } else {
-                this.showSpinner = true;
-                this.showError = this.showContent = false;
+    getSubjects(): void {
+        this.subjectService.getTeachingSubjects()
+            .subscribe((subjects: Subject[]) => this.subjects = subjects,
+                (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
+    }
 
-                this.examService.getExamById(this.examId)
-                    .pipe(finalize(() => this.showSpinner = false))
-                    .subscribe((exam: Exam) => {
-                        this.exam = exam;
-                        this.showContent = true;
-                    }, (_error: HttpErrorResponse) => {
-                        this.showError = true;
-                    });
-            }
+    getExamForUpdate(examId: string): void {
+        this.update = true;
+        this.examId = Number(examId);
+
+        if (Number.isNaN(this.examId)) {
+            this.showErrorPage = true;
+        } else {
+            this.showSpinner = true;
+            this.showErrorPage = this.showContent = false;
+
+            this.examService.getHoldingExamById(this.examId)
+                .pipe(finalize(() => this.showSpinner = false))
+                .subscribe((exam: Exam) => {
+                    this.exam = exam;
+                    this.showContent = true;
+                }, (_error: HttpErrorResponse) => {
+                    this.showErrorPage = true;
+                });
         }
     }
 
@@ -71,16 +85,19 @@ export class AddUpdateExamComponent implements OnInit {
         if (this.validateForm()) {
             if (this.update) {
                 this.examService.updateExam(this.examId, this.exam)
-                .pipe(finalize(() => this.submitProcess = false))
-                .subscribe(_response => this.submitProcessSuccess = true,
-                    (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
+                    .pipe(finalize(() => this.submitProcess = false))
+                    .subscribe(_response => this.submitProcessSuccess = true,
+                        (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
             }
             else {
                 this.examService.addExam(this.exam)
-                .pipe(finalize(() => this.submitProcess = false))
-                .subscribe(_response => this.submitProcessSuccess = true,
-                    (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
+                    .pipe(finalize(() => this.submitProcess = false))
+                    .subscribe(_response => this.submitProcessSuccess = true,
+                        (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
             }
+        }
+        else {
+            this.submitProcess = false;
         }
     }
 

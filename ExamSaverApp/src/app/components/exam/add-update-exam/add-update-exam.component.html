@@ -1,35 +1,35 @@
-<app-error-page *ngIf="showError"></app-error-page>
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
 <div *ngIf="errorMessage || submitProcessSuccess" class="banner-alert alert fade show w-100 text-center"
     [class.alert-danger]="errorMessage" [class.alert-success]="submitProcessSuccess">
     {{ submitProcessSuccess ? 'Successful' : errorMessage }}
 </div>
-<div class="container exam-container" *ngIf="showContent">
+<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div class="container wrapper" *ngIf="showContent">
     <h4 class="mb-5">{{ update ? 'Update' : 'Add' }} exam for the subject</h4>
     <form #form class="exam-form">
         <div class="form-group mb-4">
             <label for="startTime">Start time</label>
             <input type="datetime-local" class="form-control" id="startTime" name="startTime"
-                [ngModel]="exam.startTime | date:DATE_FORMAT" (ngModelChange)="exam.startTime = $event" required />
-            <div class="invalid-feedback">Start date is incorrect</div>
+                [ngModel]="exam.startTime | date: DATE_FORMAT" (ngModelChange)="exam.startTime = $event" required />
+            <div class="invalid-feedback">Start date is not valid</div>
         </div>
         <div class="form-group mb-4">
             <label for="endTime">End time</label>
             <input type="datetime-local" class="form-control" id="endTime" name="endTime"
-                [ngModel]="exam.endTime | date:DATE_FORMAT" (ngModelChange)="exam.endTime = $event"
-                [min]="exam.startTime | date:DATE_FORMAT" required />
-            <div class="invalid-feedback">End date is incorrect</div>
+                [ngModel]="exam.endTime | date: DATE_FORMAT" (ngModelChange)="exam.endTime = $event"
+                [min]="exam.startTime | date: DATE_FORMAT" required />
+            <div class="invalid-feedback">End date is not valid</div>
         </div>
         <div class="form-group mb-4">
             <label for="subject">Subject</label>
             <select class="form-select" id="subject" name="subjects" [disabled]="update" [(ngModel)]="exam.subjectId"
                 required>
-                <option *ngFor="let subject of this.subjectService.getTeachingSubjects()" [ngValue]="subject.id"
+                <option *ngFor="let subject of subjects" [ngValue]="subject.id"
                     [selected]="update ? subject.id === exam.id : false">
                     {{ subject.name }}
                 </option>
             </select>
-            <div class="invalid-feedback">Subject is incorrect</div>
+            <div class="invalid-feedback">Subject is not valid</div>
         </div>
         <button type="submit" class="btn btn-primary submit-button" (click)="addUpdateExam()"
             [disabled]="submitProcess">

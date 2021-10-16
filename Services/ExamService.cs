@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace ExamSaver.Services
 {
@@ -141,9 +142,9 @@ namespace ExamSaver.Services
                     (exam, userSubject) => new { exam, userSubject }
                 )
                 .Where(selection => selection.userSubject.UserId == userId
-                           && selection.userSubject.SubjectRelation == subjectRelationType
-                           && (subjectRelationType == SubjectRelationType.TEACHING
-                               || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
+                                 && selection.userSubject.SubjectRelation == subjectRelationType
+                                 && (subjectRelationType == SubjectRelationType.TEACHING
+                                    || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
                 .Select(res => res.exam)
                 .OrderByDescending(exam => exam.StartTime)
                 .ToList();

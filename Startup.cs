@@ -55,12 +55,12 @@ namespace ExamSaver
                 };
             });
 
-            services.AddDbContext<DatabaseContext>(ServiceLifetime.Singleton);
+            services.AddDbContext<DatabaseContext>(ServiceLifetime.Scoped);
 
-            services.AddSingleton<UserService>();
-            services.AddSingleton<ExamService>();
-            services.AddSingleton<FileService>();
-            services.AddSingleton<SubjectService>();
+            services.AddScoped<UserService>();
+            services.AddScoped<ExamService>();
+            services.AddScoped<FileService>();
+            services.AddScoped<SubjectService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

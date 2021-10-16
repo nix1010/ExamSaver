@@ -108,17 +108,5 @@ namespace ExamSaver.Services
 
             throw new UserNotFoundException("User is not found from token");
         }
-
-        public IList<string> GetRolesFromToken(string token)
-        {
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            JwtSecurityToken jwtSecurityToken = jwtSecurityTokenHandler.ReadJwtToken(token);
-
-            return jwtSecurityToken
-                .Claims
-                .Where(claim => claim.Type.Equals("role"))
-                .Select(claim => claim.Value)
-                .ToList();
-        }
     }
 }

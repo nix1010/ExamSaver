@@ -5,17 +5,9 @@ export function getErrorResponseMessage(err: HttpErrorResponse): string {
         return "Can't reach server right now, please try again later";
     }
 
-    let message: string = err.error.message;
-
-    if (message !== null && message !== undefined) {
-        return message;
+    if (err.error) {
+        return err.error.message;
     }
 
-    let title: string = err.error.title;
-
-    if (title !== null && title !== undefined) {
-        return title;
-    }
-
-    return "Unknown error, please try again later";
+    return err.message;
 }

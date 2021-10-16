@@ -6,11 +6,11 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a *ngIf="userService.hasRoles([Role.STUDENT])" routerLink="/exams/active" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
                     class="nav-item nav-link">Active exams</a>
-                <a *ngIf="userService.hasRoles([Role.PROFESSOR])" routerLink="/exams/holding" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
                     class="nav-item nav-link">Holding exams</a>
-                <a *ngIf="userService.hasRoles([Role.PROFESSOR])" routerLink="/exams/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
                     class="nav-item nav-link">Add exam</a>
             </div>
             <div class="navbar-nav ms-auto">

@@ -114,11 +114,6 @@ namespace ExamSaver.Services
 
         public void SaveFile(IFormFile file, Exam exam, Student student, out string examFilePath)
         {
-            if (!Equals(GetFileExtension(file), ".zip"))
-            {
-                throw new BadRequestException("Only zip files are allowed");
-            }
-
             string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(student, exam.Id);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(student, exam.Id);
 
@@ -133,8 +128,22 @@ namespace ExamSaver.Services
 
             examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
 
-            using (FileStream fileStream = new FileStream(examFilePath, FileMode.Create))
+            if (!Equals(GetFileExtension(file), ".zip"))
             {
+                string temporaryFilePath = Path.Combine(studentExamDirectoryPath, file.FileName);
+
+                using (FileStream fileStream = new FileStream(temporaryFilePath, FileMode.Create))
+                {
+                    file.CopyTo(fileStream);
+                }
+
+                ZipFile.CreateFromDirectory(studentExamDirectoryPath, examFilePath);
+
+                File.Delete(temporaryFilePath);
+            }
+            else
+            {
+                using FileStream fileStream = new FileStream(examFilePath, FileMode.Create);
                 file.CopyTo(fileStream);
             }
         }

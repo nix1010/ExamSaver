@@ -22,6 +22,7 @@ import { FileExplorerComponent } from './components/exam/file-explorer/file-expl
 import { FileViewerComponent } from './components/exam/file-viewer/file-viewer.component';
 import { StudentListComponent } from './components/exam/student-list/student-list.component';
 import { LoadSpinnerComponent } from './components/load-spinner/load-spinner.component';
+import { HasRoleDirective } from './directives/has-role.directive';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { LoadSpinnerComponent } from './components/load-spinner/load-spinner.com
         FileViewerComponent,
         StudentListComponent,
         LoadSpinnerComponent,
+        HasRoleDirective,
     ],
     imports: [
         BrowserModule,
