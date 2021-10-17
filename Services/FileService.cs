@@ -54,7 +54,8 @@ namespace ExamSaver.Services
                     {
                         IsDirectory = isDirectory,
                         Name = isDirectory ? new DirectoryInfo(zipArchiveEntry.FullName).Name : zipArchiveEntry.Name,
-                        FullPath = zipArchiveEntry.FullName
+                        FullPath = zipArchiveEntry.FullName,
+                        Size = zipArchiveEntry.Length
                     };
                 })
                 .OrderByDescending(fileInfo => fileInfo.IsDirectory)

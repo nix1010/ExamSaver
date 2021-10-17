@@ -2,7 +2,7 @@ import { DISPLAY_TIME_FORMAT, DISPLAY_DATE_FORMAT } from './../../../config/cons
 import { ExamService } from './../../../services/exam.service';
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
+import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
 import { Exam } from 'src/app/models/exam.model';
 import { finalize } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -33,6 +33,8 @@ export class FileUploadComponent implements OnInit {
 
     DISPLAY_TIME_FORMAT = DISPLAY_TIME_FORMAT;
     DISPLAY_DATE_FORMAT = DISPLAY_DATE_FORMAT;
+    
+    getFormattedFileSize = getFormattedFileSize;
 
     constructor(
         private examService: ExamService,
@@ -69,16 +71,6 @@ export class FileUploadComponent implements OnInit {
     onFormClick() {
         this.fileInput.nativeElement.value = '';
         this.fileInput.nativeElement.click();
-    }
-
-    getFormattedFileSize(): string {
-        const kilobyte = 1000;
-        const bytes = this.file.size;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
-        const sizeIndex = Math.floor(Math.log(bytes) / Math.log(kilobyte));
-        const convertedBytes = bytes / Math.pow(kilobyte, sizeIndex);
-
-        return `${Math.round((convertedBytes + Number.EPSILON) * 100) / 100} ${sizes[sizeIndex]}`;
     }
 
     uploadFile(fileList: FileList): void {

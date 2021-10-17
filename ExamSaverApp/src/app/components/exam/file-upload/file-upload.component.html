@@ -44,7 +44,7 @@
                                         {{errorMessage ? 'Failed' : 'Uploaded'}}
                                     </span>
                                 </span>
-                                <span class="size">{{getFormattedFileSize()}}</span>
+                                <span class="size">{{ getFormattedFileSize(file.size) }}</span>
                             </div>
                             <i class="fas" [class.fa-check]="!errorMessage"
                                 [ngClass]="{'fa-times-circle failed-color': errorMessage}"></i>

@@ -15,15 +15,24 @@
     </div>
     <div class="mt-5">
         <div class="list-group file-tree">
-            <a [routerLink]="getParentDirectoryRoute()" class="list-group-item list-group-item-action file-tree-item" *ngIf="!isRoot()">
+            <a [routerLink]="getParentDirectoryRoute()" class="list-group-item list-group-item-action file-tree-item"
+                *ngIf="!isRoot()">
                 ..
             </a>
-            <a [routerLink]="baseFileTreePath + file.fullPath" class="list-group-item list-group-item-action file-tree-item" *ngFor="let file of fileTree">
-                <div class="file-icon">
-                    <i [ngClass]="{'far fa-file' : !file.isDirectory, 'fas fa-folder': file.isDirectory}"></i>
-                </div>
-                <div class="file-name">
-                    {{ file.name }}
+            <a [routerLink]="baseFileTreePath + file.fullPath"
+                class="list-group-item list-group-item-action file-tree-item" *ngFor="let file of fileTree">
+                <div class="file-info">
+                    <div>
+                        <div class="file-icon">
+                            <i [ngClass]="{'far fa-file' : !file.isDirectory, 'fas fa-folder': file.isDirectory}"></i>
+                        </div>
+                        <div class="file-name">
+                            {{ file.name }}
+                        </div>
+                    </div>
+                    <div *ngIf="!file.isDirectory">
+                        {{ getFormattedFileSize(file.size) }}
+                    </div>
                 </div>
             </a>
         </div>

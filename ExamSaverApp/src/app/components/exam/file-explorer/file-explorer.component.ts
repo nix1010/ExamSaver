@@ -5,7 +5,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from 'src/app/config/constants';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
+import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
 import { FileInfo } from './../../../models/file-info.model';
 import { ExamService } from './../../../services/exam.service';
 import { Exam } from 'src/app/models/exam.model';
@@ -34,6 +34,8 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
 
     DISPLAY_DATE_FORMAT = DISPLAY_DATE_FORMAT;
     DISPLAY_TIME_FORMAT = DISPLAY_TIME_FORMAT;
+
+    getFormattedFileSize = getFormattedFileSize;
 
     constructor(
         private examService: ExamService,

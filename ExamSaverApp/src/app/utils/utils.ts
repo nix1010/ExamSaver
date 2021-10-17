@@ -11,3 +11,13 @@ export function getErrorResponseMessage(err: HttpErrorResponse): string {
 
     return err.message;
 }
+
+export function getFormattedFileSize(fileSize: number): string {
+    const kilobyte = 1000;
+    const bytes = fileSize;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+    const sizeIndex = Math.floor(Math.log(bytes) / Math.log(kilobyte));
+    const convertedBytes = bytes / Math.pow(kilobyte, sizeIndex);
+
+    return `${Math.round((convertedBytes + Number.EPSILON) * 100) / 100} ${sizes[sizeIndex]}`;
+}

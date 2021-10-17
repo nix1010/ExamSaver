@@ -13,6 +13,11 @@
     .file-tree-item {
         cursor: pointer;
 
+        .file-info {
+            display: flex;
+            justify-content: space-between;
+        }
+        
         .file-name,
         .file-icon {
             display: inline-block;
