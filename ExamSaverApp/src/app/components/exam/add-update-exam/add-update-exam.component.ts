@@ -45,8 +45,15 @@ export class AddUpdateExamComponent implements OnInit {
         this.showContent = true;
 
         let examId = this.activatedRoute.snapshot.paramMap.get('examId');
+
         if (examId !== null) {
-            this.getExamForUpdate(examId);
+            this.examId = Number(examId);
+
+            if (Number.isNaN(this.examId)) {
+                this.showErrorPage = true;
+            } else {
+                this.getExamForUpdate(this.examId);
+            }
         }
     }
 
@@ -56,25 +63,20 @@ export class AddUpdateExamComponent implements OnInit {
                 (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
     }
 
-    getExamForUpdate(examId: string): void {
+    getExamForUpdate(examId: number): void {
         this.update = true;
-        this.examId = Number(examId);
 
-        if (Number.isNaN(this.examId)) {
-            this.showErrorPage = true;
-        } else {
-            this.showSpinner = true;
-            this.showErrorPage = this.showContent = false;
+        this.showSpinner = true;
+        this.showErrorPage = this.showContent = false;
 
-            this.examService.getHoldingExamById(this.examId)
-                .pipe(finalize(() => this.showSpinner = false))
-                .subscribe((exam: Exam) => {
-                    this.exam = exam;
-                    this.showContent = true;
-                }, (_error: HttpErrorResponse) => {
-                    this.showErrorPage = true;
-                });
-        }
+        this.examService.getHoldingExamById(examId)
+            .pipe(finalize(() => this.showSpinner = false))
+            .subscribe((exam: Exam) => {
+                this.exam = exam;
+                this.showContent = true;
+            }, (_error: HttpErrorResponse) => {
+                this.showErrorPage = true;
+            });
     }
 
     addUpdateExam(): void {

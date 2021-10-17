@@ -1,8 +1,14 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
 <div class="wrapper container" *ngIf="showContent">
-    <h3 class="mt-5 mb-4">Exams</h3>
-    <div class="no-content" *ngIf="exams.length === 0 else showList">There are no exams</div>
-    <ng-template #showList>
+    <div class="header mt-5 mb-4">
+        <h3>
+            {{ getTitle() }}
+        </h3>
+        <a routerLink="/exams/holding/add" class="btn btn-primary btn-sm add-exam" title="Add exam" *ngIf="role === Role.PROFESSOR">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    <ng-container *ngIf="exams.length > 0 else noExams">
         <a *ngFor="let exam of exams" [routerLink]="getExamUri(exam)">
             <div class="card mb-3">
                 <div class="content">
@@ -14,20 +20,23 @@
                             {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
                         </div>
                         <div class="duration">
-                            <div>
-                                {{ exam.startTime | date: DISPLAY_TIME_FORMAT }}
-                                -
-                                {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
-                            </div>
+                            {{ exam.startTime | date: DISPLAY_TIME_FORMAT }}
+                            -
+                            {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
                         </div>
                     </div>
                     <div class="options" *ngIf="role === Role.PROFESSOR">
-                        <a [routerLink]="'/exams/' + exam.id + '/update'" title="Update exam">
+                        <a [routerLink]="'/exams/holding/' + exam.id + '/update'" title="Update exam">
                             <i class="fas fa-edit"></i>
                         </a>
                     </div>
                 </div>
             </div>
         </a>
+    </ng-container>
+    <ng-template #noExams>
+        <div class="no-content">
+            There are no exams
+        </div>
     </ng-template>
 </div>

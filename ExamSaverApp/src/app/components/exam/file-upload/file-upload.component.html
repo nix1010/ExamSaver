@@ -1,43 +1,57 @@
-<div class="wrapper">
-    <header class="text-center">Upload exam file</header>
-    <form class="text-center upload-form" (click)="onFormClick()" DragAndDrop (fileDropped)="uploadFile($event)">
-        <input class="file-input" type="file" name="file" hidden #fileInput (change)="uploadFile(fileInput.files)">
-        <i class="fas fa-cloud-upload-alt cloud-icon"></i>
-        <p>Browse File to Upload</p>
-    </form>
-    <ng-container *ngIf="fileSetForUpload">
-        <div *ngIf="uploadInProgress; else showFileUploadStatus" class="upload-in-progress">
-            <div class="file-container">
-                <i class="fas fa-file-alt file-icon"></i>
-                <div class="content">
-                    <div class="details">
-                        <span class="name">{{file.name}} • Uploading</span>
-                        <span class="percent">{{progress}}%</span>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress" [style.width]="progress + '%'"></div>
-                    </div>
-                </div>
-            </div>
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div class="container" *ngIf="showContent">
+    <div class="exam-info mt-5 text-center">
+        <h4>{{ exam.subjectName }}</h4>
+        <div class="date">
+            {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
         </div>
-        <ng-template #showFileUploadStatus>
-            <div class="upload-not-in-progress">
+        <div class="duration">
+            {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+        </div>
+    </div>
+    <div class="wrapper mt-4">
+        <header class="text-center">Upload exam file</header>
+        <form class="text-center upload-form" (click)="onFormClick()" DragAndDrop (fileDropped)="uploadFile($event)">
+            <input class="file-input" type="file" name="file" hidden #fileInput (change)="uploadFile(fileInput.files)">
+            <i class="fas fa-cloud-upload-alt cloud-icon"></i>
+            <p>Browse File to Upload</p>
+        </form>
+        <ng-container *ngIf="fileSetForUpload">
+            <div *ngIf="uploadInProgress; else showFileUploadStatus" class="upload-in-progress">
                 <div class="file-container">
                     <i class="fas fa-file-alt file-icon"></i>
                     <div class="content">
                         <div class="details">
-                            <span class="name">
-                                {{file.name}} •
-                                <span [class.failed-color]="errorMessage">
-                                    {{errorMessage ? 'Failed' : 'Uploaded'}}
-                                </span>
-                            </span>
-                            <span class="size">{{getFormattedFileSize()}}</span>
+                            <span class="name">{{file.name}} • Uploading</span>
+                            <span class="percent">{{progress}}%</span>
                         </div>
-                        <i class="fas" [class.fa-check]="!errorMessage" [ngClass]="{'fa-times-circle failed-color': errorMessage}"></i>
+                        <div class="progress-bar">
+                            <div class="progress" [style.width]="progress + '%'"></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </ng-template>
-    </ng-container>
+            <ng-template #showFileUploadStatus>
+                <div class="upload-not-in-progress">
+                    <div class="file-container">
+                        <i class="fas fa-file-alt file-icon"></i>
+                        <div class="content">
+                            <div class="details">
+                                <span class="name">
+                                    {{file.name}} •
+                                    <span [class.failed-color]="errorMessage">
+                                        {{errorMessage ? 'Failed' : 'Uploaded'}}
+                                    </span>
+                                </span>
+                                <span class="size">{{getFormattedFileSize()}}</span>
+                            </div>
+                            <i class="fas" [class.fa-check]="!errorMessage"
+                                [ngClass]="{'fa-times-circle failed-color': errorMessage}"></i>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </ng-container>
+    </div>
 </div>

@@ -12,11 +12,11 @@ export class ExamService {
     constructor(private httpClient: HttpClient) { }
 
     addExam(exam: Exam): Observable<any> {
-        return this.httpClient.post(`exams/add`, exam);
+        return this.httpClient.post(`exams/holding`, exam);
     }
 
     updateExam(examId: number, exam: Exam): Observable<any> {
-        return this.httpClient.put(`exams/${examId}/update`, exam);
+        return this.httpClient.put(`exams/holding/${examId}`, exam);
     }
 
     getTakingExams(): Observable<Exam[]> {
@@ -35,19 +35,19 @@ export class ExamService {
         return this.httpClient.get<Exam>(`exams/holding/${examId}`);
     }
 
-    getExamStudents(examId: number, studentId: number): Observable<StudentExam[]> {
-        return this.httpClient.get<StudentExam[]>(`exams/${examId}/students`);
+    getExamStudents(examId: number): Observable<StudentExam[]> {
+        return this.httpClient.get<StudentExam[]>(`exams/holding/${examId}/students`);
     }
 
-    submitExamFile(examId: number, formData: FormData): Observable<any> {
-        return this.httpClient.post(`exams/${examId}`, formData, { reportProgress: true, observe: 'events' });
+    submitExam(examId: number, formData: FormData): Observable<any> {
+        return this.httpClient.post(`exams/taking/${examId}`, formData, { reportProgress: true, observe: 'events' });
     }
 
     getStudentExamFileTree(examId: number, studentId: number, fileTreePath: string): Observable<File[]> {
-        return this.httpClient.get<File[]>(`exams/${examId}/students/${studentId}/tree/${fileTreePath}`);
+        return this.httpClient.get<File[]>(`exams/holding/${examId}/students/${studentId}/tree/${fileTreePath}`);
     }
 
     getStudentExamFile(examId: number, studentId: number, fileTreePath: string): Observable<FileInfo[]> {
-        return this.httpClient.get<FileInfo[]>(`exams/${examId}/students/${studentId}/file/${fileTreePath}`);
+        return this.httpClient.get<FileInfo[]>(`exams/holding/${examId}/students/${studentId}/file/${fileTreePath}`);
     }
 }

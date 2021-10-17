@@ -20,36 +20,6 @@ namespace ExamSaver.Controllers
             this.examService = examService;
         }
 
-        [Route("add")]
-        [HttpPost]
-        [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult AddExam([FromBody] ExamDTO examDTO)
-        {
-            examService.AddExam(Util.GetJWTToken(Request.Headers), examDTO);
-
-            return Created(string.Empty, null);
-        }
-
-        [Route("{examId}/update")]
-        [HttpPut]
-        [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult UpdateExam([FromBody] ExamDTO examDTO, [FromRoute] int examId)
-        {
-            examService.UpdateExam(Util.GetJWTToken(Request.Headers), examDTO, examId);
-
-            return NoContent();
-        }
-
-        [Route("{examId}/submit")]
-        [HttpPost]
-        [Authorize(Roles = RoleType.STUDENT)]
-        public IActionResult UploadExam([FromForm] IFormCollection form, [FromRoute] int examId)
-        {
-            examService.SubmitExam(Util.GetJWTToken(Request.Headers), form, examId);
-
-            return Created(string.Empty, null);
-        }
-
         [Route("taking")]
         [HttpGet]
         [Authorize(Roles = RoleType.STUDENT)]
@@ -64,6 +34,16 @@ namespace ExamSaver.Controllers
         public ExamDTO GetTakingExam(int examId)
         {
             return examService.GetTakingExam(Util.GetJWTToken(Request.Headers), examId);
+        }
+
+        [Route("taking/{examId}")]
+        [HttpPost]
+        [Authorize(Roles = RoleType.STUDENT)]
+        public IActionResult UploadExam([FromForm] IFormCollection form, [FromRoute] int examId)
+        {
+            examService.SubmitExam(Util.GetJWTToken(Request.Headers), form, examId);
+
+            return Created(string.Empty, null);
         }
 
         [Route("holding")]
@@ -82,7 +62,27 @@ namespace ExamSaver.Controllers
             return examService.GetHoldingExam(Util.GetJWTToken(Request.Headers), examId);
         }
 
-        [Route("{examId}/students")]
+        [Route("holding")]
+        [HttpPost]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult AddExam([FromBody] ExamDTO examDTO)
+        {
+            examService.AddExam(Util.GetJWTToken(Request.Headers), examDTO);
+
+            return Created(string.Empty, null);
+        }
+
+        [Route("holding/{examId}")]
+        [HttpPut]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult UpdateExam([FromBody] ExamDTO examDTO, [FromRoute] int examId)
+        {
+            examService.UpdateExam(Util.GetJWTToken(Request.Headers), examDTO, examId);
+
+            return NoContent();
+        }
+
+        [Route("holding/{examId}/students")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IList<StudentExamDTO> GetExamStudents([FromRoute] int examId)
@@ -90,7 +90,7 @@ namespace ExamSaver.Controllers
             return examService.GetExamStudents(Util.GetJWTToken(Request.Headers), examId);
         }
 
-        [Route("{examId}/students/{studentId}/tree/{**fileTreePath}")]
+        [Route("holding/{examId}/students/{studentId}/tree/{**fileTreePath}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IList<FileInfoDTO> GetStudentExamFileStructure([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
@@ -98,7 +98,7 @@ namespace ExamSaver.Controllers
             return examService.GetStudentExamFileTree(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
         }
 
-        [Route("{examId}/students/{studentId}/file/{**fileTreePath}")]
+        [Route("holding/{examId}/students/{studentId}/file/{**fileTreePath}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public FileDTO GetStudentExamFile([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")

@@ -1,13 +1,13 @@
-import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { Observable } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { Exam } from 'src/app/models/exam.model';
+import { Role } from 'src/app/models/role.model';
+import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from './../../../config/constants';
 import { ExamService } from './../../../services/exam.service';
-import { Component, OnInit } from '@angular/core';
-import { Exam } from 'src/app/models/exam.model';
-import { ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
-import { Role } from 'src/app/models/role.model';
-import { start } from 'repl';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-exam-list',
@@ -40,37 +40,42 @@ export class ExamListComponent implements OnInit {
         this.getExams();
     }
 
+    getTitle(): string {
+        if (this.role === Role.PROFESSOR) {
+            return 'Holding exams';
+        }
+
+        return 'Active exams';
+    }
+
     getExams(): void {
         this.showSpinner = true;
         this.errorMessage = null;
         this.showContent = false;
 
+        this.getExamsByRole()
+            .pipe(finalize(() => this.showSpinner = false))
+            .subscribe((exams: Exam[]) => {
+                this.exams = exams;
+                this.showContent = true;
+            },
+                (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
+    }
+
+    getExamsByRole(): Observable<Exam[]> {
         if (this.role === Role.PROFESSOR) {
-            this.examService.getHoldingExams()
-                .pipe(finalize(() => this.showSpinner = false))
-                .subscribe((exams: Exam[]) => {
-                    this.exams = exams;
-                    this.showContent = true;
-                },
-                    (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
+            return this.examService.getHoldingExams();
         }
-        else {
-            this.examService.getTakingExams()
-                .pipe(finalize(() => this.showSpinner = false))
-                .subscribe((exams: Exam[]) => {
-                    this.exams = exams;
-                    this.showContent = true;
-                },
-                    (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
-        }
+
+        return this.examService.getTakingExams();
     }
 
     getExamUri(exam: Exam): string {
         if (this.role === Role.PROFESSOR) {
-            return `/exams/${exam.id}/students`;
+            return `/exams/holding/${exam.id}/students`;
         }
         else {
-            return `/exams/${exam.id}/submit`;
+            return `/exams/taking/${exam.id}/submit`;
         }
     }
 }

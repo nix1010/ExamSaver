@@ -24,24 +24,16 @@ const routes: Routes = [
         component: ExamComponent,
         children: [
             {
-                path: 'add',
-                component: AddUpdateExamComponent,
-                canActivate: [RoleGuardService],
-                data: {
-                    roles: [Role.PROFESSOR]
-                }
-            },
-            {
-                path: ':examId/update',
-                component: AddUpdateExamComponent,
-                canActivate: [RoleGuardService],
-                data: {
-                    roles: [Role.PROFESSOR]
-                }
-            },
-            {
                 path: 'taking',
                 component: ExamListComponent,
+                canActivate: [RoleGuardService],
+                data: {
+                    roles: [Role.STUDENT]
+                },
+            },
+            {
+                path: 'taking/:examId/submit',
+                component: FileUploadComponent,
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.STUDENT]
@@ -53,18 +45,26 @@ const routes: Routes = [
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.PROFESSOR]
-                }
+                },
             },
             {
-                path: ':examId/submit',
-                component: FileUploadComponent,
+                path: 'holding/add',
+                component: AddUpdateExamComponent,
                 canActivate: [RoleGuardService],
                 data: {
-                    roles: [Role.STUDENT]
+                    roles: [Role.PROFESSOR]
                 }
             },
             {
-                path: ':examId/students',
+                path: 'holding/:examId/update',
+                component: AddUpdateExamComponent,
+                canActivate: [RoleGuardService],
+                data: {
+                    roles: [Role.PROFESSOR]
+                }
+            },
+            {
+                path: 'holding/:examId/students',
                 component: StudentListComponent,
                 canActivate: [RoleGuardService],
                 data: {
@@ -72,7 +72,7 @@ const routes: Routes = [
                 }
             },
             {
-                path: ':examId/students/:studentId/tree/**',
+                path: 'holding/:examId/students/:studentId/tree/**',
                 component: FileExplorerComponent,
                 canActivate: [RoleGuardService],
                 data: {
@@ -80,7 +80,7 @@ const routes: Routes = [
                 }
             },
             {
-                path: ':examId/students/:studentId/file/**',
+                path: 'holding/:examId/students/:studentId/file/**',
                 component: FileViewerComponent,
                 canActivate: [RoleGuardService],
                 data: {

@@ -1,14 +1,20 @@
 .wrapper {
-    .no-content {
-        margin-top: 3em;
-        color: #96958f;
-        font-size: 1.2rem;
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .add-exam {
+            width: 5em;
+            color: white;
+        }
     }
 
     a {
         text-decoration: none;
         color: black;
     }
+
     .content {
         border-radius: 5px;
         background-color: white;
@@ -17,7 +23,7 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        
+
         .name {
             font-size: 1.1rem;
         }
@@ -27,9 +33,7 @@
         }
 
         .options {
-            i {
-                font-size: 1.3em;
-            }
+            font-size: 1.3em;
         }
     }
 }

@@ -1,9 +1,17 @@
 $theme-color: #6990f2;
 
+.date {
+    font-size: 1.1em;
+}
+
+.duration {
+    font-size: 0.9em;
+}
+
 .wrapper {
     width: 430px;
-    margin: auto;
-    margin-top: 100px;
+    margin-left: auto;
+    margin-right: auto;
     background: white;
     border-radius: 5px;
     padding: 30px;

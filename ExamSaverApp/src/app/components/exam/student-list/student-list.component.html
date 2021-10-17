@@ -1,1 +1,39 @@
-<p>student-list works!</p>
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div class="container" *ngIf="showContent">
+    <div class="row mt-5">
+        <div class="col">
+            <h4>{{ exam.subjectName }}</h4>
+            <div class="date">
+                {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
+            </div>
+            <div class="duration">
+                {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+            </div>
+        </div>
+        <div class="col-md-5 mt-4">
+            <div class="students" *ngIf="examStudents.length > 0 else noStudents">
+                <div class="mb-2">
+                    Students:
+                </div>
+                <ul class="list-group">
+                    <li class="list-group-item list-group-item-action" *ngFor="let examStudent of examStudents">
+                        <div class="student">
+                            <div class="name">
+                                {{ examStudent.firstName }} {{ examStudent.lastName }} {{ examStudent.index }}
+                            </div>
+                            <div class="submit-time" [title]="examStudent.uploadTime | date: DISPLAY_DATE_FORMAT">
+                                {{ examStudent.uploadTime | date: DISPLAY_TIME_FORMAT }}
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+            <ng-template #noStudents>
+                <div class="no-content">
+                    No students have submitted work for this exam
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

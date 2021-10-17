@@ -6,12 +6,10 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}"
                     class="nav-item nav-link">Active exams</a>
-                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
+                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}"
                     class="nav-item nav-link">Holding exams</a>
-                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/add" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}"
-                    class="nav-item nav-link">Add exam</a>
             </div>
             <div class="navbar-nav ms-auto">
                 <button class="nav-item nav-link btn" (click)="logout()">

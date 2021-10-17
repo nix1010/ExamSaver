@@ -128,23 +128,27 @@ namespace ExamSaver.Services
 
             examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
 
-            if (!Equals(GetFileExtension(file), ".zip"))
+            if (Equals(GetFileExtension(file), ".zip"))
             {
-                string temporaryFilePath = Path.Combine(studentExamDirectoryPath, file.FileName);
+                using FileStream fileStream = new FileStream(examFilePath, FileMode.Create);
+                file.CopyTo(fileStream);
+            }
+            else
+            {
+                string temporaryDirectoryName = "temp";
+                string temporaryDirectoryPath = Path.Combine(studentExamDirectoryPath, temporaryDirectoryName);
+                string temporaryFilePath = Path.Combine(temporaryDirectoryPath, file.FileName);
+
+                Directory.CreateDirectory(temporaryDirectoryPath);
 
                 using (FileStream fileStream = new FileStream(temporaryFilePath, FileMode.Create))
                 {
                     file.CopyTo(fileStream);
                 }
 
-                ZipFile.CreateFromDirectory(studentExamDirectoryPath, examFilePath);
+                ZipFile.CreateFromDirectory(temporaryDirectoryPath, examFilePath);
 
-                File.Delete(temporaryFilePath);
-            }
-            else
-            {
-                using FileStream fileStream = new FileStream(examFilePath, FileMode.Create);
-                file.CopyTo(fileStream);
+                Directory.Delete(temporaryDirectoryPath, true);
             }
         }
 
