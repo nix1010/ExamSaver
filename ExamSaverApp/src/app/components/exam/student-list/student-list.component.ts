@@ -7,6 +7,7 @@ import { finalize } from 'rxjs/operators';
 import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { StudentExam } from 'src/app/models/student-exam.model';
+import { forkJoin } from 'rxjs';
 
 @Component({
     selector: 'app-student-list',
@@ -39,28 +40,22 @@ export class StudentListComponent implements OnInit {
             this.showErrorPage = true;
         }
         else {
-            this.getExam(this.examId);
-            this.getExamStudents(this.examId);
-        }
-    }
-
-    getExam(examId: number): void {
-        this.showSpinner = true;
-        this.showErrorPage = this.showContent = false;
-
-        this.examService.getHoldingExamById(this.examId)
+            this.showSpinner = true;
+            this.showErrorPage = this.showContent = false;
+            
+            forkJoin([
+                this.examService.getHoldingExamById(this.examId),
+                this.examService.getExamStudents(this.examId)
+            ])
             .pipe(finalize(() => this.showSpinner = false))
-            .subscribe((exam: Exam) => {
+            .subscribe(([exam, examStudents]) => {
                 this.exam = exam;
+                this.examStudents = examStudents;
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
-                this.showErrorPage = true;
                 this.errorMessage = getErrorResponseMessage(error);
+                this.showErrorPage = true;
             });
-    }
-
-    getExamStudents(examId: number): void {
-        this.examService.getExamStudents(examId)
-            .subscribe((examStudents: StudentExam[]) => this.examStudents = examStudents);
+        }
     }
 }

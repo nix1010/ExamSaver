@@ -162,6 +162,22 @@ namespace ExamSaver.Services
             }).ToList();
         }
 
+        public StudentExamDTO GetStudentExam(string token, int examId, int studentId)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            StudentExamDTO studentExamDTO = GetExamStudents(token, examId)
+                .Where(studentExam => studentExam.StudentId == studentId)
+                .FirstOrDefault();
+
+            if (studentExamDTO == null)
+            {
+                throw new BadRequestException($"Student with id '{studentId}' is not found");
+            }
+
+            return studentExamDTO;
+        }
+
         public IList<StudentExamDTO> GetExamStudents(string token, int examId)
         {
             int userId = userService.GetUserIdFromToken(token);

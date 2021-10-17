@@ -12,22 +12,23 @@
             </div>
         </div>
         <div class="col-md-5 mt-4">
-            <div class="students" *ngIf="examStudents.length > 0 else noStudents">
+            <div *ngIf="examStudents.length > 0 else noStudents">
                 <div class="mb-2">
                     Students:
                 </div>
-                <ul class="list-group">
-                    <li class="list-group-item list-group-item-action" *ngFor="let examStudent of examStudents">
+                <div class="list-group">
+                    <a [routerLink]="'/exams/holding/' + examStudent.examId + '/students/' + examStudent.studentId + '/tree'"
+                        class="list-group-item list-group-item-action" *ngFor="let examStudent of examStudents">
                         <div class="student">
                             <div class="name">
-                                {{ examStudent.firstName }} {{ examStudent.lastName }} {{ examStudent.index }}
+                                {{ examStudent.firstName }} {{ examStudent.lastName }}, {{ examStudent.index }}
                             </div>
                             <div class="submit-time" [title]="examStudent.uploadTime | date: DISPLAY_DATE_FORMAT">
                                 {{ examStudent.uploadTime | date: DISPLAY_TIME_FORMAT }}
                             </div>
                         </div>
-                    </li>
-                </ul>
+                    </a>
+                </div>
             </div>
             <ng-template #noStudents>
                 <div class="no-content">

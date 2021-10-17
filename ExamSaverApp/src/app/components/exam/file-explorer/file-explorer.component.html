@@ -1,1 +1,31 @@
-<p>file-explorer works!</p>
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div class="container wrapper" *ngIf="showContent">
+    <h3 class="mt-5">
+        {{ studentExam.firstName }} {{ studentExam.lastName }}, {{ studentExam.index }}
+    </h3>
+    <h5 class="mt-2">
+        {{ exam.subjectName }}
+    </h5>
+    <div class="exam-date">
+        {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
+    </div>
+    <div class="exam-duration">
+        {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+    </div>
+    <div class="mt-5">
+        <div class="list-group file-tree">
+            <a [routerLink]="getParentDirectoryRoute()" class="list-group-item list-group-item-action file-tree-item" *ngIf="!isRoot()">
+                ..
+            </a>
+            <a [routerLink]="baseFileTreePath + file.fullPath" class="list-group-item list-group-item-action file-tree-item" *ngFor="let file of fileTree">
+                <div class="file-icon">
+                    <i [ngClass]="{'far fa-file' : !file.isDirectory, 'fas fa-folder': file.isDirectory}"></i>
+                </div>
+                <div class="file-name">
+                    {{ file.name }}
+                </div>
+            </a>
+        </div>
+    </div>
+</div>

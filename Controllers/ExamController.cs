@@ -90,6 +90,14 @@ namespace ExamSaver.Controllers
             return examService.GetExamStudents(Util.GetJWTToken(Request.Headers), examId);
         }
 
+        [Route("holding/{examId}/students/{studentId}")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public StudentExamDTO GetStudentExam([FromRoute] int examId, [FromRoute] int studentId)
+        {
+            return examService.GetStudentExam(Util.GetJWTToken(Request.Headers), examId, studentId);
+        }
+
         [Route("holding/{examId}/students/{studentId}/tree/{**fileTreePath}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]

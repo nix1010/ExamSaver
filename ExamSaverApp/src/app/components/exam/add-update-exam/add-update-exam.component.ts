@@ -74,8 +74,9 @@ export class AddUpdateExamComponent implements OnInit {
             .subscribe((exam: Exam) => {
                 this.exam = exam;
                 this.showContent = true;
-            }, (_error: HttpErrorResponse) => {
+            }, (error: HttpErrorResponse) => {
                 this.showErrorPage = true;
+                this.errorMessage = getErrorResponseMessage(error);
             });
     }
 

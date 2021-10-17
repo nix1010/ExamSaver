@@ -57,6 +57,8 @@ namespace ExamSaver.Services
                         FullPath = zipArchiveEntry.FullName
                     };
                 })
+                .OrderByDescending(fileInfo => fileInfo.IsDirectory)
+                .ThenBy(fileInfo => fileInfo.Name)
                 .ToList();
         }
 

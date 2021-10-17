@@ -72,12 +72,22 @@ const routes: Routes = [
                 }
             },
             {
-                path: 'holding/:examId/students/:studentId/tree/**',
+                path: 'holding/:examId/students/:studentId/tree',
                 component: FileExplorerComponent,
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.PROFESSOR]
-                }
+                },
+                children: [
+                    {
+                        path: '**',
+                        component: FileExplorerComponent,
+                        canActivate: [RoleGuardService],
+                        data: {
+                            roles: [Role.PROFESSOR]
+                        }
+                    }
+                ]
             },
             {
                 path: 'holding/:examId/students/:studentId/file/**',
@@ -85,7 +95,17 @@ const routes: Routes = [
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.PROFESSOR]
-                }
+                },
+                children: [
+                    {
+                        path: '**',
+                        component: FileViewerComponent,
+                        canActivate: [RoleGuardService],
+                        data: {
+                            roles: [Role.PROFESSOR]
+                        }
+                    }
+                ]
             }
         ]
     },
