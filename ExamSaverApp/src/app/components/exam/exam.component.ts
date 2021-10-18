@@ -18,12 +18,11 @@ export class ExamComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        
         if (this.router.url === '/exams') {
             if (this.userService.hasRoles([Role.PROFESSOR])) {
                 this.router.navigate(['/exams/holding']);
             }
-            else {
+            else if (this.userService.hasRoles([Role.STUDENT])) {
                 this.router.navigate(['/exams/taking']);
             }
         }

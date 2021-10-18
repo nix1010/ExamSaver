@@ -1,3 +1,4 @@
+import { AuthGuardService } from './services/auth-guard.service';
 import { StudentListComponent } from './components/exam/student-list/student-list.component';
 import { ExamListComponent } from './components/exam/exam-list/exam-list.component';
 import { FileViewerComponent } from './components/exam/file-viewer/file-viewer.component';
@@ -22,6 +23,7 @@ const routes: Routes = [
     {
         path: 'exams',
         component: ExamComponent,
+        canActivate: [AuthGuardService],
         children: [
             {
                 path: 'taking',

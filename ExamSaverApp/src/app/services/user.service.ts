@@ -60,10 +60,12 @@ export class UserService {
         if (this.decodedToken) {
             for (let role of roles) {
                 let index = this.decodedToken.role.indexOf(role);
-                if (index !== -1) {
-                    return true;
+                if (index === -1) {
+                    return false;
                 }
             }
+
+            return true;
         }
 
         return false;
