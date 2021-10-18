@@ -85,7 +85,7 @@ namespace ExamSaver.Services
             };
         }
 
-        private string GetStudentExamFilePath(StudentExam studentExam)
+        public string GetStudentExamFilePath(StudentExam studentExam)
         {
             string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(studentExam.Student, studentExam.ExamId);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(studentExam.Student, studentExam.ExamId);

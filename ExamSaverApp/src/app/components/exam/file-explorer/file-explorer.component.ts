@@ -1,5 +1,6 @@
+import { HttpHeaders } from '@angular/common/http';
 import { StudentExam } from 'src/app/models/student-exam.model';
-import { HttpErrorResponse } from '@angular/common/http';
+import { HttpErrorResponse, HttpResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { forkJoin, Subscription } from 'rxjs';
@@ -105,6 +106,39 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
                 this.errorMessage = getErrorResponseMessage(error);
                 this.showErrorPage = true;
             });
+    }
+
+    downloadExam(): void {
+        this.examService.downloadExam(this.examId, this.studentId)
+            .subscribe((response: HttpResponse<Blob>) => {
+                const fileName = this.getFilenameFromContentDisposition(response.headers);
+                const blobUrl = URL.createObjectURL(response.body);
+
+                const a = document.createElement('a');
+                a.href = blobUrl
+                a.download = fileName;
+                a.click();
+
+                URL.revokeObjectURL(blobUrl);
+            }, (error: HttpErrorResponse) => {
+                this.errorMessage = getErrorResponseMessage(error);
+            });
+    }
+
+    private getFilenameFromContentDisposition(headers: HttpHeaders): string {
+        let fileName: string = "archive.zip";
+        const contentDisposition: string = headers.get("Content-Disposition");
+
+        if (contentDisposition !== null) {
+            const regex: RegExp = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/g;
+            const match: RegExpExecArray = regex.exec(contentDisposition);
+
+            if (match.length > 1) {
+                fileName = match[1];
+            }
+        }
+
+        return fileName;
     }
 
     getParentDirectoryRoute(): string {

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
+using System.IO;
 
 namespace ExamSaver.Controllers
 {
@@ -96,6 +97,16 @@ namespace ExamSaver.Controllers
         public StudentExamDTO GetStudentExam([FromRoute] int examId, [FromRoute] int studentId)
         {
             return examService.GetStudentExam(Util.GetJWTToken(Request.Headers), examId, studentId);
+        }
+
+        [Route("holding/{examId}/students/{studentId}/download")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult DownloadStudentExam([FromRoute] int examId, [FromRoute] int studentId)
+        {
+            string studentExamFilePath = examService.GetStudentExamFilePath(Util.GetJWTToken(Request.Headers), examId, studentId);
+            
+            return PhysicalFile(studentExamFilePath, "application/octet-stream", Path.GetFileName(studentExamFilePath));
         }
 
         [Route("holding/{examId}/students/{studentId}/tree/{**fileTreePath}")]

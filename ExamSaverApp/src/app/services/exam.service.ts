@@ -47,6 +47,10 @@ export class ExamService {
         return this.httpClient.get<StudentExam>(`exams/holding/${examId}/students/${studentId}`);
     }
 
+    downloadExam(examId: number, studentId: number): Observable<any> {
+        return this.httpClient.get(`exams/holding/${examId}/students/${studentId}/download`, { responseType: 'blob', observe: 'response' });
+    }
+
     getStudentExamFileTree(examId: number, studentId: number, fileTreePath: string): Observable<FileInfo[]> {
         return this.httpClient.get<FileInfo[]>(`exams/holding/${examId}/students/${studentId}/tree/${fileTreePath}`);
     }

@@ -235,6 +235,37 @@ namespace ExamSaver.Services
             return fileService.GetFile(fileTreePath, studentExam);
         }
 
+        private StudentExam GetStudentExam(int examId, int studentId)
+        {
+            StudentExam studentExam = databaseContext
+                .StudentsExams
+                .Include(studentExam => studentExam.Student)
+                .ThenInclude(student => student.User)
+                .Where(studentExam => studentExam.ExamId == examId
+                                   && studentExam.StudentId == studentId)
+                .FirstOrDefault();
+
+            if (studentExam == null)
+            {
+                throw new NotFoundException($"Exam with id '{examId}' for student with id '{studentId}' is not found");
+            }
+
+            return studentExam;
+        }
+
+        public string GetStudentExamFilePath(string token, int examId, int studentId)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            Subject subject = GetExamSubject(examId);
+
+            CheckUserTeachesSubject(userId, subject.Id);
+
+            StudentExam studentExam = GetStudentExam(examId, studentId);
+
+            return fileService.GetStudentExamFilePath(studentExam);
+        }
+
         private Subject GetExamSubject(int examId)
         {
             Subject subject = databaseContext
@@ -265,24 +296,6 @@ namespace ExamSaver.Services
             {
                 throw new BadRequestException($"User with id '{userId}' doesn't teach subject with id '{subjectId}'");
             }
-        }
-
-        private StudentExam GetStudentExam(int examId, int studentId)
-        {
-            StudentExam studentExam = databaseContext
-                .StudentsExams
-                .Include(studentExam => studentExam.Student)
-                .ThenInclude(student => student.User)
-                .Where(studentExam => studentExam.ExamId == examId
-                                   && studentExam.StudentId == studentId)
-                .FirstOrDefault();
-
-            if (studentExam == null)
-            {
-                throw new NotFoundException($"Exam with id '{examId}' for student with id '{studentId}' is not found");
-            }
-
-            return studentExam;
         }
 
         public void SubmitExam(string token, IFormCollection form, int examId)
