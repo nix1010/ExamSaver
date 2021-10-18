@@ -68,7 +68,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
                 this.examService.getHoldingExamById(this.examId),
                 this.examService.getStudentExam(this.examId, this.studentId)
             ])
-            .pipe(finalize(() => this.showSpinner = false))
+                .pipe(finalize(() => this.showSpinner = false))
                 .subscribe(([exam, studentExam]) => {
                     this.exam = exam;
                     this.studentExam = studentExam;

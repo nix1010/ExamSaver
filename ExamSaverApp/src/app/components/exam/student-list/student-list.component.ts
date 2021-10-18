@@ -42,20 +42,20 @@ export class StudentListComponent implements OnInit {
         else {
             this.showSpinner = true;
             this.showErrorPage = this.showContent = false;
-            
+
             forkJoin([
                 this.examService.getHoldingExamById(this.examId),
                 this.examService.getExamStudents(this.examId)
             ])
-            .pipe(finalize(() => this.showSpinner = false))
-            .subscribe(([exam, examStudents]) => {
-                this.exam = exam;
-                this.examStudents = examStudents;
-                this.showContent = true;
-            }, (error: HttpErrorResponse) => {
-                this.errorMessage = getErrorResponseMessage(error);
-                this.showErrorPage = true;
-            });
+                .pipe(finalize(() => this.showSpinner = false))
+                .subscribe(([exam, examStudents]) => {
+                    this.exam = exam;
+                    this.examStudents = examStudents;
+                    this.showContent = true;
+                }, (error: HttpErrorResponse) => {
+                    this.errorMessage = getErrorResponseMessage(error);
+                    this.showErrorPage = true;
+                });
         }
     }
 }
