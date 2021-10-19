@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { Injectable } from "@angular/core";
 import { Observable } from 'rxjs';
 import { StudentExam } from 'src/app/models/student-exam.model';
@@ -47,7 +47,7 @@ export class ExamService {
         return this.httpClient.get<StudentExam>(`exams/holding/${examId}/students/${studentId}`);
     }
 
-    downloadExam(examId: number, studentId: number): Observable<any> {
+    downloadExam(examId: number, studentId: number): Observable<HttpResponse<Blob>> {
         return this.httpClient.get(`exams/holding/${examId}/students/${studentId}/download`, { responseType: 'blob', observe: 'response' });
     }
 

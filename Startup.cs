@@ -82,6 +82,7 @@ namespace ExamSaver
                 .SetIsOriginAllowed(origin => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
+                .WithExposedHeaders("Content-Disposition")
             );
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
