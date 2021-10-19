@@ -4,6 +4,7 @@ using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -222,7 +223,7 @@ namespace ExamSaver.Services
             return fileService.GetFileTree(fileTreePath, studentExam);
         }
 
-        public FileDTO GetStudentExamFile(string token, int examId, int studentId, string fileTreePath)
+        public FileDTO GetStudentExamFileContent(string token, int examId, int studentId, string fileTreePath)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -232,7 +233,7 @@ namespace ExamSaver.Services
 
             StudentExam studentExam = GetStudentExam(examId, studentId);
 
-            return fileService.GetFile(fileTreePath, studentExam);
+            return fileService.GetFileContent(fileTreePath, studentExam);
         }
 
         private StudentExam GetStudentExam(int examId, int studentId)
@@ -253,7 +254,7 @@ namespace ExamSaver.Services
             return studentExam;
         }
 
-        public string GetStudentExamFilePath(string token, int examId, int studentId)
+        public PhysicalFileResult GetStudentExamFile(string token, int examId, int studentId)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -263,7 +264,7 @@ namespace ExamSaver.Services
 
             StudentExam studentExam = GetStudentExam(examId, studentId);
 
-            return fileService.GetStudentExamFilePath(studentExam);
+            return fileService.GetFile(studentExam);
         }
 
         private Subject GetExamSubject(int examId)

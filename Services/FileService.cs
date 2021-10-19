@@ -5,6 +5,7 @@ using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -63,7 +64,7 @@ namespace ExamSaver.Services
                 .ToList();
         }
 
-        public FileDTO GetFile(string fileTreePath, StudentExam studentExam)
+        public FileDTO GetFileContent(string fileTreePath, StudentExam studentExam)
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
 
@@ -85,7 +86,22 @@ namespace ExamSaver.Services
             };
         }
 
-        public string GetStudentExamFilePath(StudentExam studentExam)
+        public PhysicalFileResult GetFile(StudentExam studentExam)
+        {
+            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+
+            if (!File.Exists(studentExamFilePath))
+            {
+                throw new Exception($"Requested resource file for exam '{studentExam.ExamId}', student '{studentExam.StudentId}' is not found");
+            }
+
+            return new PhysicalFileResult(studentExamFilePath, "application/octet-stream")
+            {
+                FileDownloadName = Path.GetFileName(studentExamFilePath)
+            };
+        }
+
+        private string GetStudentExamFilePath(StudentExam studentExam)
         {
             string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(studentExam.Student, studentExam.ExamId);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(studentExam.Student, studentExam.ExamId);

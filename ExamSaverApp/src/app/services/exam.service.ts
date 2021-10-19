@@ -47,7 +47,7 @@ export class ExamService {
         return this.httpClient.get<StudentExam>(`exams/holding/${examId}/students/${studentId}`);
     }
 
-    downloadExam(examId: number, studentId: number): Observable<HttpResponse<Blob>> {
+    downloadStudentExam(examId: number, studentId: number): Observable<HttpResponse<Blob>> {
         return this.httpClient.get(`exams/holding/${examId}/students/${studentId}/download`, { responseType: 'blob', observe: 'response' });
     }
 
@@ -55,7 +55,7 @@ export class ExamService {
         return this.httpClient.get<FileInfo[]>(`exams/holding/${examId}/students/${studentId}/tree/${fileTreePath}`);
     }
 
-    getStudentExamFile(examId: number, studentId: number, fileTreePath: string): Observable<File[]> {
+    getStudentExamFileContent(examId: number, studentId: number, fileTreePath: string): Observable<File[]> {
         return this.httpClient.get<File[]>(`exams/holding/${examId}/students/${studentId}/file/${fileTreePath}`);
     }
 }

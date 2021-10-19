@@ -109,7 +109,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
     }
 
     downloadExam(): void {
-        this.examService.downloadExam(this.examId, this.studentId)
+        this.examService.downloadStudentExam(this.examId, this.studentId)
             .subscribe((response: HttpResponse<Blob>) => {
                 const fileName = this.getFilenameFromContentDisposition(response.headers);
                 const blobUrl = URL.createObjectURL(response.body);

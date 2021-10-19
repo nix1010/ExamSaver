@@ -104,15 +104,13 @@ namespace ExamSaver.Controllers
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IActionResult DownloadStudentExam([FromRoute] int examId, [FromRoute] int studentId)
         {
-            string studentExamFilePath = examService.GetStudentExamFilePath(Util.GetJWTToken(Request.Headers), examId, studentId);
-            
-            return PhysicalFile(studentExamFilePath, "application/octet-stream", Path.GetFileName(studentExamFilePath));
+            return examService.GetStudentExamFile(Util.GetJWTToken(Request.Headers), examId, studentId);
         }
 
         [Route("holding/{examId}/students/{studentId}/tree/{**fileTreePath}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IList<FileInfoDTO> GetStudentExamFileStructure([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
+        public IList<FileInfoDTO> GetStudentExamFileTree([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
         {
             return examService.GetStudentExamFileTree(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
         }
@@ -120,9 +118,9 @@ namespace ExamSaver.Controllers
         [Route("holding/{examId}/students/{studentId}/file/{**fileTreePath}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public FileDTO GetStudentExamFile([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
+        public FileDTO GetStudentExamFileContent([FromRoute] int examId, [FromRoute] int studentId, [FromRoute] string fileTreePath = "")
         {
-            return examService.GetStudentExamFile(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
+            return examService.GetStudentExamFileContent(Util.GetJWTToken(Request.Headers), examId, studentId, fileTreePath);
         }
     }
 }
