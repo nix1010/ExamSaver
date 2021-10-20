@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { StudentExam } from 'src/app/models/student-exam.model';
 import { Exam } from "../models/exam.model";
 import { FileInfo } from '../models/file-info.model';
-import { File } from '../models/file.model';
+import { FileContent } from './../models/file-content.model';
 
 @Injectable()
 export class ExamService {
@@ -55,7 +55,7 @@ export class ExamService {
         return this.httpClient.get<FileInfo[]>(`exams/holding/${examId}/students/${studentId}/tree/${fileTreePath}`);
     }
 
-    getStudentExamFileContent(examId: number, studentId: number, fileTreePath: string): Observable<File[]> {
-        return this.httpClient.get<File[]>(`exams/holding/${examId}/students/${studentId}/file/${fileTreePath}`);
+    getStudentExamFileContent(examId: number, studentId: number, fileTreePath: string): Observable<FileContent> {
+        return this.httpClient.get<FileContent>(`exams/holding/${examId}/students/${studentId}/file/${fileTreePath}`);
     }
 }

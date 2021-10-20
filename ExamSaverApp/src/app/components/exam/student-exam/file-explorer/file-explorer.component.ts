@@ -56,7 +56,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
         this.showContent = false;
         this.errorMessage = null;
 
-        let pathRegex: RegExp = new RegExp(`${this.studentExamService.baseFileTreePath}?`);
+        let pathRegex: RegExp = new RegExp(`${this.studentExamService.studentExamFileTreeUri}?`);
         let fileTreePath: string = this.router.url.replace(pathRegex, '');
 
         this.unsubscribeFrom(this.studentExamFileTreeSubscription);
@@ -74,10 +74,10 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
 
     getFileUri(file: FileInfo): string {
         if (file.isDirectory) {
-            return this.studentExamService.baseFileTreePath + file.fullPath;
+            return this.studentExamService.studentExamFileTreeUri + file.fullPath;
         }
 
-        return this.studentExamService.baseFileContentPath + file.fullPath;
+        return this.studentExamService.studentExamFileContentUri + file.fullPath;
     }
 
     getParentDirectoryUri(): string {
@@ -88,7 +88,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
     }
 
     isRoot(): boolean {
-        return this.router.url === this.studentExamService.baseFileTreePath.slice(0, -1);
+        return this.router.url === this.studentExamService.studentExamFileTreeUri.slice(0, -1);
     }
 
     unsubscribeFrom(subscription: Subscription): void {

@@ -1,1 +1,7 @@
-<p>file-viewer works!</p>
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div class="wrapper" *ngIf="showContent">
+    <pre>
+        {{ fileContent.content }}
+    </pre>
+</div>

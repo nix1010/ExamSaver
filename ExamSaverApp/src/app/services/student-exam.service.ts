@@ -5,8 +5,8 @@ import { StudentExam } from './../models/student-exam.model';
 export class StudentExamService {
     private _studentExam: StudentExam = null;
     private _studentExamUri: string = null;
-    private _baseFileTreePath: string;
-    private _baseFileContentPath: string;
+    private _studentExamFileTreeUri: string;
+    private _studentExamFileContentUri: string;
 
     get studentExam(): StudentExam {
         return this._studentExam;
@@ -16,18 +16,18 @@ export class StudentExamService {
         return this._studentExamUri;
     }
 
-    get baseFileTreePath(): string {
-        return this._baseFileTreePath;
+    get studentExamFileTreeUri(): string {
+        return this._studentExamFileTreeUri;
     }
 
-    get baseFileContentPath(): string {
-        return this._baseFileContentPath;
+    get studentExamFileContentUri(): string {
+        return this._studentExamFileContentUri;
     }
 
     set studentExam(studentExam: StudentExam) {
         this._studentExam = studentExam;
         this._studentExamUri = `/exams/holding/${this._studentExam.examId}/students/${this._studentExam.studentId}`;
-        this._baseFileTreePath = `${this.studentExamUri}/tree/`;
-        this._baseFileContentPath = `${this.studentExamUri}/file/`;
+        this._studentExamFileTreeUri = `${this.studentExamUri}/tree/`;
+        this._studentExamFileContentUri = `${this.studentExamUri}/file/`;
     }
 }
