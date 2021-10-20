@@ -14,16 +14,17 @@ export class ExamComponent implements OnInit {
 
     constructor(
         private userService: UserService,
-        private router: Router
+        private router: Router,
+        private route: ActivatedRoute
     ) { }
 
     ngOnInit(): void {
         if (this.router.url === '/exams') {
             if (this.userService.hasRoles([Role.PROFESSOR])) {
-                this.router.navigate(['/exams/holding']);
+                this.router.navigate(['holding'], { relativeTo: this.route });
             }
             else if (this.userService.hasRoles([Role.STUDENT])) {
-                this.router.navigate(['/exams/taking']);
+                this.router.navigate(['taking'], { relativeTo: this.route });
             }
         }
     }

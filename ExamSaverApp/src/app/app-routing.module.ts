@@ -83,6 +83,11 @@ const routes: Routes = [
                 },
                 children: [
                     {
+                        path: '',
+                        pathMatch: 'full',
+                        redirectTo: 'tree'
+                    },
+                    {
                         path: 'tree',
                         component: FileExplorerComponent,
                         canActivate: [RoleGuardService],

@@ -1,11 +1,10 @@
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from 'src/app/config/constants';
 import { Exam } from 'src/app/models/exam.model';
-import { StudentExam } from 'src/app/models/student-exam.model';
 import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
@@ -45,7 +44,7 @@ export class StudentExamComponent implements OnInit {
         }
         else {
             this.showSpinner = true;
-
+            
             forkJoin([
                 this.examService.getHoldingExamById(examIdNumber),
                 this.examService.getStudentExam(examIdNumber, studentIdNumber)
