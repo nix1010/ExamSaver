@@ -1,5 +1,5 @@
-import { DISPLAY_TIME_FORMAT, DISPLAY_DATE_FORMAT } from './../../../config/constants';
-import { ExamService } from './../../../services/exam.service';
+import { DISPLAY_TIME_FORMAT, DISPLAY_DATE_FORMAT } from '../../../config/constants';
+import { ExamService } from '../../../services/exam.service';
 import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';

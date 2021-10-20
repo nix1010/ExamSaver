@@ -1,0 +1,23 @@
+.wrapper {
+    padding-bottom: 30px;
+
+    .exam-date,
+    .exam-duration {
+        display: inline-block;
+    }
+
+    .exam-duration {
+        margin-left: 10px;
+    }
+
+    .download {
+        display: flex;
+        font-size: 1.5em;
+        flex-direction: column;
+        align-items: flex-end;
+
+        i {
+            cursor: pointer;
+        }
+    }
+}

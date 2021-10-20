@@ -79,10 +79,11 @@ namespace ExamSaver.Services
 
             using StreamReader streamReader = new StreamReader(zipArchiveEntry.Open());
 
-            return new FileDTO()
+            return new FileContentDTO()
             {
                 Name = zipArchiveEntry.Name,
-                Content = streamReader.ReadToEnd()
+                Content = streamReader.ReadToEnd(),
+                Size = zipArchiveEntry.Length
             };
         }
 

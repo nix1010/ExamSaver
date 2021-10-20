@@ -1,4 +1,4 @@
-export class File {
+export abstract class File {
     name: string;
-    content: string;
+    size: number;
 }

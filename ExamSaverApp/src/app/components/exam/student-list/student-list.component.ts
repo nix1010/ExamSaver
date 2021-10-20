@@ -8,6 +8,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
 import { StudentExam } from 'src/app/models/student-exam.model';
 import { forkJoin } from 'rxjs';
+import { StudentExamService } from 'src/app/services/student-exam.service';
 
 @Component({
     selector: 'app-student-list',

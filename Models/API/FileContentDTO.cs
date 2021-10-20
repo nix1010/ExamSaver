@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Models.API
 {
-    public class FileInfoDTO : FileDTO
+    public class FileContentDTO : FileDTO
     {
-        public string FullPath { get; set; }
-        public bool IsDirectory { get; set; }
+        public string Content { get; set; }
     }
 }

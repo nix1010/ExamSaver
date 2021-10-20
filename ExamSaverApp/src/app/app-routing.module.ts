@@ -1,7 +1,8 @@
+import { StudentExamComponent } from './components/exam/student-exam/student-exam.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { StudentListComponent } from './components/exam/student-list/student-list.component';
 import { ExamListComponent } from './components/exam/exam-list/exam-list.component';
-import { FileViewerComponent } from './components/exam/file-viewer/file-viewer.component';
+import { FileViewerComponent } from './components/exam/student-exam/file-viewer/file-viewer.component';
 import { FileUploadComponent } from './components/exam/file-upload/file-upload.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
@@ -11,7 +12,7 @@ import { ExamComponent } from './components/exam/exam.component';
 import { LoginComponent } from './components/login/login.component';
 import { Role } from './models/role.model';
 import { RoleGuardService } from './services/role-guard.service';
-import { FileExplorerComponent } from './components/exam/file-explorer/file-explorer.component';
+import { FileExplorerComponent } from './components/exam/student-exam/file-explorer/file-explorer.component';
 
 
 const routes: Routes = [
@@ -74,41 +75,51 @@ const routes: Routes = [
                 }
             },
             {
-                path: 'holding/:examId/students/:studentId/tree',
-                component: FileExplorerComponent,
+                path: 'holding/:examId/students/:studentId',
+                component: StudentExamComponent,
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.PROFESSOR]
                 },
                 children: [
                     {
-                        path: '**',
+                        path: 'tree',
                         component: FileExplorerComponent,
                         canActivate: [RoleGuardService],
                         data: {
                             roles: [Role.PROFESSOR]
-                        }
-                    }
-                ]
-            },
-            {
-                path: 'holding/:examId/students/:studentId/file/**',
-                component: FileViewerComponent,
-                canActivate: [RoleGuardService],
-                data: {
-                    roles: [Role.PROFESSOR]
-                },
-                children: [
+                        },
+                        children: [
+                            {
+                                path: '**',
+                                component: FileExplorerComponent,
+                                canActivate: [RoleGuardService],
+                                data: {
+                                    roles: [Role.PROFESSOR]
+                                }
+                            }
+                        ]
+                    },
                     {
-                        path: '**',
+                        path: 'file',
                         component: FileViewerComponent,
                         canActivate: [RoleGuardService],
                         data: {
                             roles: [Role.PROFESSOR]
-                        }
+                        },
+                        children: [
+                            {
+                                path: '**',
+                                component: FileViewerComponent,
+                                canActivate: [RoleGuardService],
+                                data: {
+                                    roles: [Role.PROFESSOR]
+                                }
+                            }
+                        ]
                     }
                 ]
-            }
+            },
         ]
     },
     {

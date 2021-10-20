@@ -6,7 +6,8 @@ import { Component, OnInit } from '@angular/core';
     styleUrls: ['./file-viewer.component.scss']
 })
 export class FileViewerComponent implements OnInit {
-
+    private baseFileContentPath: string;
+    
     constructor() { }
 
     ngOnInit(): void {
