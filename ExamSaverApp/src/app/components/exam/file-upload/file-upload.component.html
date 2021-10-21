@@ -1,6 +1,6 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
 <app-error-page *ngIf="showErrorPage"></app-error-page>
-<div class="container" *ngIf="showContent">
+<div class="container wrapper" *ngIf="showContent">
     <div class="exam-info mt-5 text-center">
         <h4>{{ exam.subjectName }}</h4>
         <div class="date">
@@ -10,7 +10,7 @@
             {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
         </div>
     </div>
-    <div class="wrapper mt-4">
+    <div class="file-upload-wrapper mt-4">
         <header class="text-center">Upload exam file</header>
         <form class="text-center upload-form" (click)="onFormClick()" DragAndDrop (fileDropped)="uploadFile($event)">
             <input class="file-input" type="file" name="file" hidden #fileInput (change)="uploadFile(fileInput.files)">

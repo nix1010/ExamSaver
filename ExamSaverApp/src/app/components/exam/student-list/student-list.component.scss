@@ -1,12 +1,14 @@
-.date {
-    font-size: 1.1em;
-}
+.wrapper {
+    .date {
+        font-size: 1.1em;
+    }
 
-.duration {
-    font-size: 0.9em;
-}
+    .duration {
+        font-size: 0.9em;
+    }
 
-.student {
-    display: flex;
-    justify-content: space-between;
+    .student {
+        display: flex;
+        justify-content: space-between;
+    }
 }
