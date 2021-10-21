@@ -4,6 +4,15 @@
     .exam {
         color: black;
         text-decoration: none;
+        display: inline-block;
+
+        &:hover {
+            &,
+            .exam-date,
+            .exam-duration {
+                text-decoration: underline;
+            }
+        }
 
         .exam-date,
         .exam-duration {
@@ -12,14 +21,6 @@
 
         .exam-duration {
             margin-left: 10px;
-        }
-    }
-
-    .exam:hover {
-        &,
-        .exam-date,
-        .exam-duration {
-            text-decoration: underline;
         }
     }
 
