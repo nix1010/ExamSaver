@@ -1,14 +1,13 @@
+import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { forkJoin } from 'rxjs';
+import { finalize } from 'rxjs/operators';
+import { Exam } from 'src/app/models/exam.model';
+import { StudentExam } from 'src/app/models/student-exam.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from './../../../config/constants';
 import { ExamService } from './../../../services/exam.service';
-import { Component, OnInit } from '@angular/core';
-import { Exam } from 'src/app/models/exam.model';
-import { finalize } from 'rxjs/operators';
-import { HttpErrorResponse } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
-import { StudentExam } from 'src/app/models/student-exam.model';
-import { forkJoin } from 'rxjs';
-import { StudentExamService } from 'src/app/services/student-exam.service';
 
 @Component({
     selector: 'app-student-list',

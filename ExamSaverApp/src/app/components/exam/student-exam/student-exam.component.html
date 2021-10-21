@@ -2,17 +2,20 @@
 <app-error-page *ngIf="showErrorPage"></app-error-page>
 <div class="container wrapper" *ngIf="showContent">
     <h3 class="mt-5">
-        {{ studentExamService.studentExam.firstName }} {{ studentExamService.studentExam.lastName }}, {{ studentExamService.studentExam.index }}
+        {{ studentExamService.studentExam.firstName }} {{ studentExamService.studentExam.lastName }},
+        {{ studentExamService.studentExam.index }}
     </h3>
-    <h5 class="mt-2">
-        {{ exam.subjectName }}
-    </h5>
-    <div class="exam-date">
-        {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
-    </div>
-    <div class="exam-duration">
-        {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
-    </div>
+    <a [href]="'/exams/holding/' + studentExamService.studentExam.examId + '/students'" class="exam">
+        <h5 class="mt-2">
+            {{ exam.subjectName }}
+        </h5>
+        <div class="exam-date">
+            {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
+        </div>
+        <div class="exam-duration">
+            {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+        </div>
+    </a>
     <div class="download mt-3 mb-2">
         <i class="fas fa-download" title="Download exam file" (click)="downloadExam()"></i>
     </div>

@@ -29,11 +29,14 @@
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
+              "node_modules/@highlightjs/cdn-assets/styles/vs.min.css",
               "src/styles.scss"
             ],
             "scripts": [
               "node_modules/jquery/dist/jquery.min.js",
-              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
+              "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js",
+              "node_modules/@highlightjs/cdn-assets/highlight.min.js",
+              "node_modules/highlightjs-line-numbers.js/dist/highlightjs-line-numbers.min.js"
             ]
           },
           "configurations": {

@@ -1,7 +1,13 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
 <app-error-page *ngIf="showErrorPage"></app-error-page>
-<div class="wrapper" *ngIf="showContent">
-    <pre>
-        {{ fileContent.content }}
-    </pre>
+<div class="file-viewer wrapper card" *ngIf="showContent">
+    <div class="header p-2">
+        <div class="name">
+            {{ file.name }}
+        </div>
+        <div class="size">
+            {{ getFormattedFileSize(file.size) }}
+        </div>
+    </div>
+    <pre class="m-0"><code class="py-0" [appHighlight]="{lineNumbers: true}">{{ file.content }}</code></pre>
 </div>

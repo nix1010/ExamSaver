@@ -1,11 +1,12 @@
-import { Router } from '@angular/router';
-import { FileContent } from './../../../../models/file-content.model';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { getFormattedFileSize, getErrorResponseMessage } from 'src/app/utils/utils';
+import { Router } from '@angular/router';
+import { finalize } from 'rxjs/operators';
 import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
-import { finalize } from 'rxjs/operators';
-import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
+import { FileContent } from './../../../../models/file-content.model';
+
 
 @Component({
     selector: 'app-file-viewer',
@@ -13,7 +14,7 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
     styleUrls: ['./file-viewer.component.scss']
 })
 export class FileViewerComponent implements OnInit {
-    public fileContent: FileContent = null;
+    public file: FileContent = null;
 
     public showErrorPage: boolean = false;
     public showSpinner: boolean = false;
@@ -46,8 +47,8 @@ export class FileViewerComponent implements OnInit {
 
         this.examService.getStudentExamFileContent(examId, studentId, fileTreePath)
             .pipe(finalize(() => this.showSpinner = false))
-            .subscribe((fileContent: FileContent) => {
-                this.fileContent = fileContent;
+            .subscribe((file: FileContent) => {
+                this.file = file;
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
                 this.errorMessage = getErrorResponseMessage(error);

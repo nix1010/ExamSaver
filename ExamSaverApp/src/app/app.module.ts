@@ -24,6 +24,7 @@ import { RoleGuardService } from './services/role-guard.service';
 import { SubjectService } from './services/subject.service';
 import { UserService } from './services/user.service';
 import { StudentExamComponent } from './components/exam/student-exam/student-exam.component';
+import { HighlightDirective } from './directives/highlight.directive';
 
 
 @NgModule({
@@ -44,6 +45,7 @@ import { StudentExamComponent } from './components/exam/student-exam/student-exa
         LoadSpinnerComponent,
         HasRoleDirective,
         StudentExamComponent,
+        HighlightDirective,
     ],
     imports: [
         BrowserModule,

@@ -1,0 +1,18 @@
+@import '../../assets/styles/variables.scss';
+
+.banner-alert {
+    border-radius: 0;
+}
+
+.no-content {
+    color: #96958f;
+    font-size: 1.2rem;
+}
+
+.file-viewer {
+    .hljs-ln-n {
+        margin-right: $line-numbers-paddding;
+        padding-right: $line-numbers-paddding;
+        border-right: 1px solid $card-border-color;
+    }
+}
