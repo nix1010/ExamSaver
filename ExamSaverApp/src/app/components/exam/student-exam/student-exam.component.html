@@ -5,7 +5,7 @@
         {{ studentExamService.studentExam.firstName }} {{ studentExamService.studentExam.lastName }},
         {{ studentExamService.studentExam.index }}
     </h3>
-    <a [href]="'/exams/holding/' + studentExamService.studentExam.examId + '/students'" class="exam">
+    <a [routerLink]="'/exams/holding/' + studentExamService.studentExam.examId + '/students'" class="exam">
         <h5 class="mt-2">
             {{ exam.subjectName }}
         </h5>
