@@ -30,6 +30,8 @@
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/@highlightjs/cdn-assets/styles/vs.min.css",
+              "node_modules/@fortawesome/fontawesome-free/css/all.min.css",
+              "node_modules/@fontsource/poppins",
               "src/styles.scss"
             ],
             "scripts": [
