@@ -55,6 +55,9 @@ export class AddUpdateExamComponent implements OnInit {
                 this.getExamForUpdate(this.examId);
             }
         }
+        else {
+            this.showContent = true;
+        }
     }
 
     getSubjects(): void {
