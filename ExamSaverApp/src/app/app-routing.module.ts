@@ -1,18 +1,18 @@
-import { StudentExamComponent } from './components/exam/student-exam/student-exam.component';
+import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
 import { AuthGuardService } from './services/auth-guard.service';
-import { StudentListComponent } from './components/exam/student-list/student-list.component';
-import { ExamListComponent } from './components/exam/exam-list/exam-list.component';
-import { FileViewerComponent } from './components/exam/student-exam/file-viewer/file-viewer.component';
-import { FileUploadComponent } from './components/exam/file-upload/file-upload.component';
+import { StudentListComponent } from './components/exams/student-list/student-list.component';
+import { ExamListComponent } from './components/exams/exam-list/exam-list.component';
+import { FileViewerComponent } from './components/exams/student-exam/file-viewer/file-viewer.component';
+import { FileUploadComponent } from './components/exams/file-upload/file-upload.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { ErrorPageComponent } from './components/error-pages/error-page/error-page.component';
-import { AddUpdateExamComponent as AddUpdateExamComponent } from './components/exam/add-update-exam/add-update-exam.component';
-import { ExamComponent } from './components/exam/exam.component';
+import { AddUpdateExamComponent as AddUpdateExamComponent } from './components/exams/add-update-exam/add-update-exam.component';
+import { ExamsComponent } from './components/exams/exams.component';
 import { LoginComponent } from './components/login/login.component';
 import { Role } from './models/role.model';
 import { RoleGuardService } from './services/role-guard.service';
-import { FileExplorerComponent } from './components/exam/student-exam/file-explorer/file-explorer.component';
+import { FileExplorerComponent } from './components/exams/student-exam/file-explorer/file-explorer.component';
 
 
 const routes: Routes = [
@@ -23,7 +23,7 @@ const routes: Routes = [
     },
     {
         path: 'exams',
-        component: ExamComponent,
+        component: ExamsComponent,
         canActivate: [AuthGuardService],
         children: [
             {

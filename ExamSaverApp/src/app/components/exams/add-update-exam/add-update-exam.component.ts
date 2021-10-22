@@ -42,12 +42,12 @@ export class AddUpdateExamComponent implements OnInit {
     ngOnInit(): void {
         this.getSubjects();
 
-        this.showContent = true;
+        let examIdParam = this.activatedRoute.snapshot.paramMap.get('examId');
 
-        let examId = this.activatedRoute.snapshot.paramMap.get('examId');
+        this.update = examIdParam !== null;
 
-        if (examId !== null) {
-            this.examId = Number(examId);
+        if (this.update) {
+            this.examId = Number(examIdParam);
 
             if (Number.isNaN(this.examId)) {
                 this.showErrorPage = true;
@@ -64,8 +64,6 @@ export class AddUpdateExamComponent implements OnInit {
     }
 
     getExamForUpdate(examId: number): void {
-        this.update = true;
-
         this.showSpinner = true;
         this.showErrorPage = this.showContent = false;
 

@@ -33,8 +33,8 @@ export class StudentListComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        let examId = this.activatedRoute.snapshot.paramMap.get('examId');
-        this.examId = Number(examId);
+        let examIdParam = this.activatedRoute.snapshot.paramMap.get('examId');
+        this.examId = Number(examIdParam);
 
         if (Number.isNaN(this.examId)) {
             this.showErrorPage = true;

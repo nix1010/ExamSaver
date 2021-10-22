@@ -5,13 +5,13 @@ import { BrowserModule } from '@angular/platform-browser';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { ErrorPageComponent } from './components/error-pages/error-page/error-page.component';
-import { AddUpdateExamComponent } from './components/exam/add-update-exam/add-update-exam.component';
-import { ExamListComponent } from './components/exam/exam-list/exam-list.component';
-import { ExamComponent } from './components/exam/exam.component';
-import { FileExplorerComponent } from './components/exam/student-exam/file-explorer/file-explorer.component';
-import { FileUploadComponent } from './components/exam/file-upload/file-upload.component';
-import { FileViewerComponent } from './components/exam/student-exam/file-viewer/file-viewer.component';
-import { StudentListComponent } from './components/exam/student-list/student-list.component';
+import { AddUpdateExamComponent } from './components/exams/add-update-exam/add-update-exam.component';
+import { ExamListComponent } from './components/exams/exam-list/exam-list.component';
+import { ExamsComponent } from './components/exams/exams.component';
+import { FileExplorerComponent } from './components/exams/student-exam/file-explorer/file-explorer.component';
+import { FileUploadComponent } from './components/exams/file-upload/file-upload.component';
+import { FileViewerComponent } from './components/exams/student-exam/file-viewer/file-viewer.component';
+import { StudentListComponent } from './components/exams/student-list/student-list.component';
 import { LoadSpinnerComponent } from './components/load-spinner/load-spinner.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
@@ -23,15 +23,16 @@ import { ExamService } from './services/exam.service';
 import { RoleGuardService } from './services/role-guard.service';
 import { SubjectService } from './services/subject.service';
 import { UserService } from './services/user.service';
-import { StudentExamComponent } from './components/exam/student-exam/student-exam.component';
+import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
 import { HighlightDirective } from './directives/highlight.directive';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
     declarations: [
         AppComponent,
         LoginComponent,
-        ExamComponent,
+        ExamsComponent,
         FileUploadComponent,
         AddUpdateExamComponent,
         NavBarComponent,
@@ -51,7 +52,8 @@ import { HighlightDirective } from './directives/highlight.directive';
         BrowserModule,
         AppRoutingModule,
         FormsModule,
-        HttpClientModule
+        HttpClientModule,
+        NgbPaginationModule
     ],
     providers: [
         {

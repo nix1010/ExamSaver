@@ -33,21 +33,21 @@ export class StudentExamComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
-        let examId = this.activatedRoute.snapshot.paramMap.get('examId');
-        let studentId = this.activatedRoute.snapshot.paramMap.get('studentId');
+        let examIdParam = this.activatedRoute.snapshot.paramMap.get('examId');
+        let studentIdParam = this.activatedRoute.snapshot.paramMap.get('studentId');
 
-        let examIdNumber: number = Number(examId);
-        let studentIdNumber: number = Number(studentId);
+        let examId: number = Number(examIdParam);
+        let studentId: number = Number(studentIdParam);
 
-        if (Number.isNaN(examIdNumber) || Number.isNaN(studentIdNumber)) {
+        if (Number.isNaN(examId) || Number.isNaN(studentId)) {
             this.showErrorPage = true;
         }
         else {
             this.showSpinner = true;
             
             forkJoin([
-                this.examService.getHoldingExamById(examIdNumber),
-                this.examService.getStudentExam(examIdNumber, studentIdNumber)
+                this.examService.getHoldingExamById(examId),
+                this.examService.getStudentExam(examId, studentId)
             ])
                 .pipe(finalize(() => this.showSpinner = false))
                 .subscribe(([exam, studentExam]) => {

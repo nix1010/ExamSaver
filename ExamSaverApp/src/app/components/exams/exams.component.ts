@@ -1,14 +1,14 @@
-import { UserService } from './../../services/user.service';
+import { UserService } from '../../services/user.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { Role } from 'src/app/models/role.model';
 
 @Component({
     selector: 'app-exams',
-    templateUrl: './exam.component.html',
-    styleUrls: ['./exam.component.scss']
+    templateUrl: './exams.component.html',
+    styleUrls: ['./exams.component.scss']
 })
-export class ExamComponent implements OnInit {
+export class ExamsComponent implements OnInit {
 
     Role = Role;
 
