@@ -9,5 +9,6 @@ namespace ExamSaver.Configs
     {
         public const string URL_PREFIX = "api";
         public const string EXAMS_DIRECTORY_PATH = "Resources/Exams";
+        public const int PAGE_SIZE = 10;
     }
 }

@@ -4,7 +4,7 @@ import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { StudentExamService } from 'src/app/services/student-exam.service';
-import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
+import { getErrorResponseMessage, getFormattedFileSize, unsubscribeFrom } from 'src/app/utils/utils';
 import { FileInfo } from '../../../../models/file-info.model';
 import { ExamService } from '../../../../services/exam.service';
 
@@ -46,8 +46,8 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
     }
 
     ngOnDestroy(): void {
-        this.unsubscribeFrom(this.routerEventsSubscription);
-        this.unsubscribeFrom(this.studentExamFileTreeSubscription);
+        unsubscribeFrom(this.routerEventsSubscription);
+        unsubscribeFrom(this.studentExamFileTreeSubscription);
     }
 
     getStudentExamFileTree(examId: number, studentId: number): void {
@@ -59,7 +59,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
         let pathRegex: RegExp = new RegExp(`${this.studentExamService.studentExamFileTreeUri}?`);
         let fileTreePath: string = this.router.url.replace(pathRegex, '');
 
-        this.unsubscribeFrom(this.studentExamFileTreeSubscription);
+        unsubscribeFrom(this.studentExamFileTreeSubscription);
         
         this.studentExamFileTreeSubscription = this.examService.getStudentExamFileTree(examId, studentId, fileTreePath)
             .pipe(finalize(() => this.showSpinner = false))
@@ -89,11 +89,5 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
 
     isRoot(): boolean {
         return this.router.url === this.studentExamService.studentExamFileTreeUri.slice(0, -1);
-    }
-
-    unsubscribeFrom(subscription: Subscription): void {
-        if (subscription !== null) {
-            subscription.unsubscribe();
-        }
     }
 }

@@ -23,16 +23,16 @@ export class ExamService {
         return this.httpClient.put(`exams/holding/${examId}`, exam);
     }
 
-    getTakingExams(): Observable<Exam[]> {
-        return this.httpClient.get<Exam[]>(`exams/taking`);
+    getTakingExams(pageQuery: number = null): Observable<HttpResponse<Exam[]>> {
+        return this.httpClient.get<Exam[]>(this.appendPageQuery(`exams/taking`, pageQuery), { observe: 'response' });
     }
 
     getTakingExamById(examId: number): Observable<Exam> {
         return this.httpClient.get<Exam>(`exams/taking/${examId}`);
     }
 
-    getHoldingExams(): Observable<Exam[]> {
-        return this.httpClient.get<Exam[]>(`exams/holding`);
+    getHoldingExams(pageQuery: number = null): Observable<HttpResponse<Exam[]>> {
+        return this.httpClient.get<Exam[]>(this.appendPageQuery(`exams/holding`, pageQuery), { observe: 'response' });
     }
 
     getHoldingExamById(examId: number): Observable<Exam> {
@@ -57,5 +57,13 @@ export class ExamService {
 
     getStudentExamFileContent(examId: number, studentId: number, fileTreePath: string): Observable<FileContent> {
         return this.httpClient.get<FileContent>(`exams/holding/${examId}/students/${studentId}/file/${fileTreePath}`);
+    }
+
+    appendPageQuery(url: string, pageQuery: number): string {
+        if (pageQuery) {
+            url = `${url}?page=${pageQuery}`;
+        }
+
+        return url;
     }
 }

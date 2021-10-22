@@ -83,6 +83,7 @@ namespace ExamSaver
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .WithExposedHeaders("Content-Disposition")
+                .WithExposedHeaders("X-Pagination")
             );
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();

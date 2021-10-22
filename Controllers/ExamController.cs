@@ -24,15 +24,19 @@ namespace ExamSaver.Controllers
         [Route("taking")]
         [HttpGet]
         [Authorize(Roles = RoleType.STUDENT)]
-        public IList<ExamDTO> GetTakingExams()
+        public IList<ExamDTO> GetTakingExams([FromQuery] int? page)
         {
-            return examService.GetTakingExams(Util.GetJWTToken(Request.Headers));
+            PagedList<ExamDTO> exams = examService.GetTakingExams(Util.GetJWTToken(Request.Headers), Util.GetPage(page));
+
+            Util.SetPageHeader(Response, exams.Page);
+            
+            return exams;
         }
 
         [Route("taking/{examId}")]
         [HttpGet]
         [Authorize]
-        public ExamDTO GetTakingExam(int examId)
+        public ExamDTO GetTakingExam([FromRoute] int examId)
         {
             return examService.GetTakingExam(Util.GetJWTToken(Request.Headers), examId);
         }
@@ -50,15 +54,19 @@ namespace ExamSaver.Controllers
         [Route("holding")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IList<ExamDTO> GetHoldingExams()
+        public IList<ExamDTO> GetHoldingExams([FromQuery] int? page)
         {
-            return examService.GetHoldingExams(Util.GetJWTToken(Request.Headers));
+            PagedList<ExamDTO> exams = examService.GetHoldingExams(Util.GetJWTToken(Request.Headers), Util.GetPage(page));
+
+            Util.SetPageHeader(Response, exams.Page);
+
+            return exams;
         }
 
         [Route("holding/{examId}")]
         [HttpGet]
         [Authorize]
-        public ExamDTO GetHoldingExam(int examId)
+        public ExamDTO GetHoldingExam([FromRoute] int examId)
         {
             return examService.GetHoldingExam(Util.GetJWTToken(Request.Headers), examId);
         }

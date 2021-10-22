@@ -1,8 +1,10 @@
-﻿using ExamSaver.Data;
+﻿using ExamSaver.Configs;
+using ExamSaver.Data;
 using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
+using ExamSaver.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -92,9 +94,9 @@ namespace ExamSaver.Services
             }
         }
 
-        public IList<ExamDTO> GetHoldingExams(string token)
+        public PagedList<ExamDTO> GetHoldingExams(string token, int page)
         {
-            return GetExams(token, SubjectRelationType.TEACHING);
+            return GetExams(token, SubjectRelationType.TEACHING, page);
         }
 
         public ExamDTO GetHoldingExam(string token, int examId)
@@ -102,9 +104,9 @@ namespace ExamSaver.Services
             return GetExam(token, examId, SubjectRelationType.TEACHING);
         }
 
-        public IList<ExamDTO> GetTakingExams(string token)
+        public PagedList<ExamDTO> GetTakingExams(string token, int page)
         {
-            return GetExams(token, SubjectRelationType.ATTENDING);
+            return GetExams(token, SubjectRelationType.ATTENDING, page);
         }
 
         public ExamDTO GetTakingExam(string token, int examId)
@@ -128,12 +130,12 @@ namespace ExamSaver.Services
             return examDTO;
         }
 
-        public IList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType)
+        public PagedList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType, int page = 1)
         {
             int userId = userService.GetUserIdFromToken(token);
             DateTime now = DateTime.Now;
 
-            IList<Exam> exams = databaseContext
+            return databaseContext
                 .Exams
                 .Include(exam => exam.Subject)
                 .Join(
@@ -146,21 +148,17 @@ namespace ExamSaver.Services
                                  && selection.userSubject.SubjectRelation == subjectRelationType
                                  && (subjectRelationType == SubjectRelationType.TEACHING
                                     || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
-                .Select(res => res.exam)
-                .OrderByDescending(exam => exam.StartTime)
-                .ToList();
-
-            return exams.Select((exam) =>
-            {
-                return new ExamDTO()
+                .Select(selection => selection.exam)
+                .Select((exam) => new ExamDTO()
                 {
                     Id = exam.Id,
                     StartTime = exam.StartTime,
                     EndTime = exam.EndTime,
                     SubjectId = exam.SubjectId,
                     SubjectName = exam.Subject.Name
-                };
-            }).ToList();
+                })
+                .OrderByDescending(exam => exam.StartTime)
+                .ToPagedList(page);
         }
 
         public StudentExamDTO GetStudentExam(string token, int examId, int studentId)

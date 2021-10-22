@@ -1,4 +1,5 @@
 import { HttpErrorResponse } from '@angular/common/http';
+import { Subscription } from 'rxjs';
 
 export function getErrorResponseMessage(err: HttpErrorResponse): string {
     if (err.status === 0) {
@@ -20,4 +21,10 @@ export function getFormattedFileSize(fileSize: number): string {
     const convertedBytes = bytes / Math.pow(kilobyte, sizeIndex);
 
     return `${Math.round((convertedBytes + Number.EPSILON) * 100) / 100} ${sizes[sizeIndex]}`;
+}
+
+export function unsubscribeFrom(subscription: Subscription): void {
+    if (subscription) {
+        subscription.unsubscribe();
+    }
 }
