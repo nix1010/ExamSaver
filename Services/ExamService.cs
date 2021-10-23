@@ -118,7 +118,7 @@ namespace ExamSaver.Services
         {
             int userId = userService.GetUserIdFromToken(token);
 
-            ExamDTO examDTO = GetExams(token, subjectRelationType)
+            ExamDTO examDTO = GetExamsQuery(token, subjectRelationType)
                 .Where(examDTO => examDTO.Id == examId)
                 .FirstOrDefault();
 
@@ -131,6 +131,13 @@ namespace ExamSaver.Services
         }
 
         public PagedList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType, int page = 1)
+        {
+            return GetExamsQuery(token, subjectRelationType)
+                .OrderByDescending(exam => exam.StartTime)
+                .ToPagedList(page);
+        }
+
+        private IQueryable<ExamDTO> GetExamsQuery(string token, SubjectRelationType subjectRelationType)
         {
             int userId = userService.GetUserIdFromToken(token);
             DateTime now = DateTime.Now;
@@ -155,9 +162,7 @@ namespace ExamSaver.Services
                     EndTime = selection.exam.EndTime,
                     SubjectId = selection.exam.SubjectId,
                     SubjectName = selection.exam.Subject.Name
-                })
-                .OrderByDescending(exam => exam.StartTime)
-                .ToPagedList(page);
+                });
         }
 
         public StudentExamDTO GetStudentExam(string token, int examId, int studentId)

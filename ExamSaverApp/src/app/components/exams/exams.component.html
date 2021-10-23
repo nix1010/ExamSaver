@@ -1,2 +1,16 @@
-<app-nav-bar></app-nav-bar>
-<router-outlet></router-outlet>
+<app-load-spinner *ngIf="status.showSpinner"></app-load-spinner>
+<div class="wrapper container mt-5">
+    <div class="header mb-4">
+        <h3>
+            {{ getTitle() }}
+        </h3>
+        <a routerLink="/exams/holding/add" class="btn btn-primary btn-sm add-exam" title="Add exam"
+            *ngIf="role === Role.PROFESSOR">
+            <i class="fas fa-plus"></i>
+        </a>
+    </div>
+    <app-exam-list *ngIf="status.showContent" [exams]="exams" [role]="role"></app-exam-list>
+    <ngb-pagination [pageSize]="page.pageSize" [(page)]="page.currentPage" [collectionSize]="page.totalCount"
+        [maxSize]=5 (pageChange)="pageChange()" size='sm'>
+    </ngb-pagination>
+</div>

@@ -26,6 +26,7 @@ import { UserService } from './services/user.service';
 import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
 import { HighlightDirective } from './directives/highlight.directive';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
 @NgModule({
@@ -47,6 +48,7 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
         HasRoleDirective,
         StudentExamComponent,
         HighlightDirective,
+        DashboardComponent,
     ],
     imports: [
         BrowserModule,

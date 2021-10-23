@@ -1,0 +1,14 @@
+.wrapper {
+    padding-bottom: 30px;
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .add-exam {
+            width: 5em;
+            color: white;
+        }
+    }
+}

@@ -1,3 +1,4 @@
+import { Role } from './../models/role.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
@@ -26,5 +27,14 @@ export function getFormattedFileSize(fileSize: number): string {
 export function unsubscribeFrom(subscription: Subscription): void {
     if (subscription) {
         subscription.unsubscribe();
+    }
+}
+
+export function getExamsUri(role: Role): string {
+    if (role === Role.PROFESSOR) {
+        return `/exams/holding`;
+    }
+    else {
+        return `/exams/taking`;
     }
 }
