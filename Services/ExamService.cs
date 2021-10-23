@@ -148,14 +148,13 @@ namespace ExamSaver.Services
                                  && selection.userSubject.SubjectRelation == subjectRelationType
                                  && (subjectRelationType == SubjectRelationType.TEACHING
                                     || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
-                .Select(selection => selection.exam)
-                .Select((exam) => new ExamDTO()
+                .Select((selection) => new ExamDTO()
                 {
-                    Id = exam.Id,
-                    StartTime = exam.StartTime,
-                    EndTime = exam.EndTime,
-                    SubjectId = exam.SubjectId,
-                    SubjectName = exam.Subject.Name
+                    Id = selection.exam.Id,
+                    StartTime = selection.exam.StartTime,
+                    EndTime = selection.exam.EndTime,
+                    SubjectId = selection.exam.SubjectId,
+                    SubjectName = selection.exam.Subject.Name
                 })
                 .OrderByDescending(exam => exam.StartTime)
                 .ToPagedList(page);

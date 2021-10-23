@@ -36,7 +36,7 @@
                 </div>
             </a>
         </div>
-        <ngb-pagination [pageSize]="exams.length" [(page)]="page.currentPage" [collectionSize]="page.totalCount"
+        <ngb-pagination [pageSize]="page.pageSize" [(page)]="page.currentPage" [collectionSize]="page.totalCount"
             [maxSize]=5 (pageChange)="pageChange()" size='sm'>
         </ngb-pagination>
     </ng-container>

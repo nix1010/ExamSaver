@@ -18,7 +18,7 @@ import { ExamService } from './../../../services/exam.service';
 export class ExamListComponent implements OnInit, OnDestroy {
     public exams: Exam[] = [];
     private role: Role;
-    public page: Page = new Page(1, 0);
+    public page: Page = new Page(1, 0, 0);
 
     public showContent: boolean = false;
     public errorMessage: string = null;

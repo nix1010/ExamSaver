@@ -70,6 +70,7 @@ namespace ExamSaver.Utils
             Page page = new Page()
             {
                 CurrentPage = pageNumber,
+                PageSize = Constant.PAGE_SIZE,
                 TotalCount = source.Count()
             };
 
