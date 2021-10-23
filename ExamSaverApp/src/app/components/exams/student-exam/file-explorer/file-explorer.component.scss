@@ -5,19 +5,19 @@
         .file-info {
             display: flex;
             justify-content: space-between;
-        }
 
-        .file-name,
-        .file-icon {
-            display: inline-block;
-        }
+            .file-name,
+            .file-icon {
+                display: inline-block;
+            }
 
-        .file-name {
-            margin-left: 10px;
-        }
+            .file-name {
+                margin-left: 10px;
+            }
 
-        i {
-            font-size: 1.2em;
+            i {
+                font-size: 1.2em;
+            }
         }
     }
 }
