@@ -1,4 +1,7 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
+    {{ errorMessage }}
+</div>
 <div class="wrapper container mt-5">
     <div class="header mb-4">
         <h3>
