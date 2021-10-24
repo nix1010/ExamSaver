@@ -2,16 +2,16 @@ import { Role } from './../models/role.model';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
-export function getErrorResponseMessage(err: HttpErrorResponse): string {
-    if (err.status === 0) {
+export function getErrorResponseMessage(error: HttpErrorResponse): string {
+    if (error.status === 0) {
         return "Can't reach server right now, please try again later";
     }
 
-    if (err.error) {
-        return err.error.message;
+    if (error.error && error.error.message) {
+        return error.error.message;
     }
 
-    return err.message;
+    return 'Unknown error';
 }
 
 export function getFormattedFileSize(fileSize: number): string {

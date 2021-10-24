@@ -6,7 +6,7 @@ import { finalize } from 'rxjs/operators';
 import { Exam } from 'src/app/models/exam.model';
 import { StudentExam } from 'src/app/models/student-exam.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
-import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from './../../../config/constants';
+import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT, ID_NOT_VALID_MESSAGE } from './../../../config/constants';
 import { ExamService } from './../../../services/exam.service';
 
 @Component({
@@ -19,7 +19,6 @@ export class StudentListComponent implements OnInit {
     private examId: number;
     public examStudents: StudentExam[] = [];
 
-    public showErrorPage: boolean = false;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -37,11 +36,11 @@ export class StudentListComponent implements OnInit {
         this.examId = Number(examIdParam);
 
         if (Number.isNaN(this.examId)) {
-            this.showErrorPage = true;
+            this.errorMessage = ID_NOT_VALID_MESSAGE;
         }
         else {
             this.showSpinner = true;
-            this.showErrorPage = this.showContent = false;
+            this.showContent = false;
 
             forkJoin([
                 this.examService.getHoldingExamById(this.examId),
@@ -54,7 +53,6 @@ export class StudentListComponent implements OnInit {
                     this.showContent = true;
                 }, (error: HttpErrorResponse) => {
                     this.errorMessage = getErrorResponseMessage(error);
-                    this.showErrorPage = true;
                 });
         }
     }

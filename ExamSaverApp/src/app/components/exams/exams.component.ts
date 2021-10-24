@@ -1,15 +1,13 @@
-import { ExamService } from './../../services/exam.service';
-import { UserService } from '../../services/user.service';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
-import { Component, OnInit, OnDestroy } from '@angular/core';
-import { Role } from 'src/app/models/role.model';
-import { Page } from 'src/app/models/page.model';
-import { Status } from 'src/app/models/status.model';
-import { getErrorResponseMessage, getExamsUri, unsubscribeFrom } from 'src/app/utils/utils';
-import { Exam } from 'src/app/models/exam.model';
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 import { Observable, Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { Exam } from 'src/app/models/exam.model';
+import { Page } from 'src/app/models/page.model';
+import { Role } from 'src/app/models/role.model';
+import { getErrorResponseMessage, getExamsUri, unsubscribeFrom } from 'src/app/utils/utils';
+import { ExamService } from './../../services/exam.service';
 
 @Component({
     selector: 'app-exams',
@@ -21,7 +19,9 @@ export class ExamsComponent implements OnInit, OnDestroy {
     public role: Role = null;
     public page: Page = new Page(1, 0, 0);
     
-    public status: Status = new Status();
+    public showSpinner: boolean = false;
+    public showContent: boolean = false;
+    public errorMessage: string = null;
 
     routerEventsSubscription: Subscription;
     examsSubscription: Subscription;
@@ -29,7 +29,6 @@ export class ExamsComponent implements OnInit, OnDestroy {
     Role = Role;
 
     constructor(
-        private userService: UserService,
         private examService: ExamService,
         private router: Router,
         private activatedRoute: ActivatedRoute
@@ -61,21 +60,20 @@ export class ExamsComponent implements OnInit, OnDestroy {
     }
 
     getExams(): void {
-        this.status.showSpinner = true;
-        this.status.errorMessage = null;
-        this.status.showContent = false;
+        this.showSpinner = true;
+        this.errorMessage = null;
+        this.showContent = false;
 
         unsubscribeFrom(this.examsSubscription);
 
         this.examsSubscription = this.getExamsByRole()
-            .pipe(finalize(() => this.status.showSpinner = false))
+            .pipe(finalize(() => this.showSpinner = false))
             .subscribe((response: HttpResponse<Exam[]>) => {
                 this.page = this.getPageHeader(response.headers);
                 this.exams = response.body
-                console.log(this.exams);
-                this.status.showContent = true;
+                this.showContent = true;
             },
-                (error: HttpErrorResponse) => this.status.errorMessage = getErrorResponseMessage(error));
+                (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
     }
 
     getExamsByRole(): Observable<HttpResponse<Exam[]>> {

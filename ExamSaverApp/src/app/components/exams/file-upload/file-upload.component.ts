@@ -1,11 +1,11 @@
-import { DISPLAY_TIME_FORMAT, DISPLAY_DATE_FORMAT } from '../../../config/constants';
-import { ExamService } from '../../../services/exam.service';
-import { HttpClient, HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
+import { HttpErrorResponse, HttpEvent, HttpEventType } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
-import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
-import { Exam } from 'src/app/models/exam.model';
-import { finalize } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import { Exam } from 'src/app/models/exam.model';
+import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
+import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT, ID_NOT_VALID_MESSAGE } from '../../../config/constants';
+import { ExamService } from '../../../services/exam.service';
 
 @Component({
     selector: 'app-file-upload',
@@ -28,8 +28,6 @@ export class FileUploadComponent implements OnInit {
     public errorMessage: string = null;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
-    public showErrorPage: boolean = false;
-
 
     DISPLAY_TIME_FORMAT = DISPLAY_TIME_FORMAT;
     DISPLAY_DATE_FORMAT = DISPLAY_DATE_FORMAT;
@@ -47,7 +45,7 @@ export class FileUploadComponent implements OnInit {
         this.examId = Number(examId);
 
         if (Number.isNaN(this.examId)) {
-            this.showErrorPage = true;
+            this.errorMessage = ID_NOT_VALID_MESSAGE;
         } else {
             this.getExamForSubmit(this.examId);
         }
@@ -55,7 +53,8 @@ export class FileUploadComponent implements OnInit {
 
     getExamForSubmit(examId: number): void {
         this.showSpinner = true;
-        this.showErrorPage = this.showContent = false;
+        this.showContent = false;
+        this.errorMessage = null;
 
         this.examService.getTakingExamById(examId)
             .pipe(finalize(() => this.showSpinner = false))
@@ -63,7 +62,6 @@ export class FileUploadComponent implements OnInit {
                 this.exam = exam;
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
-                this.showErrorPage = true;
                 this.errorMessage = getErrorResponseMessage(error);
             });
     }
@@ -81,6 +79,7 @@ export class FileUploadComponent implements OnInit {
         this.progress = 0;
         this.fileSetForUpload = true;
         this.uploadInProgress = true;
+        this.uploadSuccess = false;
         this.errorMessage = null;
 
         const formData: FormData = new FormData();

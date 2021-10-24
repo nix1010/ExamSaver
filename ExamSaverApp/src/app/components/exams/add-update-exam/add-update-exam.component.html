@@ -3,7 +3,6 @@
     [class.alert-danger]="errorMessage" [class.alert-success]="submitProcessSuccess">
     {{ submitProcessSuccess ? 'Successful' : errorMessage }}
 </div>
-<app-error-page *ngIf="showErrorPage"></app-error-page>
 <div class="container wrapper" *ngIf="showContent">
     <h4 class="mb-5">{{ update ? 'Update' : 'Add' }} exam for the subject</h4>
     <form #form class="exam-form">

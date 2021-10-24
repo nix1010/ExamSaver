@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ExamSaver.Models.Entity;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,5 +13,17 @@ namespace ExamSaver.Models.API
         public DateTime EndTime { get; set; }
         public int SubjectId { get; set; }
         public string SubjectName { get; set; }
+
+        public static ExamDTO FromEntity(Exam exam)
+        {
+            return new ExamDTO()
+            {
+                Id = exam.Id,
+                StartTime = exam.StartTime,
+                EndTime = exam.EndTime,
+                SubjectId = exam.SubjectId,
+                SubjectName = exam.Subject.Name
+            };
+        }
     }
 }

@@ -30,6 +30,8 @@ export class LoginComponent implements OnInit {
 
     authenticate() {
         this.loginProcess = true;
+        this.errorMessage = null;
+        
         this.userService.authenticate(new User(this.email, this.password))
             .pipe(finalize(() => this.loginProcess = false))
             .subscribe(() => {

@@ -93,7 +93,7 @@ namespace ExamSaver.Services
 
             if (!File.Exists(studentExamFilePath))
             {
-                throw new Exception($"Requested resource file for exam '{studentExam.ExamId}', student '{studentExam.StudentId}' is not found");
+                throw new NotFoundException($"Requested resource file for exam '{studentExam.ExamId}', student '{studentExam.StudentId}' is not found");
             }
 
             return new PhysicalFileResult(studentExamFilePath, "application/octet-stream")

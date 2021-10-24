@@ -1,9 +1,9 @@
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
-import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT } from 'src/app/config/constants';
+import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT, ID_NOT_VALID_MESSAGE } from 'src/app/config/constants';
 import { Exam } from 'src/app/models/exam.model';
 import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
@@ -18,7 +18,6 @@ import { getErrorResponseMessage } from 'src/app/utils/utils';
 export class StudentExamComponent implements OnInit {
     public exam: Exam = null;
 
-    public showErrorPage: boolean = false;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -40,11 +39,11 @@ export class StudentExamComponent implements OnInit {
         let studentId: number = Number(studentIdParam);
 
         if (Number.isNaN(examId) || Number.isNaN(studentId)) {
-            this.showErrorPage = true;
+            this.errorMessage = ID_NOT_VALID_MESSAGE;
         }
         else {
             this.showSpinner = true;
-            
+
             forkJoin([
                 this.examService.getHoldingExamById(examId),
                 this.examService.getStudentExam(examId, studentId)
@@ -56,7 +55,6 @@ export class StudentExamComponent implements OnInit {
                     this.showContent = true;
                 }, (error: HttpErrorResponse) => {
                     this.errorMessage = getErrorResponseMessage(error);
-                    this.showErrorPage = true;
                 });
         }
     }
@@ -64,6 +62,8 @@ export class StudentExamComponent implements OnInit {
     downloadExam(): void {
         let examId: number = this.studentExamService.studentExam.examId;
         let studentId: number = this.studentExamService.studentExam.studentId;
+
+        this.errorMessage = null;
 
         this.examService.downloadStudentExam(examId, studentId)
             .subscribe((response: HttpResponse<Blob>) => {
@@ -77,7 +77,12 @@ export class StudentExamComponent implements OnInit {
 
                 URL.revokeObjectURL(blobUrl);
             }, (error: HttpErrorResponse) => {
-                this.errorMessage = getErrorResponseMessage(error);
+                if (error.status === 404) {
+                    this.errorMessage = 'Resource file is not found';
+                }
+                else {
+                    this.errorMessage = getErrorResponseMessage(error);
+                }
             });
     }
 

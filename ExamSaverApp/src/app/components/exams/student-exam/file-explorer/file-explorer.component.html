@@ -1,5 +1,7 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
-<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
+    {{ errorMessage }}
+</div>
 <div class="wrapper" *ngIf="showContent">
     <div class="list-group file-tree">
         <a [routerLink]="getParentDirectoryUri()" class="list-group-item list-group-item-action file-tree-item"

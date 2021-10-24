@@ -16,7 +16,6 @@ import { ExamService } from '../../../../services/exam.service';
 export class FileExplorerComponent implements OnInit, OnDestroy {
     public fileTree: FileInfo[] = [];
 
-    public showErrorPage: boolean = false;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -52,7 +51,6 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
 
     getStudentExamFileTree(examId: number, studentId: number): void {
         this.showSpinner = true;
-        this.showErrorPage = false;
         this.showContent = false;
         this.errorMessage = null;
 
@@ -68,7 +66,6 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
                 this.errorMessage = getErrorResponseMessage(error);
-                this.showErrorPage = true;
             });
     }
 

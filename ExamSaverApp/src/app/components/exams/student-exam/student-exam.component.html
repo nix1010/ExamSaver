@@ -1,5 +1,7 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
-<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
+    {{ errorMessage }}
+</div>
 <div class="container wrapper" *ngIf="showContent">
     <h3 class="mt-5">
         {{ studentExamService.studentExam.firstName }} {{ studentExamService.studentExam.lastName }},

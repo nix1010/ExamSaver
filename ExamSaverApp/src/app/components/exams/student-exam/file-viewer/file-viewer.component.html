@@ -1,5 +1,7 @@
 <app-load-spinner *ngIf="showSpinner"></app-load-spinner>
-<app-error-page *ngIf="showErrorPage"></app-error-page>
+<div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
+    {{ errorMessage }}
+</div>
 <div class="file-viewer wrapper card" *ngIf="showContent">
     <div class="header p-2">
         <div class="name">

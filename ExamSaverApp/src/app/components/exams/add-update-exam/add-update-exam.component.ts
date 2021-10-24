@@ -1,13 +1,13 @@
-import { Subject } from './../../../models/subject.model';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
-import { INPUT_DATE_TIME_FORMAT } from './../../../config/constants';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+import { finalize } from 'rxjs/operators';
+import { Exam } from 'src/app/models/exam.model';
+import { getErrorResponseMessage } from 'src/app/utils/utils';
+import { ID_NOT_VALID_MESSAGE, INPUT_DATE_TIME_FORMAT } from './../../../config/constants';
+import { Subject } from './../../../models/subject.model';
 import { ExamService } from './../../../services/exam.service';
 import { SubjectService } from './../../../services/subject.service';
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Exam } from 'src/app/models/exam.model';
-import { finalize } from 'rxjs/operators';
 
 @Component({
     selector: 'app-create-exam',
@@ -21,7 +21,6 @@ export class AddUpdateExamComponent implements OnInit {
     public examId: number;
     public update: boolean = false;
 
-    public showErrorPage: boolean = false;
     public showContent: boolean = false;
     public showSpinner: boolean = false;
     public errorMessage: string = null;
@@ -50,7 +49,7 @@ export class AddUpdateExamComponent implements OnInit {
             this.examId = Number(examIdParam);
 
             if (Number.isNaN(this.examId)) {
-                this.showErrorPage = true;
+                this.errorMessage = ID_NOT_VALID_MESSAGE;
             } else {
                 this.getExamForUpdate(this.examId);
             }
@@ -68,7 +67,7 @@ export class AddUpdateExamComponent implements OnInit {
 
     getExamForUpdate(examId: number): void {
         this.showSpinner = true;
-        this.showErrorPage = this.showContent = false;
+        this.showContent = false;
 
         this.examService.getHoldingExamById(examId)
             .pipe(finalize(() => this.showSpinner = false))
@@ -76,7 +75,6 @@ export class AddUpdateExamComponent implements OnInit {
                 this.exam = exam;
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
-                this.showErrorPage = true;
                 this.errorMessage = getErrorResponseMessage(error);
             });
     }

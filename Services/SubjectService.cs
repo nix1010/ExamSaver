@@ -33,11 +33,7 @@ namespace ExamSaver.Services
                     )
                     .Where(userSubject => userSubject.SubjectRelation == SubjectRelationType.TEACHING
                                        && userSubject.UserId == userId)
-                    .Select(userSubject => new SubjectDTO()
-                    {
-                        Id = userSubject.SubjectId,
-                        Name = userSubject.Subject.Name
-                    })
+                    .Select(userSubject => SubjectDTO.FromEntity(userSubject.Subject))
                     .ToList();
         }
     }

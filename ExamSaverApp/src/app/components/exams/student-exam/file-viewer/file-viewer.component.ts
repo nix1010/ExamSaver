@@ -16,7 +16,6 @@ import { FileContent } from './../../../../models/file-content.model';
 export class FileViewerComponent implements OnInit {
     public file: FileContent = null;
 
-    public showErrorPage: boolean = false;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -38,7 +37,6 @@ export class FileViewerComponent implements OnInit {
 
     getStudentExamFileContent(examId: number, studentId: number): void {
         this.showSpinner = true;
-        this.showErrorPage = false;
         this.showContent = false;
         this.errorMessage = null;
 
@@ -52,7 +50,6 @@ export class FileViewerComponent implements OnInit {
                 this.showContent = true;
             }, (error: HttpErrorResponse) => {
                 this.errorMessage = getErrorResponseMessage(error);
-                this.showErrorPage = true;
             });
     }
 }
