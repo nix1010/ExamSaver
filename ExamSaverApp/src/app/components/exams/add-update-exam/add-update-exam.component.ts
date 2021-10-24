@@ -80,11 +80,11 @@ export class AddUpdateExamComponent implements OnInit {
     }
 
     addUpdateExam(): void {
-        this.errorMessage = null;
-        this.submitProcess = true;
-        this.submitProcessSuccess = false;
-
         if (this.validateForm()) {
+            this.errorMessage = null;
+            this.submitProcess = true;
+            this.submitProcessSuccess = false;
+
             if (this.update) {
                 this.examService.updateExam(this.examId, this.exam)
                     .pipe(finalize(() => this.submitProcess = false))
@@ -97,9 +97,6 @@ export class AddUpdateExamComponent implements OnInit {
                     .subscribe(_response => this.submitProcessSuccess = true,
                         (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
             }
-        }
-        else {
-            this.submitProcess = false;
         }
     }
 
