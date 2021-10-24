@@ -17,8 +17,8 @@ import { ExamService } from './../../services/exam.service';
 export class ExamsComponent implements OnInit, OnDestroy {
     public exams: Exam[] = [];
     public role: Role = null;
-    public page: Page = new Page(1, 0, 0);
-    
+    public page: Page = null;
+
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -69,7 +69,7 @@ export class ExamsComponent implements OnInit, OnDestroy {
         this.examsSubscription = this.getExamsByRole()
             .pipe(finalize(() => this.showSpinner = false))
             .subscribe((response: HttpResponse<Exam[]>) => {
-                this.page = this.getPageHeader(response.headers);
+                this.page = this.getPageFromHeader(response.headers);
                 this.exams = response.body
                 this.showContent = true;
             },
@@ -78,25 +78,25 @@ export class ExamsComponent implements OnInit, OnDestroy {
 
     getExamsByRole(): Observable<HttpResponse<Exam[]>> {
         if (this.role === Role.PROFESSOR) {
-            return this.examService.getHoldingExams(this.page.currentPage);
+            return this.examService.getHoldingExams(this.page?.currentPage);
         }
 
-        return this.examService.getTakingExams(this.page.currentPage);
+        return this.examService.getTakingExams(this.page?.currentPage);
     }
 
     setPageFromQueryParams(): void {
-        let pageParam: string = this.activatedRoute.snapshot.queryParamMap.get('page');
+        let pageQueryParam: string = this.activatedRoute.snapshot.queryParamMap.get('page');
 
-        if (pageParam) {
-            let page: number = Number(pageParam);
+        if (pageQueryParam) {
+            let page: number = Number(pageQueryParam);
 
             if (!Number.isNaN(page)) {
-                this.page.currentPage = page;
+                this.page = new Page(page, null, null);
             }
         }
     }
 
-    getPageHeader(httpHeaders: HttpHeaders): Page {
+    getPageFromHeader(httpHeaders: HttpHeaders): Page {
         let xPagination: string = httpHeaders.get('X-Pagination');
 
         let page: Page = this.page;
@@ -106,6 +106,10 @@ export class ExamsComponent implements OnInit, OnDestroy {
         }
 
         return page;
+    }
+
+    paginationExists(): boolean {
+        return !!this.page && !!this.page.currentPage && !!this.page.pageSize && !!this.page.totalCount;
     }
 
     pageChange(): void {

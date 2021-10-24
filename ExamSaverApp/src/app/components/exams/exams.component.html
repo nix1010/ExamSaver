@@ -13,7 +13,7 @@
         </a>
     </div>
     <app-exam-list *ngIf="showContent" [exams]="exams" [role]="role"></app-exam-list>
-    <ngb-pagination [pageSize]="page.pageSize" [(page)]="page.currentPage" [collectionSize]="page.totalCount"
+    <ngb-pagination *ngIf="paginationExists()" [pageSize]="page.pageSize" [(page)]="page.currentPage" [collectionSize]="page.totalCount"
         [maxSize]=5 (pageChange)="pageChange()" size='sm'>
     </ngb-pagination>
 </div>
