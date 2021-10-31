@@ -97,7 +97,7 @@ namespace ExamSaver.Services
             };
         }
 
-        public string ExtractFiles(StudentExam studentExam)
+        public string ExtractZipArchive(StudentExam studentExam)
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
             string studentExamFileExtractedDirectoryPath = GetStudentExamFileExtractedDirectoryPath(studentExam);
@@ -214,6 +214,14 @@ namespace ExamSaver.Services
             foreach (DirectoryInfo subDirectory in directoryInfo.EnumerateDirectories())
             {
                 subDirectory.Delete(true);
+            }
+        }
+
+        public void DeleteDirectoryAndContents(string directoryPath)
+        {
+            if (Directory.Exists(directoryPath))
+            {
+                Directory.Delete(directoryPath, true);
             }
         }
     }

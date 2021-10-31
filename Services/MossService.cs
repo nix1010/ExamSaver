@@ -79,19 +79,19 @@ namespace ExamSaver.Services
             string mossFilePath = Path.Combine(Directory.GetCurrentDirectory(), Constant.MOSS_RELATIVE_FILE_PATH);
             StringBuilder argumentBuilder = new StringBuilder($"perl \"{mossFilePath}\" -m 1000000 -l {language} -d");
 
-            foreach (StudentExam studentExam in examStudents)
-            {
-                string studentExamFileExtractedDirectoryPath = fileService.ExtractFiles(studentExam);
-
-                SetFiles(argumentBuilder, studentExamFileExtractedDirectoryPath, mossRequestDTO.FileExtension);
-            }
-
             try
             {
+                foreach (StudentExam studentExam in examStudents)
+                {
+                    string studentExamFileExtractedDirectoryPath = fileService.ExtractZipArchive(studentExam);
+
+                    SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, mossRequestDTO.FileExtension);
+                }
+
                 DateTime submitDateTime = DateTime.Now;
 
                 string resultUrl = RunMoss(argumentBuilder);
-                
+
                 databaseContext.MossResults.Add(new MossResult()
                 {
                     ExamId = examId,
@@ -105,12 +105,12 @@ namespace ExamSaver.Services
             {
                 foreach (StudentExam studentExam in examStudents)
                 {
-                   Directory.Delete(fileService.GetStudentExamFileExtractedDirectoryPath(studentExam), true);
+                    fileService.DeleteDirectoryAndContents(fileService.GetStudentExamFileExtractedDirectoryPath(studentExam));
                 }
             }
         }
 
-        private void SetFiles(StringBuilder argumentBuilder, string studentExamFileExtractedDirectoryPath, string fileExtension)
+        private void SetFilePaths(StringBuilder argumentBuilder, string studentExamFileExtractedDirectoryPath, string fileExtension)
         {
             string[] filePaths = Directory.GetFiles(studentExamFileExtractedDirectoryPath, $"*.{fileExtension}", SearchOption.AllDirectories);
 
