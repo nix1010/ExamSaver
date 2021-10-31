@@ -12,6 +12,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace ExamSaver.Services
@@ -22,10 +23,7 @@ namespace ExamSaver.Services
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
 
-            if (!File.Exists(studentExamFilePath))
-            {
-                throw new NotFoundException("Student resource file is not found on the disk");
-            }
+            CheckFileExists(studentExamFilePath);
 
             using ZipArchive zipArchive = ZipFile.Open(studentExamFilePath, ZipArchiveMode.Read);
 
@@ -35,7 +33,7 @@ namespace ExamSaver.Services
                 {
                     fileTreePath += Path.AltDirectorySeparatorChar;
                 }
-            
+
                 ZipArchiveEntry zipArchiveEntry = zipArchive.GetEntry(fileTreePath);
 
                 if (zipArchiveEntry == null || !IsDirectory(zipArchiveEntry))
@@ -91,15 +89,41 @@ namespace ExamSaver.Services
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
 
-            if (!File.Exists(studentExamFilePath))
-            {
-                throw new NotFoundException($"Requested resource file for exam '{studentExam.ExamId}', student '{studentExam.StudentId}' is not found");
-            }
+            CheckFileExists(studentExamFilePath);
 
             return new PhysicalFileResult(studentExamFilePath, "application/octet-stream")
             {
                 FileDownloadName = Path.GetFileName(studentExamFilePath)
             };
+        }
+
+        public string ExtractFiles(StudentExam studentExam)
+        {
+            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+            string studentExamFileExtractedDirectoryPath = GetStudentExamFileExtractedDirectoryPath(studentExam);
+
+            CheckFileExists(studentExamFilePath);
+
+            ZipFile.ExtractToDirectory(studentExamFilePath, studentExamFileExtractedDirectoryPath, true);
+
+            return studentExamFileExtractedDirectoryPath;
+        }
+
+        public string GetStudentExamFileExtractedDirectoryPath(StudentExam studentExam)
+        {
+            string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(studentExam.Student, studentExam.ExamId);
+            string studentResourceIdentifier = Util.GetStudentResourceIdentifier(studentExam.Student, studentExam.ExamId);
+            string studentExamFileExtractedDirectoryPath = Path.Combine(studentExamDirectoryPath, studentResourceIdentifier);
+
+            return studentExamFileExtractedDirectoryPath;
+        }
+
+        private void CheckFileExists(string filePath)
+        {
+            if (!File.Exists(filePath))
+            {
+                throw new NotFoundException("Student resource file is not found on the disk");
+            }
         }
 
         private string GetStudentExamFilePath(StudentExam studentExam)
@@ -123,7 +147,7 @@ namespace ExamSaver.Services
             {
                 entryName = zipArchiveEntry.Name;
             }
-            
+
             return fileTreePath + entryName == zipArchiveEntry.FullName;
         }
 

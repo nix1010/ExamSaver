@@ -19,8 +19,10 @@ namespace ExamSaver.Models.Entity
         [ForeignKey("Exam")]
         public int ExamId { get; set; }
         public Exam Exam { get; set; }
+        
         [Column("upload_time")]
         public DateTime UploadTime { get; set; }
+        
         [Column("exam_path")]
         public string ExamPath { get; set; }
     }

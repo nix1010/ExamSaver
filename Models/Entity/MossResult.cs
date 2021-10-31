@@ -7,17 +7,24 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Models.Entity
 {
-    [Table("roles")]
-    public class Role
+    [Table("moss_results")]
+    public class MossResult
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
         public int Id { get; set; }
+
+        [Column("exam_id")]
+        [ForeignKey("Exam")]
+        public int ExamId { get; set; }
+        public Exam Exam { get; set; }
         
-        [Column("name")]
-        public string Name { get; set; }
+        [Column("url")]
+        public string Url { get; set; }
         
-        public ICollection<User> Users { get; set; }
+        [Column("submit_time")]
+        public DateTime Submitted { get; set; }
+
     }
 }

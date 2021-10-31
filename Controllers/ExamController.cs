@@ -15,10 +15,12 @@ namespace ExamSaver.Controllers
     public class ExamController : ControllerBase
     {
         private readonly ExamService examService;
+        private readonly MossService mossService;
 
-        public ExamController(ExamService examService)
+        public ExamController(ExamService examService, MossService mossService)
         {
             this.examService = examService;
+            this.mossService = mossService;
         }
 
         [Route("taking")]
@@ -44,9 +46,9 @@ namespace ExamSaver.Controllers
         [Route("taking/{examId}")]
         [HttpPost]
         [Authorize(Roles = RoleType.STUDENT)]
-        public IActionResult UploadExam([FromForm] IFormCollection form, [FromRoute] int examId)
+        public IActionResult UploadExam([FromRoute] int examId, [FromForm] IFormCollection form)
         {
-            examService.SubmitExam(Util.GetJWTToken(Request.Headers), form, examId);
+            examService.SubmitExam(Util.GetJWTToken(Request.Headers), examId, form);
 
             return Created(string.Empty, null);
         }
@@ -84,9 +86,9 @@ namespace ExamSaver.Controllers
         [Route("holding/{examId}")]
         [HttpPut]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult UpdateExam([FromBody] ExamDTO examDTO, [FromRoute] int examId)
+        public IActionResult UpdateExam([FromRoute] int examId, [FromBody] ExamDTO examDTO)
         {
-            examService.UpdateExam(Util.GetJWTToken(Request.Headers), examDTO, examId);
+            examService.UpdateExam(Util.GetJWTToken(Request.Headers), examId, examDTO);
 
             return NoContent();
         }
@@ -97,6 +99,35 @@ namespace ExamSaver.Controllers
         public IList<StudentExamDTO> GetExamStudents([FromRoute] int examId)
         {
             return examService.GetExamStudents(Util.GetJWTToken(Request.Headers), examId);
+        }
+
+        [Route("holding/{examId}/students/similarity")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IList<MossResultDTO> GetSimilarityResults([FromRoute] int examId)
+        {
+            return mossService.GetMossResults(Util.GetJWTToken(Request.Headers), examId);
+        }
+
+        
+        [Route("holding/{examId}/students/similarity")]
+        [HttpPost]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult RunSimilarityCheck([FromRoute] int examId, [FromBody] MossRequestDTO mossRequestDTO)
+        {
+            mossService.PerformMoss(Util.GetJWTToken(Request.Headers), examId, mossRequestDTO);
+
+            return Created(string.Empty, null);
+        }
+
+        [Route("holding/{examId}/students/similarity/{mossResultId}")]
+        [HttpGet]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult DeleteSimilarityResult([FromRoute] int examId, [FromRoute] int mossResultId)
+        {
+            mossService.DeleteMossResult(Util.GetJWTToken(Request.Headers), examId, mossResultId);
+
+            return NoContent();
         }
 
         [Route("holding/{examId}/students/{studentId}")]

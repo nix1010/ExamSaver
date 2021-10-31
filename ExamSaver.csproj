@@ -6,9 +6,13 @@
 
   <ItemGroup>
     <Compile Remove="ExamSaverApp\**" />
+    <Compile Remove="Resources\Exams\**" />
     <Content Remove="ExamSaverApp\**" />
+    <Content Remove="Resources\Exams\**" />
     <EmbeddedResource Remove="ExamSaverApp\**" />
+    <EmbeddedResource Remove="Resources\Exams\**" />
     <None Remove="ExamSaverApp\**" />
+    <None Remove="Resources\Exams\**" />
   </ItemGroup>
 
   <ItemGroup>

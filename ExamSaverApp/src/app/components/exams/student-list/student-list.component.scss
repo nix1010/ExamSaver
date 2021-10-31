@@ -1,4 +1,36 @@
 .wrapper {
+    .similarity-check-button {
+        align-items: center;
+        display: flex;
+
+        .similarity-check-spinner {
+            position: relative;
+            display: inline-block;
+            margin-left: 10px;
+            height: 31px;
+            width: 30px;
+        }
+    }
+
+    .similarity-results {
+        .results-availability {
+            font-size: 12px;
+        }
+
+        .content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .submit-time {
+                i {
+                    margin-left: 5px;
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+
     .date {
         font-size: 1.1em;
     }

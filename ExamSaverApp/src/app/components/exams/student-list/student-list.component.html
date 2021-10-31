@@ -15,12 +15,11 @@
         </div>
         <div class="col-md-5 mt-4">
             <div *ngIf="examStudents.length > 0 else noStudents">
-                <div class="mb-2">
-                    Students:
-                </div>
+                <h6>Students:</h6>
                 <div class="list-group">
-                    <a [routerLink]="'/exams/holding/' + examStudent.examId + '/students/' + examStudent.studentId + '/tree'"
-                        class="list-group-item list-group-item-action" *ngFor="let examStudent of examStudents">
+                    <a *ngFor="let examStudent of examStudents"
+                        [routerLink]="'/exams/holding/' + examStudent.examId + '/students/' + examStudent.studentId + '/tree'"
+                        class="list-group-item list-group-item-action">
                         <div class="student">
                             <div class="name">
                                 {{ examStudent.firstName }} {{ examStudent.lastName }}, {{ examStudent.index }}
@@ -38,5 +37,51 @@
                 </div>
             </ng-template>
         </div>
+    </div>
+    <div class="row mt-4" *ngIf="examStudents.length > 1">
+        <div class="col">
+            <form #form>
+                <div class="extensions mb-3">
+                    <h6>File extension:</h6>
+                    <select class="form-select" name="fileExtension" [(ngModel)]="mossRequest.fileExtension" required>
+                        <option *ngFor="let fileExtension of FILE_EXTENSIONS" [ngValue]="fileExtension">
+                            .{{ fileExtension }}
+                        </option>
+                    </select>
+                    <div class="invalid-feedback">File extension must be provided</div>
+                </div>
+                <div class="similarity-check-button">
+                    <button class="btn btn-primary btn-sm" [disabled]="showMossRunningSpinner"
+                        (click)="performSimilarityCheck()">
+                        Perform similarity check
+                    </button>
+                    <div class="similarity-check-spinner" *ngIf="showMossRunningSpinner">
+                        <app-load-spinner [size]="'small'"></app-load-spinner>
+                    </div>
+                </div>
+            </form>
+            <div class="similarity-results mt-5" *ngIf="mossResults.length > 0">
+                <h6>Similarity results
+                    <small class="results-availability">
+                        (Available for 14 days)
+                    </small>
+                    :
+                </h6>
+                <div class="list-group">
+                    <div *ngFor="let mossResult of mossResults" class="content list-group-item">
+                        <a [href]="mossResult.url" target="_blank">
+                            {{ mossResult.url }}
+                        </a>
+                        <div class="submit-time">
+                            <span>
+                                {{ mossResult.submitted | date: DISPLAY_DATE_TIME_FORMAT }}
+                            </span>
+                            <i class="fas fa-trash-alt" (click)="deleteSimilarityResult(mossResult.id)" title="Delete result"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col"></div>
     </div>
 </div>

@@ -14,8 +14,10 @@ namespace ExamSaver.Models.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
         public int Id { get; set; }
+        
         [Column("name")]
         public string Name { get; set; }
+        
         [Column("espb")]
         public int ESPB { get; set; }
     }

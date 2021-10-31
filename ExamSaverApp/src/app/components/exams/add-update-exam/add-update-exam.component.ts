@@ -80,35 +80,38 @@ export class AddUpdateExamComponent implements OnInit {
     }
 
     addUpdateExam(): void {
-        if (this.validateForm()) {
-            this.errorMessage = null;
-            this.submitProcess = true;
-            this.submitProcessSuccess = false;
-
-            if (this.update) {
-                this.examService.updateExam(this.examId, this.exam)
-                    .pipe(finalize(() => this.submitProcess = false))
-                    .subscribe(_response => this.submitProcessSuccess = true,
-                        (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
-            }
-            else {
-                this.examService.addExam(this.exam)
-                    .pipe(finalize(() => this.submitProcess = false))
-                    .subscribe(_response => this.submitProcessSuccess = true,
-                        (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
-            }
+        if (!this.validateForm()) {
+            return;
         }
+        
+        this.errorMessage = null;
+        this.submitProcess = true;
+        this.submitProcessSuccess = false;
+
+        if (this.update) {
+            this.examService.updateExam(this.examId, this.exam)
+                .pipe(finalize(() => this.submitProcess = false))
+                .subscribe((_response: any) => this.submitProcessSuccess = true,
+                    (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
+        }
+        else {
+            this.examService.addExam(this.exam)
+                .pipe(finalize(() => this.submitProcess = false))
+                .subscribe((_response: any) => this.submitProcessSuccess = true,
+                    (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
+        }
+
     }
 
     validateForm(): boolean {
-        let validated: boolean = true;
+        let valid: boolean = true;
 
         if (!this.exam.startTime || !this.exam.endTime || !this.exam.endTime || !this.exam.subjectId) {
-            validated = false;
+            valid = false;
         }
 
         this.formElement.nativeElement.classList.add('was-validated');
 
-        return validated;
+        return valid;
     }
 }

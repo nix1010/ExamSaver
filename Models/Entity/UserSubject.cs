@@ -13,10 +13,12 @@ namespace ExamSaver.Models.Entity
         [ForeignKey("User")]
         public int UserId { get; set; }
         public User User { get; set; }
+        
         [Column("subject_id")]
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }
         public Subject Subject { get; set; }
+        
         [Column("subject_relation")]
         public SubjectRelationType SubjectRelation { get; set; }
     }

@@ -44,7 +44,7 @@ namespace ExamSaver.Services
             databaseContext.SaveChanges();
         }
 
-        public void UpdateExam(string token, ExamDTO examDTO, int examId)
+        public void UpdateExam(string token, int examId, ExamDTO examDTO)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -94,7 +94,7 @@ namespace ExamSaver.Services
             }
         }
 
-        public void SubmitExam(string token, IFormCollection form, int examId)
+        public void SubmitExam(string token, int examId, IFormCollection form)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -206,19 +206,21 @@ namespace ExamSaver.Services
 
         public ExamDTO GetExam(string token, int examId, SubjectRelationType subjectRelationType)
         {
-            int userId = userService.GetUserIdFromToken(token);
+            return ExamDTO.FromEntity(GetExamEntity(token, examId, subjectRelationType));
+        }
 
-            ExamDTO examDTO = GetExamsQuery(token, subjectRelationType)
+        public Exam GetExamEntity(string token, int examId, SubjectRelationType subjectRelationType)
+        {
+            Exam exam = GetExamsQuery(token, subjectRelationType)
                 .Where(exam => exam.Id == examId)
-                .Select(exam => ExamDTO.FromEntity(exam))
                 .FirstOrDefault();
 
-            if (examDTO == null)
+            if (exam == null)
             {
                 throw new NotFoundException($"Exam with id '{examId}' is not found for the current user");
             }
 
-            return examDTO;
+            return exam;
         }
 
         public PagedList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType, int page = 1)
@@ -229,7 +231,7 @@ namespace ExamSaver.Services
                 .ToPagedList(page);
         }
 
-        private IQueryable<Exam> GetExamsQuery(string token, SubjectRelationType subjectRelationType)
+        public IQueryable<Exam> GetExamsQuery(string token, SubjectRelationType subjectRelationType)
         {
             int userId = userService.GetUserIdFromToken(token);
             DateTime now = DateTime.Now;
@@ -317,7 +319,7 @@ namespace ExamSaver.Services
                 .Where(studentExam => studentExam.ExamId == examId);
         }
 
-        private void CheckUserTeachesSubject(int userId, int subjectId)
+        public void CheckUserTeachesSubject(int userId, int subjectId)
         {
             UserSubject userSubject = databaseContext
                .UsersSubjects

@@ -14,10 +14,13 @@ namespace ExamSaver.Models.Entity
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Column("id")]
         public int Id { get; set; }
+        
         [Column("start_time")]
         public DateTime StartTime { get; set; }
+        
         [Column("end_time")]
         public DateTime EndTime { get; set; }
+        
         [Column("subject_id")]
         [ForeignKey("Subject")]
         public int SubjectId { get; set; }

@@ -36,7 +36,7 @@ namespace ExamSaver.Utils
 
         public static string GetStudentExamDirectoryPath(Student student, int examId)
         {
-            string resourcesDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.EXAMS_DIRECTORY_PATH);
+            string resourcesDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.EXAMS_RELATIVE_DIRECTORY_PATH);
             string studentResourceIdentifier = GetStudentResourceIdentifier(student, examId);
             string studentExamDirectoryPath = Path.Combine(resourcesDirectoryPath, studentResourceIdentifier);
 
