@@ -10,6 +10,7 @@ namespace ExamSaver.Models.API
     {
         public int Id { get; set; }
         public string Url { get; set; }
+        public string Comment { get; set; }
         public DateTime Submitted { get; set; }
 
         public static MossResultDTO FromEntity(MossResult mossResult)
@@ -18,6 +19,7 @@ namespace ExamSaver.Models.API
             {
                 Id = mossResult.Id,
                 Url = mossResult.Url,
+                Comment = mossResult.Comment,
                 Submitted = mossResult.Submitted
             };
         }

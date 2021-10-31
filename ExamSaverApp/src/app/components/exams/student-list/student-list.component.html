@@ -2,6 +2,9 @@
 <div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
     {{ errorMessage }}
 </div>
+<div *ngIf="mossRunResult && mossRunResult.runMessage" class="banner-alert alert alert-warning fade show w-100 text-center">
+    {{ mossRunResult.runMessage }}
+</div>
 <div class="container wrapper" *ngIf="showContent">
     <div class="row mt-5">
         <div class="col">
@@ -41,14 +44,20 @@
     <div class="row mt-4" *ngIf="examStudents.length > 1">
         <div class="col">
             <form #form>
-                <div class="extensions mb-3">
-                    <h6>File extension:</h6>
-                    <select class="form-select" name="fileExtension" [(ngModel)]="mossRequest.fileExtension" required>
+                <div class="form-group mb-3">
+                    <label for="fileExtension">File extension:</label>
+                    <select class="form-select" id="fileExtension" name="fileExtension"
+                        [(ngModel)]="mossRequest.fileExtension" required>
                         <option *ngFor="let fileExtension of FILE_EXTENSIONS" [ngValue]="fileExtension">
                             .{{ fileExtension }}
                         </option>
                     </select>
                     <div class="invalid-feedback">File extension must be provided</div>
+                </div>
+                <div class="form-group mb-3">
+                    <label for="comment">Comment:</label>
+                    <input type="text" id="comment" name="comment" class="form-control" placeholder="Optional"
+                        [(ngModel)]="mossRequest.comment" />
                 </div>
                 <div class="similarity-check-button">
                     <button class="btn btn-primary btn-sm" [disabled]="showMossRunningSpinner"
@@ -70,13 +79,14 @@
                 <div class="list-group">
                     <div *ngFor="let mossResult of mossResults" class="content list-group-item">
                         <a [href]="mossResult.url" target="_blank">
-                            {{ mossResult.url }}
+                            {{ mossResult.comment ? mossResult.comment : mossResult.url }}
                         </a>
                         <div class="submit-time">
                             <span>
                                 {{ mossResult.submitted | date: DISPLAY_DATE_TIME_FORMAT }}
                             </span>
-                            <i class="fas fa-trash-alt" (click)="deleteSimilarityResult(mossResult.id)" title="Delete result"></i>
+                            <i class="fas fa-trash-alt" (click)="deleteSimilarityResult(mossResult.id)"
+                                title="Delete result"></i>
                         </div>
                     </div>
                 </div>

@@ -5,9 +5,8 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Models.API
 {
-    public class MossRequestDTO
+    public class MossRunResultDTO
     {
-        public string FileExtension { get; set; }
-        public string Comment { get; set; }
+        public string RunMessage { get; set; }
     }
 }

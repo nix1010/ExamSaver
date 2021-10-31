@@ -1,16 +1,17 @@
-import { MossRequest } from './../../../models/moss-request.model';
-import { MossService } from './../../../services/moss.service';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Exam } from 'src/app/models/exam.model';
+import { MossResult } from 'src/app/models/moss-result.model';
+import { MossRunResult } from 'src/app/models/moss-run-result.model';
 import { StudentExam } from 'src/app/models/student-exam.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { DISPLAY_DATE_FORMAT, DISPLAY_DATE_TIME_FORMAT, DISPLAY_TIME_FORMAT, FILE_EXTENSIONS, ID_NOT_VALID_MESSAGE } from './../../../config/constants';
+import { MossRequest } from './../../../models/moss-request.model';
 import { ExamService } from './../../../services/exam.service';
-import { MossResult } from 'src/app/models/moss-result.model';
+import { MossService } from './../../../services/moss.service';
 
 @Component({
     selector: 'app-student-list',
@@ -24,6 +25,7 @@ export class StudentListComponent implements OnInit {
     public examStudents: StudentExam[] = [];
     public mossResults: MossResult[] = [];
     public mossRequest: MossRequest = new MossRequest();
+    public mossRunResult: MossRunResult = null;
 
     @ViewChild('form')
     public formElement: ElementRef<any>;
@@ -79,11 +81,13 @@ export class StudentListComponent implements OnInit {
 
         this.showMossRunningSpinner = true;
         this.errorMessage = null;
+        this.mossRunResult = null;
 
         this.mossService.runSimilarityCheck(this.examId, this.mossRequest)
             .pipe(finalize(() => this.showMossRunningSpinner = false))
-            .subscribe(() => {
+            .subscribe((mossRunResult: MossRunResult) => {
                 this.showMossRunningSpinner = true;
+                this.mossRunResult = mossRunResult;
 
                 this.mossService.getMossResults(this.examId)
                     .pipe(finalize(() => this.showMossRunningSpinner = false))

@@ -22,6 +22,9 @@ namespace ExamSaver.Models.Entity
         
         [Column("url")]
         public string Url { get; set; }
+
+        [Column("comment")]
+        public string Comment { get; set; }
         
         [Column("submit_time")]
         public DateTime Submitted { get; set; }

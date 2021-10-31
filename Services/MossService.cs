@@ -66,7 +66,7 @@ namespace ExamSaver.Services
                 .Where(mossResult => mossResult.ExamId == examId);
         }
 
-        public void PerformMoss(string token, int examId, MossRequestDTO mossRequestDTO)
+        public MossRunResultDTO PerformMoss(string token, int examId, MossRequestDTO mossRequestDTO)
         {
             string language = GetLanguageFromExtension(mossRequestDTO.FileExtension);
             List<StudentExam> examStudents = examService.GetExamStudentsQuery(token, examId).ToList();
@@ -76,16 +76,33 @@ namespace ExamSaver.Services
                 throw new BadRequestException("Required minimum 2 students for the similarity check");
             }
 
+            StringBuilder runMessageBuilder = new StringBuilder();
             string mossFilePath = Path.Combine(Directory.GetCurrentDirectory(), Constant.MOSS_RELATIVE_FILE_PATH);
             StringBuilder argumentBuilder = new StringBuilder($"perl \"{mossFilePath}\" -m 1000000 -l {language} -d");
 
+            AddComment(argumentBuilder, mossRequestDTO.Comment);
+
+            int studentFilePathsSetCount = 0;
             try
             {
                 foreach (StudentExam studentExam in examStudents)
                 {
                     string studentExamFileExtractedDirectoryPath = fileService.ExtractZipArchive(studentExam);
 
-                    SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, mossRequestDTO.FileExtension);
+                    try
+                    {
+                        SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, mossRequestDTO.FileExtension);
+                        ++studentFilePathsSetCount;
+                    }
+                    catch (NotFoundException)
+                    {
+                        AppendStudentToRunMessage(runMessageBuilder, studentExam);
+                    }
+                }
+
+                if (studentFilePathsSetCount < 2)
+                {
+                    throw new BadRequestException($"Found files for {studentFilePathsSetCount} student(s), at least 2 students are required");
                 }
 
                 DateTime submitDateTime = DateTime.Now;
@@ -96,10 +113,16 @@ namespace ExamSaver.Services
                 {
                     ExamId = examId,
                     Url = resultUrl,
+                    Comment = mossRequestDTO.Comment,
                     Submitted = submitDateTime
                 });
 
                 databaseContext.SaveChanges();
+
+                return new MossRunResultDTO()
+                {
+                    RunMessage = runMessageBuilder.Length > 0 ? runMessageBuilder.ToString() : null
+                };
             }
             finally
             {
@@ -116,7 +139,7 @@ namespace ExamSaver.Services
 
             if (filePaths.Length == 0)
             {
-                throw new BadRequestException("No files found");
+                throw new NotFoundException("Files not found");
             }
 
             foreach (string filePath in filePaths)
@@ -179,6 +202,37 @@ namespace ExamSaver.Services
                 case "py": return "python";
                 default: throw new BadRequestException($"File extension '{fileExtension}' is not supported");
             }
+        }
+
+        private void AddComment(StringBuilder argumentBuilder, string comment)
+        {
+            if (comment != null)
+            {
+                comment = comment.Trim();
+
+                if (comment != "")
+                {
+                    argumentBuilder.Append($" -c \"{comment}\"");
+                }
+            }
+        }
+
+        private void AppendStudentToRunMessage(StringBuilder runMessageBuilder, StudentExam studentExam)
+        {
+            string firstName = studentExam.Student.User.FirstName;
+            string lastName = studentExam.Student.User.LastName;
+            string index = studentExam.Student.Index;
+
+            if (runMessageBuilder.Length == 0)
+            {
+                runMessageBuilder.Append("Files not found for: ");
+            }
+            else
+            {
+                runMessageBuilder.Append(", ");
+            }
+
+            runMessageBuilder.Append($"{firstName} {lastName} {index}");
         }
     }
 }

@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { MossResult } from '../models/moss-result.model';
+import { MossRunResult } from '../models/moss-run-result.model';
 
 @Injectable()
 export class MossService {
@@ -17,7 +18,7 @@ export class MossService {
         return this.httpClient.get(`exams/holding/${examId}/students/similarity/${mossResultId}`);
     }
 
-    runSimilarityCheck(examId: number, mossRequest: MossRequest): Observable<any> {
-        return this.httpClient.post(`exams/holding/${examId}/students/similarity`, mossRequest);
+    runSimilarityCheck(examId: number, mossRequest: MossRequest): Observable<MossRunResult> {
+        return this.httpClient.post<MossRunResult>(`exams/holding/${examId}/students/similarity`, mossRequest);
     }
 }

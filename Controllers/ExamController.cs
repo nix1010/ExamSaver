@@ -31,7 +31,7 @@ namespace ExamSaver.Controllers
             PagedList<ExamDTO> exams = examService.GetTakingExams(Util.GetJWTToken(Request.Headers), Util.GetPage(page));
 
             Util.SetPageHeader(Response, exams.Page);
-            
+
             return exams;
         }
 
@@ -109,15 +109,13 @@ namespace ExamSaver.Controllers
             return mossService.GetMossResults(Util.GetJWTToken(Request.Headers), examId);
         }
 
-        
+
         [Route("holding/{examId}/students/similarity")]
         [HttpPost]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IActionResult RunSimilarityCheck([FromRoute] int examId, [FromBody] MossRequestDTO mossRequestDTO)
         {
-            mossService.PerformMoss(Util.GetJWTToken(Request.Headers), examId, mossRequestDTO);
-
-            return Created(string.Empty, null);
+            return Created(string.Empty, mossService.PerformMoss(Util.GetJWTToken(Request.Headers), examId, mossRequestDTO));
         }
 
         [Route("holding/{examId}/students/similarity/{mossResultId}")]
