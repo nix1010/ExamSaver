@@ -1,5 +1,6 @@
 using ExamSaver.Configs;
 using ExamSaver.Data;
+using ExamSaver.Models;
 using ExamSaver.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;

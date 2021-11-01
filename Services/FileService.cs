@@ -1,11 +1,13 @@
 ﻿using ExamSaver.Configs;
 using ExamSaver.Data;
 using ExamSaver.Exceptions;
+using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +21,13 @@ namespace ExamSaver.Services
 {
     public class FileService
     {
+        private readonly AppSettings appSettings;
+
+        public FileService(IOptions<AppSettings> optionsMonitor)
+        {
+            appSettings = optionsMonitor.Value;
+        }
+
         public IList<FileInfoDTO> GetFileTree(string fileTreePath, StudentExam studentExam)
         {
             string studentExamFilePath = GetStudentExamFilePath(studentExam);
@@ -111,8 +120,8 @@ namespace ExamSaver.Services
 
         public string GetStudentExamFileExtractedDirectoryPath(StudentExam studentExam)
         {
-            string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(studentExam.Student, studentExam.ExamId);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(studentExam.Student, studentExam.ExamId);
+            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
             string studentExamFileExtractedDirectoryPath = Path.Combine(studentExamDirectoryPath, studentResourceIdentifier);
 
             return studentExamFileExtractedDirectoryPath;
@@ -128,8 +137,8 @@ namespace ExamSaver.Services
 
         private string GetStudentExamFilePath(StudentExam studentExam)
         {
-            string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(studentExam.Student, studentExam.ExamId);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(studentExam.Student, studentExam.ExamId);
+            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
             string studentExamFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
 
             return studentExamFilePath;
@@ -158,8 +167,8 @@ namespace ExamSaver.Services
 
         public void SaveFile(IFormFile file, Exam exam, Student student, out string examFilePath)
         {
-            string studentExamDirectoryPath = Util.GetStudentExamDirectoryPath(student, exam.Id);
             string studentResourceIdentifier = Util.GetStudentResourceIdentifier(student, exam.Id);
+            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
 
             if (!Directory.Exists(studentExamDirectoryPath))
             {

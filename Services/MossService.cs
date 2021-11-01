@@ -5,6 +5,8 @@ using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
 using ExamSaver.Utils;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -21,13 +23,15 @@ namespace ExamSaver.Services
         private readonly FileService fileService;
         private readonly UserService userService;
         private readonly DatabaseContext databaseContext;
+        private readonly AppSettings appSettings;
 
-        public MossService(ExamService examService, FileService fileService, UserService userService, DatabaseContext databaseContext)
+        public MossService(ExamService examService, FileService fileService, UserService userService, DatabaseContext databaseContext, IOptions<AppSettings> optionsMonitor)
         {
             this.examService = examService;
             this.fileService = fileService;
             this.userService = userService;
             this.databaseContext = databaseContext;
+            this.appSettings = optionsMonitor.Value;
         }
 
         public IList<MossResultDTO> GetMossResults(string token, int examId)
@@ -144,12 +148,12 @@ namespace ExamSaver.Services
 
             foreach (string filePath in filePaths)
             {
-                int examsDirectoryStartIndex = filePath.IndexOf(Constant.EXAMS_RELATIVE_DIRECTORY_PATH);
+                int examsDirectoryStartIndex = filePath.IndexOf(appSettings.ExamsDirectoryPath);
                 string relativeFilePath = filePath;
 
                 if (examsDirectoryStartIndex != -1)
                 {
-                    int studentExamResourceIndex = examsDirectoryStartIndex + Constant.EXAMS_RELATIVE_DIRECTORY_PATH.Length + 1;
+                    int studentExamResourceIndex = examsDirectoryStartIndex + appSettings.ExamsDirectoryPath.Length + 1;
                     relativeFilePath = filePath.Substring(studentExamResourceIndex);
                 }
 
@@ -163,7 +167,7 @@ namespace ExamSaver.Services
             {
                 FileName = "cmd.exe",
                 Arguments = $"/C {argumentBuilder.Replace('\\', '/')}",
-                WorkingDirectory = Constant.EXAMS_RELATIVE_DIRECTORY_PATH,
+                WorkingDirectory = appSettings.ExamsDirectoryPath,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
                 RedirectStandardError = true

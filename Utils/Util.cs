@@ -34,15 +34,6 @@ namespace ExamSaver.Utils
             return token.ToString().Replace("Bearer", "").Trim();
         }
 
-        public static string GetStudentExamDirectoryPath(Student student, int examId)
-        {
-            string resourcesDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), Constant.EXAMS_RELATIVE_DIRECTORY_PATH);
-            string studentResourceIdentifier = GetStudentResourceIdentifier(student, examId);
-            string studentExamDirectoryPath = Path.Combine(resourcesDirectoryPath, studentResourceIdentifier);
-
-            return studentExamDirectoryPath;
-        }
-
         public static string GetStudentResourceIdentifier(Student student, int examId)
         {
             return $"{examId}-{student.Id}-{student.User.FirstName}-{student.User.LastName}-{student.Index}";
