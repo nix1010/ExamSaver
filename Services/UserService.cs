@@ -32,6 +32,8 @@ namespace ExamSaver.Services
 
         public JWTTokenDTO Authenticate(UserDTO userDTO)
         {
+            CheckUserValid(userDTO);
+
             string encryptedPassword = Util.Encrypt(userDTO.Password);
 
             User user = databaseContext
@@ -55,6 +57,14 @@ namespace ExamSaver.Services
                 ExpiresAt = expiringDateTime,
                 Roles = user.Roles.Select(role => role.Name).ToList()
             };
+        }
+
+        private void CheckUserValid(UserDTO userDTO)
+        {
+            if (userDTO.Email == null || userDTO.Password == null)
+            {
+                throw new BadRequestException("Credentials are not valid");
+            }
         }
 
         private string GenerateJWTToken(User user, DateTime expiryDateTime)

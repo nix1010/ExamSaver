@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
 import { User } from 'src/app/models/user-credentials.model';
@@ -13,10 +13,12 @@ import { UserService } from './../../services/user.service';
     styleUrls: ['./login.component.scss']
 })
 export class LoginComponent implements OnInit {
-    public email: string = "milos@gmail.com";
-    public password: string = "pass1";
+    public user: User = new User();
     public errorMessage: string = null;
     public loginProcess: boolean = false;
+
+    @ViewChild('form')
+    public formElement: ElementRef;
 
     constructor(
         private userService: UserService,
@@ -29,10 +31,14 @@ export class LoginComponent implements OnInit {
     }
 
     authenticate() {
+        if (!this.validateForm()) {
+            return;
+        }
+
         this.loginProcess = true;
         this.errorMessage = null;
-        
-        this.userService.authenticate(new User(this.email, this.password))
+
+        this.userService.authenticate(this.user)
             .pipe(finalize(() => this.loginProcess = false))
             .subscribe(() => {
                 this.routeToPreviousPageIfAuthenticated();
@@ -52,5 +58,17 @@ export class LoginComponent implements OnInit {
 
             this.router.navigate([url]);
         }
+    }
+
+    validateForm(): boolean {
+        let valid: boolean = true;
+
+        if (!this.user.email || !this.user.password) {
+            valid = false;
+        }
+
+        this.formElement.nativeElement.classList.add('was-validated');
+
+        return valid;
     }
 }

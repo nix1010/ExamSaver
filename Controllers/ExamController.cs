@@ -109,7 +109,6 @@ namespace ExamSaver.Controllers
             return mossService.GetMossResults(Util.GetJWTToken(Request.Headers), examId);
         }
 
-
         [Route("holding/{examId}/students/similarity")]
         [HttpPost]
         [Authorize(Roles = RoleType.PROFESSOR)]

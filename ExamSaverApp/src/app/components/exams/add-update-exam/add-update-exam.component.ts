@@ -28,7 +28,7 @@ export class AddUpdateExamComponent implements OnInit {
     public submitProcessSuccess: boolean = false;
 
     @ViewChild('form')
-    public formElement: ElementRef<any>;
+    public formElement: ElementRef;
 
     public DATE_FORMAT = INPUT_DATE_TIME_FORMAT;
 

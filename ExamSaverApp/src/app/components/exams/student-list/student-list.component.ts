@@ -28,7 +28,7 @@ export class StudentListComponent implements OnInit {
     public mossRunResult: MossRunResult = null;
 
     @ViewChild('form')
-    public formElement: ElementRef<any>;
+    public formElement: ElementRef;
 
     public showMossRunningSpinner: boolean = false;
     public showSpinner: boolean = false;

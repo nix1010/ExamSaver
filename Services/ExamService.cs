@@ -106,7 +106,7 @@ namespace ExamSaver.Services
 
             if (student == null)
             {
-                throw new UserNotFoundException("Current user is not a student");
+                throw new UserNotFoundException("Authenticated user is not a student");
             }
 
             Exam exam = databaseContext
@@ -217,7 +217,7 @@ namespace ExamSaver.Services
 
             if (exam == null)
             {
-                throw new NotFoundException($"Exam with id '{examId}' is not found for the current user");
+                throw new NotFoundException($"Exam with id '{examId}' is not found for the authenticated user");
             }
 
             return exam;
@@ -330,7 +330,7 @@ namespace ExamSaver.Services
 
             if (userSubject == null)
             {
-                throw new BadRequestException($"Current user doesn't teach subject with id '{subjectId}'");
+                throw new BadRequestException($"Authenticated user doesn't teach subject with id '{subjectId}'");
             }
         }
     }
