@@ -100,7 +100,7 @@ namespace ExamSaver.Services
 
             CheckFileExists(studentExamFilePath);
 
-            return new PhysicalFileResult(studentExamFilePath, "application/octet-stream")
+            return new PhysicalFileResult(Path.GetFullPath(studentExamFilePath), "application/octet-stream")
             {
                 FileDownloadName = Path.GetFileName(studentExamFilePath)
             };
