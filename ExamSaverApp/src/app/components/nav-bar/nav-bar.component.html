@@ -6,15 +6,26 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <div class="navbar-nav">
-                <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}"
-                    class="nav-item nav-link">Active exams</a>
-                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active" [routerLinkActiveOptions]="{exact: false}"
-                    class="nav-item nav-link">Holding exams</a>
+                <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{exact: false}" class="nav-item nav-link">Active exams</a>
+                <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active"
+                    [routerLinkActiveOptions]="{exact: false}" class="nav-item nav-link">Holding exams</a>
             </div>
-            <div class="navbar-nav ms-auto">
-                <button class="nav-item nav-link btn" (click)="logout()">
-                    {{userService.isAuthenticated() ? "Logout" : "Login"}}
-                </button>
+            <div class="navbar-nav ms-auto" *ngIf="userService.isAuthenticated()">
+                <div class="nav-item nav-link btn">
+                    <div class="d-inline-block user-dropdown" ngbDropdown #userDropDown="ngbDropdown">
+                        <div class="dropdown-anchor" ngbDropdownAnchor (click)="userDropDown.open()">
+                            <i class="fas fa-user user-icon"></i>
+                            <span class="user">{{ getFirstName() }} {{ getLastName() }}</span>
+                        </div>
+                        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                            <div ngbDropdownItem (click)="logout()">
+                                <i class="fas fa-sign-out-alt"></i>
+                                Logout
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

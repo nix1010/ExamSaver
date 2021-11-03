@@ -1,8 +1,8 @@
-import { Role } from './../../models/role.model';
-import { Router } from '@angular/router';
-import { UserService } from './../../services/user.service';
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { LOGIN_ABSOLUTE_ROUTE } from 'src/app/config/constants';
+import { Role } from './../../models/role.model';
+import { UserService } from './../../services/user.service';
 
 @Component({
     selector: 'app-nav-bar',
@@ -19,6 +19,14 @@ export class NavBarComponent implements OnInit {
     ) { }
 
     ngOnInit(): void {
+    }
+
+    getFirstName(): string {
+        return this.userService.getAuthenticatedUser()?.firstName;
+    }
+
+    getLastName(): string {
+        return this.userService.getAuthenticatedUser()?.lastName;
     }
 
     logout(): void {

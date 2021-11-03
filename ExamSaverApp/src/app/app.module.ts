@@ -25,7 +25,7 @@ import { SubjectService } from './services/subject.service';
 import { UserService } from './services/user.service';
 import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
 import { HighlightDirective } from './directives/highlight.directive';
-import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 
@@ -55,7 +55,8 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
         AppRoutingModule,
         FormsModule,
         HttpClientModule,
-        NgbPaginationModule
+        NgbPaginationModule,
+        NgbDropdownModule
     ],
     providers: [
         {

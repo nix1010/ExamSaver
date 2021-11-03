@@ -30,7 +30,7 @@ namespace ExamSaver.Services
             this.appSettings = appSettings.Value;
         }
 
-        public JWTTokenDTO Authenticate(UserDTO userDTO)
+        public AuthenticationResponseDTO Authenticate(UserDTO userDTO)
         {
             CheckUserValid(userDTO);
 
@@ -50,12 +50,17 @@ namespace ExamSaver.Services
             DateTime issuedDate = DateTime.Now;
             DateTime expiringDateTime = issuedDate.AddHours(8);
 
-            return new JWTTokenDTO()
+            return new AuthenticationResponseDTO()
             {
-                Token = GenerateJWTToken(user, expiringDateTime),
-                IssuedAt = issuedDate,
-                ExpiresAt = expiringDateTime,
-                Roles = user.Roles.Select(role => role.Name).ToList()
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                JWTToken = new JWTTokenDTO()
+                {
+                    Token = GenerateJWTToken(user, expiringDateTime),
+                    IssuedAt = issuedDate,
+                    ExpiresAt = expiringDateTime,
+                    Roles = user.Roles.Select(role => role.Name).ToList()
+                }
             };
         }
 

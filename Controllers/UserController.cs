@@ -19,7 +19,7 @@ namespace ExamSaver.Controllers
         [Route("authenticate")]
         [HttpPost]
         [AllowAnonymous]
-        public JWTTokenDTO Authenticate([FromBody] UserDTO userDTO)
+        public AuthenticationResponseDTO Authenticate([FromBody] UserDTO userDTO)
         {
             return userService.Authenticate(userDTO);
         }

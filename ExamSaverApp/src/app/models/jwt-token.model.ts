@@ -1,6 +1,6 @@
 import { Role } from "./role.model";
 
-export class AuthenticationResponse {
+export class JWTToken {
     token: string;
     issuedAt: Date;
     expiresAt: Date;
