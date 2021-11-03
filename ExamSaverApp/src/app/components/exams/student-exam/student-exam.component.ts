@@ -1,13 +1,13 @@
 import { HttpErrorResponse, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { DISPLAY_DATE_FORMAT, DISPLAY_TIME_FORMAT, ID_NOT_VALID_MESSAGE } from 'src/app/config/constants';
 import { Exam } from 'src/app/models/exam.model';
 import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
+import { equalUris, getErrorResponseMessage } from 'src/app/utils/utils';
 
 @Component({
     selector: 'app-student-exam',
@@ -26,6 +26,7 @@ export class StudentExamComponent implements OnInit {
     DISPLAY_TIME_FORMAT = DISPLAY_TIME_FORMAT;
 
     constructor(
+        private router: Router,
         private examService: ExamService,
         private activatedRoute: ActivatedRoute,
         private studentExamService: StudentExamService
@@ -102,4 +103,59 @@ export class StudentExamComponent implements OnInit {
         return fileName;
     }
 
+    getRootUri(): string {
+        return this.studentExamService.studentExamFileTreeUri;
+    }
+
+    isRoot(): boolean {
+        return equalUris(this.router.url, this.getRootUri());
+    }
+
+    getFileTreeLevelsUri(): string[] {
+        let fileTreeUriSegments: string[] = this.getFileTreeUriSegments(this.router.url);
+        let fileTreeLevelsUri: string[] = [];
+        let baseUri: string = this.studentExamService.studentExamFileTreeUri;
+
+        for (let fileTreeUriSegment of fileTreeUriSegments) {
+            let fileTreeLevelUri: string;
+
+            if (fileTreeLevelsUri.length > 0) {
+                fileTreeLevelUri = `${fileTreeLevelsUri[fileTreeLevelsUri.length - 1]}/${fileTreeUriSegment}`;
+            }
+            else {
+                fileTreeLevelUri = `${baseUri}${fileTreeUriSegment}`;
+            }
+
+            fileTreeLevelsUri.push(fileTreeLevelUri);
+        }
+
+        return fileTreeLevelsUri;
+    }
+
+    private getFileTreeUriSegments(uri: string): string[] {
+        let fileTreeUriSegments: string[] = [];
+        let baseUri: string = this.studentExamService.studentExamFileTreeUri;
+        let baseUriStartIndex: number = uri.indexOf(baseUri);
+
+        if (baseUriStartIndex === -1) {
+            baseUri = this.studentExamService.studentExamFileContentUri;
+            baseUriStartIndex = uri.indexOf(baseUri);
+        }
+
+        if (baseUriStartIndex !== -1) {
+            fileTreeUriSegments = uri.replace(baseUri, '').split('/');
+        }
+
+        return fileTreeUriSegments;
+    }
+
+    getLastUriSegment(uri: string): string {
+        let fileTreeUriSegments: string[] = uri.split('/');
+
+        if (fileTreeUriSegments.length > 0) {
+            return fileTreeUriSegments[fileTreeUriSegments.length - 1];
+        }
+
+        return '';
+    }
 }

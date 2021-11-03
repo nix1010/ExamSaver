@@ -18,7 +18,23 @@
             {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
         </div>
     </a>
-    <div class="download mt-3 mb-2">
+    <div class="file-browser-header mt-4 mb-2">
+        <div>
+            <div class="level-links" *ngIf="!isRoot()">
+                <a [routerLink]="getRootUri()" class="root-level previous-level" title="Root directory">..</a>
+                <ng-container *ngFor="let fileTreeLevelUri of getFileTreeLevelsUri(); let last = last">
+                    <span class="level-divider">/</span>
+                    <a [routerLink]="fileTreeLevelUri" *ngIf="!last else noLink" class="previous-level">
+                        {{ getLastUriSegment(fileTreeLevelUri) }}
+                    </a>
+                    <ng-template #noLink>
+                        <span class="current-level">
+                            {{ getLastUriSegment(fileTreeLevelUri) }}
+                        </span>
+                    </ng-template>
+                </ng-container>
+            </div>
+        </div>
         <i class="fas fa-download" title="Download exam file" (click)="downloadExam()"></i>
     </div>
     <router-outlet></router-outlet>

@@ -1,10 +1,10 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
+import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { StudentExamService } from 'src/app/services/student-exam.service';
-import { getErrorResponseMessage, getFormattedFileSize, unsubscribeFrom } from 'src/app/utils/utils';
+import { equalUris, getErrorResponseMessage, getFormattedFileSize, unsubscribeFrom } from 'src/app/utils/utils';
 import { FileInfo } from '../../../../models/file-info.model';
 import { ExamService } from '../../../../services/exam.service';
 
@@ -58,7 +58,7 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
         let fileTreePath: string = this.router.url.replace(pathRegex, '');
 
         unsubscribeFrom(this.studentExamFileTreeSubscription);
-        
+
         this.studentExamFileTreeSubscription = this.examService.getStudentExamFileTree(examId, studentId, fileTreePath)
             .pipe(finalize(() => this.showSpinner = false))
             .subscribe((fileTree: FileInfo[]) => {
@@ -85,6 +85,6 @@ export class FileExplorerComponent implements OnInit, OnDestroy {
     }
 
     isRoot(): boolean {
-        return this.router.url === this.studentExamService.studentExamFileTreeUri.slice(0, -1);
+        return equalUris(this.router.url, this.studentExamService.studentExamFileTreeUri);
     }
 }

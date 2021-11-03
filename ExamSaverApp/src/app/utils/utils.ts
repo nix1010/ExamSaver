@@ -38,3 +38,19 @@ export function getExamsUri(role: Role): string {
         return `/exams/taking`;
     }
 }
+
+export function equalUris(url: string, urlToCompare: string): boolean {
+    let lastSlashIndex: number = url.lastIndexOf('/');
+
+    if (lastSlashIndex === url.length - 1) {
+        url = url.substring(0, lastSlashIndex);
+    }
+
+    lastSlashIndex = urlToCompare.lastIndexOf('/');
+
+    if (lastSlashIndex === urlToCompare.length - 1) {
+        urlToCompare = urlToCompare.substring(0, lastSlashIndex);
+    }
+
+    return url === urlToCompare;
+}

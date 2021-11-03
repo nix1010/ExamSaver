@@ -24,11 +24,44 @@
         }
     }
 
-    .download {
+    .file-browser-header {
         display: flex;
         font-size: 1.5em;
-        flex-direction: column;
+        justify-content: space-between;
         align-items: flex-end;
+
+        .level-links {
+            .root-level {
+                cursor: pointer;
+            }
+
+            .root-level,
+            .previous-level,
+            .current-level,
+            .level-divider {
+                font-size: 0.6em;
+                display: inline-block;
+                margin: 0 2px;
+            }
+
+            .level-divider {
+                color: #7a7a7a;
+            }
+
+            .previous-level {
+                text-decoration: none;
+                color: #464646;
+
+                &:hover {
+                    text-decoration: underline;
+                }
+            }
+
+            .current-level {
+                cursor: default;
+                color: black;
+            }
+        }
 
         i {
             cursor: pointer;
