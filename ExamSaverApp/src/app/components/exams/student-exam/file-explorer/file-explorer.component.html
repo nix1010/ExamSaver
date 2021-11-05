@@ -2,27 +2,25 @@
 <div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
     {{ errorMessage }}
 </div>
-<div class="wrapper" *ngIf="showContent">
-    <div class="list-group file-tree">
-        <a [routerLink]="getParentDirectoryUri()" class="list-group-item list-group-item-action file-tree-item"
-            *ngIf="!isRoot()">
-            ..
-        </a>
-        <a [routerLink]="getFileUri(file)" *ngFor="let file of fileTree"
-            class="list-group-item list-group-item-action file-tree-item">
-            <div class="file-info">
-                <div>
-                    <div class="file-icon">
-                        <i [ngClass]="{'far fa-file' : !file.isDirectory, 'fas fa-folder': file.isDirectory}"></i>
-                    </div>
-                    <div class="file-name">
-                        {{ file.name }}
-                    </div>
+<div class="list-group file-tree" *ngIf="showContent">
+    <a [routerLink]="getParentDirectoryUri()" class="list-group-item list-group-item-action file-tree-item"
+        *ngIf="!isRoot()">
+        ..
+    </a>
+    <a [routerLink]="getFileUri(file)" *ngFor="let file of fileTree"
+        class="list-group-item list-group-item-action file-tree-item">
+        <div class="file-info">
+            <div>
+                <div class="file-icon">
+                    <i [ngClass]="{'far fa-file' : !file.isDirectory, 'fas fa-folder': file.isDirectory}"></i>
                 </div>
-                <div *ngIf="!file.isDirectory">
-                    {{ getFormattedFileSize(file.size) }}
+                <div class="file-name">
+                    {{ file.name }}
                 </div>
             </div>
-        </a>
-    </div>
+            <div *ngIf="!file.isDirectory">
+                {{ getFormattedFileSize(file.size) }}
+            </div>
+        </div>
+    </a>
 </div>

@@ -9,19 +9,21 @@
                 <a *appHasRole="Role.STUDENT" routerLink="/exams/taking" routerLinkActive="active"
                     [routerLinkActiveOptions]="{exact: false}" class="nav-item nav-link">Active exams</a>
                 <a *appHasRole="Role.PROFESSOR" routerLink="/exams/holding" routerLinkActive="active"
-                    [routerLinkActiveOptions]="{exact: false}" class="nav-item nav-link">Holding exams</a>
+                    [routerLinkActiveOptions]="{exact: false}" class="nav-item nav-link active">Holding exams</a>
             </div>
             <div class="navbar-nav ms-auto" *ngIf="userService.isAuthenticated()">
                 <div class="nav-item nav-link btn">
                     <div class="d-inline-block user-dropdown" ngbDropdown #userDropDown="ngbDropdown">
-                        <div class="dropdown-anchor" ngbDropdownAnchor (click)="userDropDown.open()">
+                        <div class="dropdown-anchor" ngbDropdownAnchor (click)="userDropDown.toggle()">
                             <i class="fas fa-user user-icon"></i>
                             <span class="user">{{ getFirstName() }} {{ getLastName() }}</span>
                         </div>
-                        <div ngbDropdownMenu aria-labelledby="dropdownManual">
+                        <div ngbDropdownMenu class="dropdown-items">
                             <div ngbDropdownItem (click)="logout()">
-                                <i class="fas fa-sign-out-alt"></i>
-                                Logout
+                                <i class="fas fa-sign-out-alt dropdown-icon"></i>
+                                <span class="dropdown-text">
+                                    Logout
+                                </span>
                             </div>
                         </div>
                     </div>

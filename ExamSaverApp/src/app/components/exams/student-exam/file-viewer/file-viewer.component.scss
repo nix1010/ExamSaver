@@ -1,17 +1,14 @@
-@import '../../../../../assets/styles/variables.scss';
+@import "../../../../../assets/styles/variables.scss";
 
-.wrapper {
-    .header {
-        display: flex;
-        justify-content: space-between;
-        border-bottom: 1px solid #dfdfdf;
-        align-items: center;
-        height: 50px;
-    }
+.header {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #dfdfdf;
+    align-items: center;
+    height: 50px;
+}
 
-
-    code {
-        padding-left: $line-numbers-paddding;
-        padding-right: $line-numbers-paddding;
-    }
+code {
+    padding-left: $line-numbers-paddding;
+    padding-right: $line-numbers-paddding;
 }

@@ -1,29 +1,36 @@
 .wrapper {
-    .similarity-check-button {
-        align-items: center;
-        display: flex;
+    .similarity {
+        max-width: 516px;
 
-        .similarity-check-spinner {
-            position: relative;
-            display: inline-block;
-            margin-left: 10px;
-            height: 31px;
-            width: 30px;
+        .similarity-check {
+            padding: 24px;
+
+            .similarity-check-button {
+                align-items: center;
+                display: flex;
+
+                .similarity-check-spinner {
+                    position: relative;
+                    display: inline-block;
+                    margin-left: 10px;
+                    height: 31px;
+                    width: 30px;
+                }
+            }
         }
-    }
 
-    .similarity-results {
-        .results-availability {
-            font-size: 12px;
-        }
+        .similarity-results {
+            .availability {
+                font-size: 12px;
+            }
 
-        .content {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            .content,
+            .right-content {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
 
-            .submit-time {
-                i {
+                .delete-icon {
                     margin-left: 5px;
                     cursor: pointer;
                 }
