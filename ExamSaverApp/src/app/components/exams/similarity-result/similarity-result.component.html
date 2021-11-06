@@ -1,0 +1,17 @@
+<div class="content">
+    <a [href]="similarityResult.url" target="_blank">
+        {{ similarityResult.comment ? similarityResult.comment : similarityResult.url }}
+    </a>
+    <div class="right-content">
+        <span class="submit-time">
+            {{ similarityResult.submitted | date: DISPLAY_DATE_TIME_FORMAT }}
+        </span>
+        <div class="delete-result">
+            <app-load-spinner *ngIf="deleting else deleteIcon;" [size]="'small'"></app-load-spinner>
+            <ng-template #deleteIcon>
+                <i class="fas fa-trash-alt" (click)="deleteSimilarityResult(similarityResult.id)"
+                    title="Delete result"></i>
+            </ng-template>
+        </div>
+    </div>
+</div>

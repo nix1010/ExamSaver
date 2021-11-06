@@ -2,9 +2,9 @@
 <div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
     {{ errorMessage }}
 </div>
-<div *ngIf="mossRunResult && mossRunResult.runMessage"
+<div *ngIf="similarityRunResult && similarityRunResult.runMessage"
     class="banner-alert alert alert-warning fade show w-100 text-center">
-    {{ mossRunResult.runMessage }}
+    {{ similarityRunResult.runMessage }}
 </div>
 <div class="container wrapper" *ngIf="showContent">
     <div class="row mt-5">
@@ -23,7 +23,7 @@
                         <div class="form-group mb-3">
                             <label for="fileExtension">File extension:</label>
                             <select class="form-select" id="fileExtension" name="fileExtension"
-                                [(ngModel)]="mossRequest.fileExtension" required>
+                                [(ngModel)]="similarityRequest.fileExtension" required>
                                 <option *ngFor="let fileExtension of FILE_EXTENSIONS" [ngValue]="fileExtension">
                                     .{{ fileExtension }}
                                 </option>
@@ -33,44 +33,37 @@
                         <div class="form-group">
                             <label for="comment">Comment:</label>
                             <input type="text" id="comment" name="comment" class="form-control" placeholder="Optional"
-                                [(ngModel)]="mossRequest.comment" />
+                                [(ngModel)]="similarityRequest.comment" />
                         </div>
                         <div class="similarity-check-button mt-4">
-                            <button class="btn btn-primary btn-sm" [disabled]="showMossRunningSpinner"
+                            <button class="btn btn-primary btn-sm" [disabled]="showSimilarityRunningSpinner"
                                 (click)="performSimilarityCheck()">
                                 Perform similarity check
                             </button>
-                            <div class="similarity-check-spinner" *ngIf="showMossRunningSpinner">
+                            <div class="similarity-check-spinner" *ngIf="showSimilarityRunningSpinner">
                                 <app-load-spinner [size]="'small'"></app-load-spinner>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="similarity-results mt-5" *ngIf="mossResults.length > 0">
+                <div class="mt-5" *ngIf="similarityResults.length > 0">
                     <h6>Similarity results
-                        <small class="availability">
+                        <small class="results-availability">
                             (Available for 14 days)
                         </small>
                         :
                     </h6>
-                    <div class="list-group similarity-results-list">
-                        <div *ngFor="let mossResult of mossResults" class="content list-group-item">
-                            <a [href]="mossResult.url" target="_blank">
-                                {{ mossResult.comment ? mossResult.comment : mossResult.url }}
-                            </a>
-                            <div class="right-content">
-                                <span class="submit-time">
-                                    {{ mossResult.submitted | date: DISPLAY_DATE_TIME_FORMAT }}
-                                </span>
-                                <i class="fas fa-trash-alt delete-icon" (click)="deleteSimilarityResult(mossResult.id)"
-                                    title="Delete result"></i>
-                            </div>
+                    <div class="list-group">
+                        <div *ngFor="let similarityResult of similarityResults" class="list-group-item">
+                            <app-similarity-result [examId]="examId" [similarityResult]="similarityResult"
+                                (deleted)="deletedSimilarityResult()" (error)="errorMessage = $event">
+                            </app-similarity-result>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div class="col-md-5 mt-4 students-list">
+        <div class="col mt-4 students-list">
             <div *ngIf="examStudents.length > 0 else noStudents">
                 <h6>Students:</h6>
                 <div class="list-group">

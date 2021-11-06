@@ -21,7 +21,7 @@ namespace ExamSaver.Data
         public DbSet<StudentExam> StudentsExams { get; set; }
         public DbSet<Subject> Subjects { get; set; }
         public DbSet<UserSubject> UsersSubjects { get; set; }
-        public DbSet<MossResult> MossResults { get; set; }
+        public DbSet<SimilarityResult> SimilarityResults { get; set; }
 
         
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

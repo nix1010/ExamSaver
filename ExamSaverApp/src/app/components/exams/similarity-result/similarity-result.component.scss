@@ -1,0 +1,13 @@
+.content,
+.right-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .delete-result {
+        margin-left: 7px;
+        cursor: pointer;
+        position: relative;
+        min-width: 1em;
+    }
+}

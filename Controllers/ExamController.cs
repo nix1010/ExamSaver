@@ -15,12 +15,12 @@ namespace ExamSaver.Controllers
     public class ExamController : ControllerBase
     {
         private readonly ExamService examService;
-        private readonly MossService mossService;
+        private readonly SimilarityService similarityService;
 
-        public ExamController(ExamService examService, MossService mossService)
+        public ExamController(ExamService examService, SimilarityService similarityService)
         {
             this.examService = examService;
-            this.mossService = mossService;
+            this.similarityService = similarityService;
         }
 
         [Route("taking")]
@@ -104,25 +104,25 @@ namespace ExamSaver.Controllers
         [Route("holding/{examId}/students/similarity")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IList<MossResultDTO> GetSimilarityResults([FromRoute] int examId)
+        public IList<SimilarityResultDTO> GetSimilarityResults([FromRoute] int examId)
         {
-            return mossService.GetMossResults(Util.GetJWTToken(Request.Headers), examId);
+            return similarityService.GetSimilarityResults(Util.GetJWTToken(Request.Headers), examId);
         }
 
         [Route("holding/{examId}/students/similarity")]
         [HttpPost]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult RunSimilarityCheck([FromRoute] int examId, [FromBody] MossRequestDTO mossRequestDTO)
+        public IActionResult PerformSimilarityCheck([FromRoute] int examId, [FromBody] SimilarityRequestDTO similarityRequestDTO)
         {
-            return Created(string.Empty, mossService.PerformMoss(Util.GetJWTToken(Request.Headers), examId, mossRequestDTO));
+            return Created(string.Empty, similarityService.PerformSimilarityCheck(Util.GetJWTToken(Request.Headers), examId, similarityRequestDTO));
         }
 
-        [Route("holding/{examId}/students/similarity/{mossResultId}")]
+        [Route("holding/{examId}/students/similarity/{similarityResultId}")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IActionResult DeleteSimilarityResult([FromRoute] int examId, [FromRoute] int mossResultId)
+        public IActionResult DeleteSimilarityResult([FromRoute] int examId, [FromRoute] int similarityResultId)
         {
-            mossService.DeleteMossResult(Util.GetJWTToken(Request.Headers), examId, mossResultId);
+            similarityService.DeleteSimilarityResult(Util.GetJWTToken(Request.Headers), examId, similarityResultId);
 
             return NoContent();
         }

@@ -19,22 +19,8 @@
             }
         }
 
-        .similarity-results {
-            .availability {
-                font-size: 12px;
-            }
-
-            .content,
-            .right-content {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-
-                .delete-icon {
-                    margin-left: 5px;
-                    cursor: pointer;
-                }
-            }
+        .results-availability {
+            font-size: 12px;
         }
     }
 

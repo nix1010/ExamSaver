@@ -6,21 +6,21 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Models.API
 {
-    public class MossResultDTO
+    public class SimilarityResultDTO
     {
         public int Id { get; set; }
         public string Url { get; set; }
         public string Comment { get; set; }
         public DateTime Submitted { get; set; }
 
-        public static MossResultDTO FromEntity(MossResult mossResult)
+        public static SimilarityResultDTO FromEntity(SimilarityResult similarityResult)
         {
-            return new MossResultDTO()
+            return new SimilarityResultDTO()
             {
-                Id = mossResult.Id,
-                Url = mossResult.Url,
-                Comment = mossResult.Comment,
-                Submitted = mossResult.Submitted
+                Id = similarityResult.Id,
+                Url = similarityResult.Url,
+                Comment = similarityResult.Comment,
+                Submitted = similarityResult.Submitted
             };
         }
     }

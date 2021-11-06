@@ -1,4 +1,4 @@
-import { MossRequest } from "../models/moss-request.model";
+import { SimilarityRequest } from "../models/similarity-request.model";
 
 export const URL_PREFIX = 'api';
 export const HOST = 'localhost';

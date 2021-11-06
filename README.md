@@ -28,3 +28,15 @@ Where:
 ## Configuration
 Location where exam files are stored on the server can be specified in `appSettings.json` file, section "**AppSettings**" > "**ExamsDirectoryPath**".
 Relative or absolute paths can be used.
+
+## Testing
+There are 3 users available to test the application:
+1. Milos (Professor and student)
+    - Email: milos@gmail.com
+    - Password: pass1
+2. Petar (Professor)
+    - Email: petar@gmail.com
+    - Password: pass1
+3. Ljuba (Student)
+    - Email: ljuba@gmail.com
+    - Password: pass1

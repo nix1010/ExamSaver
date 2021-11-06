@@ -4,33 +4,33 @@ import { ActivatedRoute } from '@angular/router';
 import { forkJoin } from 'rxjs';
 import { finalize } from 'rxjs/operators';
 import { Exam } from 'src/app/models/exam.model';
-import { MossResult } from 'src/app/models/moss-result.model';
-import { MossRunResult } from 'src/app/models/moss-run-result.model';
+import { SimilarityResult } from 'src/app/models/similarity-result.model';
+import { SimilarityRunResult } from 'src/app/models/similarity-run-result.model';
 import { StudentExam } from 'src/app/models/student-exam.model';
 import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { DISPLAY_DATE_FORMAT, DISPLAY_DATE_TIME_FORMAT, DISPLAY_TIME_FORMAT, FILE_EXTENSIONS, ID_NOT_VALID_MESSAGE } from './../../../config/constants';
-import { MossRequest } from './../../../models/moss-request.model';
+import { SimilarityRequest } from '../../../models/similarity-request.model';
 import { ExamService } from './../../../services/exam.service';
-import { MossService } from './../../../services/moss.service';
+import { SimilarityService } from '../../../services/similarity.service';
 
 @Component({
     selector: 'app-student-list',
     templateUrl: './student-list.component.html',
     styleUrls: ['./student-list.component.scss'],
-    providers: [MossService]
+    providers: [SimilarityService]
 })
 export class StudentListComponent implements OnInit {
     public exam: Exam = null;
-    private examId: number;
+    public examId: number;
     public examStudents: StudentExam[] = [];
-    public mossResults: MossResult[] = [];
-    public mossRequest: MossRequest = new MossRequest();
-    public mossRunResult: MossRunResult = null;
+    public similarityResults: SimilarityResult[] = [];
+    public similarityRequest: SimilarityRequest = new SimilarityRequest();
+    public similarityRunResult: SimilarityRunResult = null;
 
     @ViewChild('form')
     public formElement: ElementRef;
 
-    public showMossRunningSpinner: boolean = false;
+    public showSimilarityRunningSpinner: boolean = false;
     public showSpinner: boolean = false;
     public showContent: boolean = false;
     public errorMessage: string = null;
@@ -43,7 +43,7 @@ export class StudentListComponent implements OnInit {
     constructor(
         private examService: ExamService,
         private activatedRoute: ActivatedRoute,
-        private mossService: MossService
+        private similarityService: SimilarityService
     ) { }
 
     ngOnInit(): void {
@@ -60,13 +60,13 @@ export class StudentListComponent implements OnInit {
             forkJoin([
                 this.examService.getHoldingExamById(this.examId),
                 this.examService.getExamStudents(this.examId),
-                this.mossService.getMossResults(this.examId)
+                this.similarityService.getSimilarityResults(this.examId)
             ])
                 .pipe(finalize(() => this.showSpinner = false))
-                .subscribe(([exam, examStudents, mossResults]) => {
+                .subscribe(([exam, examStudents, similarityResults]) => {
                     this.exam = exam;
                     this.examStudents = examStudents;
-                    this.mossResults = mossResults;
+                    this.similarityResults = similarityResults;
                     this.showContent = true;
                 }, (error: HttpErrorResponse) => {
                     this.errorMessage = getErrorResponseMessage(error);
@@ -79,43 +79,34 @@ export class StudentListComponent implements OnInit {
             return;
         }
 
-        this.showMossRunningSpinner = true;
+        this.showSimilarityRunningSpinner = true;
         this.errorMessage = null;
-        this.mossRunResult = null;
+        this.similarityRunResult = null;
 
-        this.mossService.runSimilarityCheck(this.examId, this.mossRequest)
-            .pipe(finalize(() => this.showMossRunningSpinner = false))
-            .subscribe((mossRunResult: MossRunResult) => {
-                this.showMossRunningSpinner = true;
-                this.mossRunResult = mossRunResult;
+        this.similarityService.runSimilarityCheck(this.examId, this.similarityRequest)
+            .pipe(finalize(() => this.showSimilarityRunningSpinner = false))
+            .subscribe((similarityRunResult: SimilarityRunResult) => {
+                this.showSimilarityRunningSpinner = true;
+                this.similarityRunResult = similarityRunResult;
 
-                this.mossService.getMossResults(this.examId)
-                    .pipe(finalize(() => this.showMossRunningSpinner = false))
-                    .subscribe((mossResults: MossResult[]) => this.mossResults = mossResults,
+                this.similarityService.getSimilarityResults(this.examId)
+                    .pipe(finalize(() => this.showSimilarityRunningSpinner = false))
+                    .subscribe((similarityResults: SimilarityResult[]) => this.similarityResults = similarityResults,
                         (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
             },
                 (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
     }
 
-    deleteSimilarityResult(mossResultId: number): void {
-        let confirmation: boolean = confirm("Do you really want to delete?");
-
-        if (!confirmation) {
-            return;
-        }
-
-        this.mossService.deleteMossResult(this.examId, mossResultId)
-            .subscribe(() => {
-                this.mossService.getMossResults(this.examId)
-                    .subscribe((mossResults: MossResult[]) => this.mossResults = mossResults,
-                        (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
-            }, (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
+    deletedSimilarityResult(): void {
+        this.similarityService.getSimilarityResults(this.examId)
+            .subscribe((similarityResults: SimilarityResult[]) => this.similarityResults = similarityResults,
+                (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
     }
 
     validateFileExtensionForm(): boolean {
         let valid: boolean = true;
 
-        if (!this.mossRequest.fileExtension) {
+        if (!this.similarityRequest.fileExtension) {
             valid = false;
         }
 

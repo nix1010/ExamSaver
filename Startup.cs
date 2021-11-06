@@ -60,7 +60,7 @@ namespace ExamSaver
             services.AddScoped<ExamService>();
             services.AddScoped<FileService>();
             services.AddScoped<SubjectService>();
-            services.AddScoped<MossService>();
+            services.AddScoped<SimilarityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

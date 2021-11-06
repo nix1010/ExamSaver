@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
-    public class MossService
+    public class SimilarityService
     {
         private readonly ExamService examService;
         private readonly FileService fileService;
@@ -25,7 +25,7 @@ namespace ExamSaver.Services
         private readonly DatabaseContext databaseContext;
         private readonly AppSettings appSettings;
 
-        public MossService(ExamService examService, FileService fileService, UserService userService, DatabaseContext databaseContext, IOptions<AppSettings> optionsMonitor)
+        public SimilarityService(ExamService examService, FileService fileService, UserService userService, DatabaseContext databaseContext, IOptions<AppSettings> optionsMonitor)
         {
             this.examService = examService;
             this.fileService = fileService;
@@ -34,31 +34,31 @@ namespace ExamSaver.Services
             this.appSettings = optionsMonitor.Value;
         }
 
-        public IList<MossResultDTO> GetMossResults(string token, int examId)
+        public IList<SimilarityResultDTO> GetSimilarityResults(string token, int examId)
         {
-            return GetMossResultsQuery(token, examId)
-                .OrderByDescending(mossResult => mossResult.Submitted)
-                .Select(mossResult => MossResultDTO.FromEntity(mossResult))
+            return GetSimilarityResultsQuery(token, examId)
+                .OrderByDescending(similarityResult => similarityResult.Submitted)
+                .Select(similarityResult => SimilarityResultDTO.FromEntity(similarityResult))
                 .ToList();
         }
 
-        public void DeleteMossResult(string token, int examId, int mossResultId)
+        public void DeleteSimilarityResult(string token, int examId, int similarityResultId)
         {
-            MossResult mossResult = GetMossResultsQuery(token, examId)
-                .Where(mossResult => mossResult.Id == mossResultId)
+            SimilarityResult similarityResult = GetSimilarityResultsQuery(token, examId)
+                .Where(similarityResult => similarityResult.Id == similarityResultId)
                 .FirstOrDefault();
 
-            if (mossResult == null)
+            if (similarityResult == null)
             {
                 throw new NotFoundException("Similarity result is not found");
             }
 
-            databaseContext.MossResults.Remove(mossResult);
+            databaseContext.SimilarityResults.Remove(similarityResult);
 
             databaseContext.SaveChanges();
         }
 
-        private IQueryable<MossResult> GetMossResultsQuery(string token, int examId)
+        private IQueryable<SimilarityResult> GetSimilarityResultsQuery(string token, int examId)
         {
             int userId = userService.GetUserIdFromToken(token);
 
@@ -66,13 +66,13 @@ namespace ExamSaver.Services
 
             examService.CheckUserTeachesSubject(userId, exam.SubjectId);
 
-            return databaseContext.MossResults
-                .Where(mossResult => mossResult.ExamId == examId);
+            return databaseContext.SimilarityResults
+                .Where(similarityResult => similarityResult.ExamId == examId);
         }
 
-        public MossRunResultDTO PerformMoss(string token, int examId, MossRequestDTO mossRequestDTO)
+        public SimilarityRunResultDTO PerformSimilarityCheck(string token, int examId, SimilarityRequestDTO similarityRequestDTO)
         {
-            string language = GetLanguageFromExtension(mossRequestDTO.FileExtension);
+            string language = GetLanguageFromExtension(similarityRequestDTO.FileExtension);
             List<StudentExam> examStudents = examService.GetExamStudentsQuery(token, examId).ToList();
 
             if (examStudents.Count < 2)
@@ -84,7 +84,7 @@ namespace ExamSaver.Services
             string mossFilePath = Path.Combine(Directory.GetCurrentDirectory(), Constant.MOSS_RELATIVE_FILE_PATH);
             StringBuilder argumentBuilder = new StringBuilder($"perl \"{mossFilePath}\" -m 1000000 -l {language} -d");
 
-            AddComment(argumentBuilder, mossRequestDTO.Comment);
+            AddComment(argumentBuilder, similarityRequestDTO.Comment);
 
             int studentFilePathsSetCount = 0;
             try
@@ -95,7 +95,7 @@ namespace ExamSaver.Services
 
                     try
                     {
-                        SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, mossRequestDTO.FileExtension);
+                        SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, similarityRequestDTO.FileExtension);
                         ++studentFilePathsSetCount;
                     }
                     catch (NotFoundException)
@@ -111,19 +111,19 @@ namespace ExamSaver.Services
 
                 DateTime submitDateTime = DateTime.Now;
 
-                string resultUrl = RunMoss(argumentBuilder);
+                string resultUrl = RunSimilarityCheck(argumentBuilder);
 
-                databaseContext.MossResults.Add(new MossResult()
+                databaseContext.SimilarityResults.Add(new SimilarityResult()
                 {
                     ExamId = examId,
                     Url = resultUrl,
-                    Comment = mossRequestDTO.Comment,
+                    Comment = similarityRequestDTO.Comment,
                     Submitted = submitDateTime
                 });
 
                 databaseContext.SaveChanges();
 
-                return new MossRunResultDTO()
+                return new SimilarityRunResultDTO()
                 {
                     RunMessage = runMessageBuilder.Length > 0 ? runMessageBuilder.ToString() : null
                 };
@@ -161,7 +161,7 @@ namespace ExamSaver.Services
             }
         }
 
-        private string RunMoss(StringBuilder argumentBuilder)
+        private string RunSimilarityCheck(StringBuilder argumentBuilder)
         {
             ProcessStartInfo processStartInfo = new ProcessStartInfo()
             {

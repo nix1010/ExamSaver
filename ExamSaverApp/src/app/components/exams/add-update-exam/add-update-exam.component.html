@@ -10,14 +10,14 @@
             <label for="startTime">Start time</label>
             <input type="datetime-local" class="form-control" id="startTime" name="startTime"
                 [ngModel]="exam.startTime | date: DATE_FORMAT" (ngModelChange)="exam.startTime = $event" required />
-            <div class="invalid-feedback">Start date is not valid</div>
+            <div class="invalid-feedback">Start time is not valid</div>
         </div>
         <div class="form-group mb-4">
             <label for="endTime">End time</label>
             <input type="datetime-local" class="form-control" id="endTime" name="endTime"
                 [ngModel]="exam.endTime | date: DATE_FORMAT" (ngModelChange)="exam.endTime = $event"
                 [min]="exam.startTime | date: DATE_FORMAT" required />
-            <div class="invalid-feedback">End date is not valid</div>
+            <div class="invalid-feedback">End time is not valid</div>
         </div>
         <div class="form-group mb-4">
             <label for="subject">Subject</label>

@@ -27,6 +27,7 @@ import { StudentExamComponent } from './components/exams/student-exam/student-ex
 import { HighlightDirective } from './directives/highlight.directive';
 import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { SimilarityResultComponent } from './components/exams/similarity-result/similarity-result.component';
 
 
 @NgModule({
@@ -49,6 +50,7 @@ import { DashboardComponent } from './components/dashboard/dashboard.component';
         StudentExamComponent,
         HighlightDirective,
         DashboardComponent,
+        SimilarityResultComponent,
     ],
     imports: [
         BrowserModule,

@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Models.Entity
 {
-    [Table("moss_results")]
-    public class MossResult
+    [Table("similarity_results")]
+    public class SimilarityResult
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
