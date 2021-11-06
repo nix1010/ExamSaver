@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Observable } from "rxjs";
-import { map } from "rxjs/internal/operators/map";
+import { map } from "rxjs/operators";
 import { AuthenticationResponse } from 'src/app/models/authentication-response.model';
 import { USER_AUTHENTICATION_TOKEN_KEY as AUTHENTICATED_USER_KEY } from '../config/constants';
 import { AuthenticatedUser } from "../models/authenticated-user.model";
