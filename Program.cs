@@ -17,23 +17,35 @@ namespace ExamSaver
         {
             IHost host = CreateHostBuilder(args).Build();
 
-            CreateDatabaseIfNotExists(host);
+            SetupEnvironment(host);
 
             host.Run();
         }
 
-        private static void CreateDatabaseIfNotExists(IHost host)
+        private static void SetupEnvironment(IHost host)
         {
-            using IServiceScope scope = host.Services.CreateScope();
-            IServiceProvider services = scope.ServiceProvider;
+            using IServiceScope serviceScope = host.Services.CreateScope();
+            IServiceProvider serviceProvider = serviceScope.ServiceProvider;
+
+            IWebHostEnvironment webHostEnvironment = serviceProvider.GetService<IWebHostEnvironment>();
+
+            if (webHostEnvironment.IsDevelopment())
+            {
+                InitializeDatabaseIfNotExists(serviceProvider);
+            }
+        }
+
+        private static void InitializeDatabaseIfNotExists(IServiceProvider serviceProvider)
+        {
             try
             {
-                DatabaseContext databaseContext = services.GetRequiredService<DatabaseContext>();
+                DatabaseContext databaseContext = serviceProvider.GetRequiredService<DatabaseContext>();
+
                 DatabaseInitializer.Initialize(databaseContext);
             }
             catch (Exception ex)
             {
-                ILogger logger = services.GetRequiredService<ILogger<Program>>();
+                ILogger logger = serviceProvider.GetRequiredService<ILogger<Program>>();
                 logger.LogError(ex, "An error occurred creating the DB.");
             }
         }

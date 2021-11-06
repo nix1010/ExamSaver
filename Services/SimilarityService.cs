@@ -77,7 +77,7 @@ namespace ExamSaver.Services
 
             if (examStudents.Count < 2)
             {
-                throw new BadRequestException("Required minimum 2 students for the similarity check");
+                throw new BadRequestException("Required minimum 2 students for similarity check");
             }
 
             StringBuilder runMessageBuilder = new StringBuilder();
