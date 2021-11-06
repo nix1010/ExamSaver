@@ -1,7 +1,5 @@
-import { SimilarityRequest } from "../models/similarity-request.model";
-
-export const URL_PREFIX = 'api';
-export const HOST = 'localhost';
+export const URI_PREFIX = 'api';
+export const HOST = window.location.hostname;
 export const PORT = '59106';
 export const USER_AUTHENTICATION_TOKEN_KEY = 'USER_AUTHENTICATION_TOKEN_KEY';
 export const LOGIN_ABSOLUTE_ROUTE = '/login';
