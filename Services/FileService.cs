@@ -113,6 +113,8 @@ namespace ExamSaver.Services
 
             CheckFileExists(studentExamFilePath);
 
+            DeleteDirectoryAndContents(studentExamFileExtractedDirectoryPath);
+
             ZipFile.ExtractToDirectory(studentExamFilePath, studentExamFileExtractedDirectoryPath, true);
 
             return studentExamFileExtractedDirectoryPath;
