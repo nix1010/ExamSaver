@@ -34,7 +34,7 @@ namespace ExamSaver.Utils
             return token.ToString().Replace("Bearer", "").Trim();
         }
 
-        public static string GetStudentResourceIdentifier(Student student, int examId)
+        public static string GetStudentExamResourceIdentifier(Student student, int examId)
         {
             return $"{examId}-{student.Id}-{student.User.FirstName}-{student.User.LastName}-{student.Index}";
         }
