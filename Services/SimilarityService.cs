@@ -4,8 +4,6 @@ using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
-using ExamSaver.Utils;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
@@ -13,12 +11,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
     public class SimilarityService
     {
+        private static readonly object similarityCheckLock = new object();
+
         private readonly ExamService examService;
         private readonly FileService fileService;
         private readonly UserService userService;
@@ -87,52 +86,56 @@ namespace ExamSaver.Services
             AddComment(argumentBuilder, similarityRequestDTO.Comment);
 
             int studentFilePathsSetCount = 0;
-            try
+
+            lock (similarityCheckLock)
             {
-                foreach (StudentExam studentExam in examStudents)
+                try
                 {
-                    string studentExamFileExtractedDirectoryPath = fileService.ExtractZipArchive(studentExam);
-
-                    try
+                    foreach (StudentExam studentExam in examStudents)
                     {
-                        SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, similarityRequestDTO.FileExtension);
-                        ++studentFilePathsSetCount;
+                        string studentExamFileExtractedDirectoryPath = fileService.ExtractZipArchive(studentExam);
+
+                        try
+                        {
+                            SetFilePaths(argumentBuilder, studentExamFileExtractedDirectoryPath, similarityRequestDTO.FileExtension);
+                            ++studentFilePathsSetCount;
+                        }
+                        catch (NotFoundException)
+                        {
+                            AppendStudentFilesErrorMessage(runMessageBuilder, studentExam);
+                        }
                     }
-                    catch (NotFoundException)
+
+                    if (studentFilePathsSetCount < 2)
                     {
-                        AppendStudentToRunMessage(runMessageBuilder, studentExam);
+                        throw new BadRequestException($"Found files for {studentFilePathsSetCount} student(s), at least 2 students are required");
                     }
+
+                    DateTime submitDateTime = DateTime.Now;
+
+                    string resultUrl = RunSimilarityCheck(argumentBuilder);
+
+                    databaseContext.SimilarityResults.Add(new SimilarityResult()
+                    {
+                        ExamId = examId,
+                        Url = resultUrl,
+                        Comment = similarityRequestDTO.Comment,
+                        Submitted = submitDateTime
+                    });
+
+                    databaseContext.SaveChanges();
+
+                    return new SimilarityRunResultDTO()
+                    {
+                        RunMessage = runMessageBuilder.Length > 0 ? runMessageBuilder.ToString() : null
+                    };
                 }
-
-                if (studentFilePathsSetCount < 2)
+                finally
                 {
-                    throw new BadRequestException($"Found files for {studentFilePathsSetCount} student(s), at least 2 students are required");
-                }
-
-                DateTime submitDateTime = DateTime.Now;
-
-                string resultUrl = RunSimilarityCheck(argumentBuilder);
-
-                databaseContext.SimilarityResults.Add(new SimilarityResult()
-                {
-                    ExamId = examId,
-                    Url = resultUrl,
-                    Comment = similarityRequestDTO.Comment,
-                    Submitted = submitDateTime
-                });
-
-                databaseContext.SaveChanges();
-
-                return new SimilarityRunResultDTO()
-                {
-                    RunMessage = runMessageBuilder.Length > 0 ? runMessageBuilder.ToString() : null
-                };
-            }
-            finally
-            {
-                foreach (StudentExam studentExam in examStudents)
-                {
-                    fileService.DeleteDirectoryAndContents(fileService.GetStudentExamFileExtractedDirectoryPath(studentExam));
+                    foreach (StudentExam studentExam in examStudents)
+                    {
+                        fileService.DeleteDirectoryAndContents(fileService.GetStudentExamFileExtractedDirectoryPath(studentExam));
+                    }
                 }
             }
         }
@@ -221,7 +224,7 @@ namespace ExamSaver.Services
             }
         }
 
-        private void AppendStudentToRunMessage(StringBuilder runMessageBuilder, StudentExam studentExam)
+        private void AppendStudentFilesErrorMessage(StringBuilder runMessageBuilder, StudentExam studentExam)
         {
             string firstName = studentExam.Student.User.FirstName;
             string lastName = studentExam.Student.User.LastName;
