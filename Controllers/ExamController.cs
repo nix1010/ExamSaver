@@ -37,7 +37,7 @@ namespace ExamSaver.Controllers
 
         [Route("taking/{examId}")]
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = RoleType.STUDENT)]
         public ExamDTO GetTakingExam([FromRoute] int examId)
         {
             return examService.GetTakingExam(Util.GetJWTToken(Request.Headers), examId);
@@ -67,7 +67,7 @@ namespace ExamSaver.Controllers
 
         [Route("holding/{examId}")]
         [HttpGet]
-        [Authorize]
+        [Authorize(Roles = RoleType.PROFESSOR)]
         public ExamDTO GetHoldingExam([FromRoute] int examId)
         {
             return examService.GetHoldingExam(Util.GetJWTToken(Request.Headers), examId);
