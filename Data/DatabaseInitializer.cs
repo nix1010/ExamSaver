@@ -140,13 +140,7 @@ namespace ExamSaver.Data
                 new UserSubject()
                 {
                     User = users[0],
-                    Subject = subjects[4],
-                    SubjectRelation = SubjectRelationType.TEACHING
-                },
-                new UserSubject()
-                {
-                    User = users[1],
-                    Subject = subjects[3],
+                    Subject = subjects[2],
                     SubjectRelation = SubjectRelationType.TEACHING
                 },
                 new UserSubject()
@@ -165,6 +159,12 @@ namespace ExamSaver.Data
                 {
                     User = users[1],
                     Subject = subjects[2],
+                    SubjectRelation = SubjectRelationType.ATTENDING
+                },
+                new UserSubject()
+                {
+                    User = users[1],
+                    Subject = subjects[3],
                     SubjectRelation = SubjectRelationType.TEACHING
                 },
                 new UserSubject()
@@ -177,6 +177,12 @@ namespace ExamSaver.Data
                 {
                     User = users[2],
                     Subject = subjects[0],
+                    SubjectRelation = SubjectRelationType.ATTENDING
+                },
+                new UserSubject()
+                {
+                    User = users[2],
+                    Subject = subjects[1],
                     SubjectRelation = SubjectRelationType.ATTENDING
                 },
                 new UserSubject()
@@ -196,7 +202,7 @@ namespace ExamSaver.Data
                     User = users[2],
                     Subject = subjects[4],
                     SubjectRelation = SubjectRelationType.ATTENDING
-                },
+                }
             };
 
             foreach (UserSubject userSubject in userSubjects)

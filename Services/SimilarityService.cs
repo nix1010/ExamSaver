@@ -6,6 +6,7 @@ using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
 using Microsoft.Extensions.Options;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -16,7 +17,7 @@ namespace ExamSaver.Services
 {
     public class SimilarityService
     {
-        private static readonly object similarityCheckLock = new object();
+        private static readonly ConcurrentDictionary<int, object> similarityCheckLocks = new ConcurrentDictionary<int, object>();
 
         private readonly ExamService examService;
         private readonly FileService fileService;
@@ -87,6 +88,8 @@ namespace ExamSaver.Services
 
             int studentFilePathsSetCount = 0;
 
+            object similarityCheckLock = similarityCheckLocks.GetOrAdd(examId, new object());
+
             lock (similarityCheckLock)
             {
                 try
@@ -136,6 +139,8 @@ namespace ExamSaver.Services
                     {
                         fileService.DeleteDirectoryAndContents(fileService.GetStudentExamFileExtractedDirectoryPath(studentExam));
                     }
+
+                    similarityCheckLocks.TryRemove(examId, out object _);
                 }
             }
         }
