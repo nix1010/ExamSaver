@@ -75,6 +75,8 @@ namespace ExamSaver.Services
         {
             string studentExamFilePath = studentExam.ExamPath;
 
+            CheckFileExists(studentExamFilePath);
+
             using ZipArchive zipArchive = ZipFile.Open(studentExamFilePath, ZipArchiveMode.Read);
 
             ZipArchiveEntry zipArchiveEntry = zipArchive.GetEntry(fileTreePath);
