@@ -30,7 +30,7 @@ namespace ExamSaver.Services
 
         public IList<FileInfoDTO> GetFileTree(string fileTreePath, StudentExam studentExam)
         {
-            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+            string studentExamFilePath = studentExam.ExamPath;
 
             CheckFileExists(studentExamFilePath);
 
@@ -73,7 +73,7 @@ namespace ExamSaver.Services
 
         public FileDTO GetFileContent(string fileTreePath, StudentExam studentExam)
         {
-            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+            string studentExamFilePath = studentExam.ExamPath;
 
             using ZipArchive zipArchive = ZipFile.Open(studentExamFilePath, ZipArchiveMode.Read);
 
@@ -96,7 +96,7 @@ namespace ExamSaver.Services
 
         public PhysicalFileResult GetFile(StudentExam studentExam)
         {
-            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+            string studentExamFilePath = studentExam.ExamPath;
 
             CheckFileExists(studentExamFilePath);
 
@@ -108,7 +108,7 @@ namespace ExamSaver.Services
 
         public string ExtractZipArchive(StudentExam studentExam)
         {
-            string studentExamFilePath = GetStudentExamFilePath(studentExam);
+            string studentExamFilePath = studentExam.ExamPath;
             string studentExamFileExtractedDirectoryPath = GetStudentExamFileExtractedDirectoryPath(studentExam);
 
             CheckFileExists(studentExamFilePath);
@@ -122,9 +122,9 @@ namespace ExamSaver.Services
 
         public string GetStudentExamFileExtractedDirectoryPath(StudentExam studentExam)
         {
-            string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(studentExam.Student, studentExam.ExamId);
-            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
-            string studentExamFileExtractedDirectoryPath = Path.Combine(studentExamDirectoryPath, studentResourceIdentifier);
+            string studentExamFileName = Path.GetFileNameWithoutExtension(studentExam.ExamPath);
+            string studentExamDirectoryPath = Path.GetDirectoryName(studentExam.ExamPath);
+            string studentExamFileExtractedDirectoryPath = Path.Combine(studentExamDirectoryPath, studentExamFileName);
 
             return studentExamFileExtractedDirectoryPath;
         }
@@ -135,15 +135,6 @@ namespace ExamSaver.Services
             {
                 throw new NotFoundException("Student resource file is not found on the disk");
             }
-        }
-
-        private string GetStudentExamFilePath(StudentExam studentExam)
-        {
-            string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(studentExam.Student, studentExam.ExamId);
-            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
-            string studentExamFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
-
-            return studentExamFilePath;
         }
 
         private bool IsOnLevel(ZipArchiveEntry zipArchiveEntry, string fileTreePath)
@@ -167,10 +158,11 @@ namespace ExamSaver.Services
             return Equals(zipArchiveEntry.Name, string.Empty) && zipArchiveEntry.FullName.EndsWith("/");
         }
 
-        public void SaveFile(IFormFile file, Exam exam, Student student, out string examFilePath)
+        public string SaveFile(IFormFile file, Exam exam, Student student)
         {
             string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(student, exam.Id);
             string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
+            string examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
 
             if (!Directory.Exists(studentExamDirectoryPath))
             {
@@ -180,8 +172,6 @@ namespace ExamSaver.Services
             {
                 DeleteExistingContent(studentExamDirectoryPath);
             }
-
-            examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
 
             if (Equals(GetFileExtension(file), ".zip"))
             {
@@ -205,6 +195,8 @@ namespace ExamSaver.Services
 
                 Directory.Delete(temporaryDirectoryPath, true);
             }
+
+            return examFilePath;
         }
 
         public void DeleteStudentExamFile(StudentExam studentExam)

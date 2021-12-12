@@ -126,7 +126,7 @@ namespace ExamSaver.Services
 
             CheckExamSubmitValidity(form, exam, student);
 
-            fileService.SaveFile(form.Files[0], exam, student, out string studentExamFilePath);
+            string studentExamFilePath = fileService.SaveFile(form.Files[0], exam, student);
 
             StudentExam studentExam = new StudentExam()
             {
