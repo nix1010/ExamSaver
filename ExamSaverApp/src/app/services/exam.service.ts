@@ -23,6 +23,10 @@ export class ExamService {
         return this.httpClient.put(`exams/holding/${examId}`, exam);
     }
 
+    deleteExam(examId: number): Observable<any> {
+        return this.httpClient.delete(`exams/holding/${examId}`);
+    }
+
     getTakingExams(pageQueryParam: number = null): Observable<HttpResponse<Exam[]>> {
         return this.httpClient.get<Exam[]>(this.appendPageQueryParam(`exams/taking`, pageQueryParam), { observe: 'response' });
     }
@@ -39,7 +43,7 @@ export class ExamService {
         return this.httpClient.get<Exam>(`exams/holding/${examId}`);
     }
 
-    getExamStudents(examId: number): Observable<StudentExam[]> {
+    getStudentExams(examId: number): Observable<StudentExam[]> {
         return this.httpClient.get<StudentExam[]>(`exams/holding/${examId}/students`);
     }
 

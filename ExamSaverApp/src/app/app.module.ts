@@ -8,10 +8,8 @@ import { ErrorPageComponent } from './components/error-pages/error-page/error-pa
 import { AddUpdateExamComponent } from './components/exams/add-update-exam/add-update-exam.component';
 import { ExamListComponent } from './components/exams/exam-list/exam-list.component';
 import { ExamsComponent } from './components/exams/exams.component';
-import { FileExplorerComponent } from './components/exams/student-exam/file-explorer/file-explorer.component';
 import { FileUploadComponent } from './components/exams/file-upload/file-upload.component';
-import { FileViewerComponent } from './components/exams/student-exam/file-viewer/file-viewer.component';
-import { StudentListComponent } from './components/exams/student-list/student-list.component';
+import { StudentExamsComponent } from './components/exams/student-exams/student-exams.component';
 import { LoadSpinnerComponent } from './components/load-spinner/load-spinner.component';
 import { LoginComponent } from './components/login/login.component';
 import { NavBarComponent } from './components/nav-bar/nav-bar.component';
@@ -23,11 +21,15 @@ import { ExamService } from './services/exam.service';
 import { RoleGuardService } from './services/role-guard.service';
 import { SubjectService } from './services/subject.service';
 import { UserService } from './services/user.service';
-import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
 import { HighlightDirective } from './directives/highlight.directive';
 import { NgbDropdownModule, NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { SimilarityResultComponent } from './components/exams/similarity-result/similarity-result.component';
+import { FileExplorerComponent } from './components/exams/student-exams/student-exam/file-explorer/file-explorer.component';
+import { FileViewerComponent } from './components/exams/student-exams/student-exam/file-viewer/file-viewer.component';
+import { SimilarityCheckComponent } from './components/exams/student-exams/similarity-check/similarity-check.component';
+import { SimilarityResultComponent } from './components/exams/student-exams/similarity-check/similarity-result/similarity-result.component';
+import { StudentExamComponent } from './components/exams/student-exams/student-exam/student-exam.component';
+import { ExamItemComponent } from './components/exams/exam-list/exam-item/exam-item.component';
 
 
 @NgModule({
@@ -44,13 +46,15 @@ import { SimilarityResultComponent } from './components/exams/similarity-result/
         ExamListComponent,
         FileExplorerComponent,
         FileViewerComponent,
-        StudentListComponent,
+        StudentExamsComponent,
         LoadSpinnerComponent,
         HasRoleDirective,
         StudentExamComponent,
         HighlightDirective,
         DashboardComponent,
         SimilarityResultComponent,
+        ExamItemComponent,
+        SimilarityCheckComponent,
     ],
     imports: [
         BrowserModule,

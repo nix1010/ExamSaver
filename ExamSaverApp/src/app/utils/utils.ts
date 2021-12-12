@@ -3,6 +3,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Subscription } from 'rxjs';
 
 export function getErrorResponseMessage(error: HttpErrorResponse): string {
+    if (!error) {
+        return null;
+    }
+
     if (error.status === 0) {
         return "Can't reach server right now, please try again later";
     }

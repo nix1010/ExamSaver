@@ -1,10 +1,10 @@
-import { finalize } from 'rxjs/operators';
-import { SimilarityService } from './../../../services/similarity.service';
-import { DISPLAY_DATE_FORMAT } from './../../../config/constants';
-import { SimilarityResult } from '../../../models/similarity-result.model';
-import { Component, Input, OnInit, Output, EventEmitter } from '@angular/core';
-import { getErrorResponseMessage } from 'src/app/utils/utils';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { finalize } from 'rxjs/operators';
+import { DISPLAY_DATE_FORMAT } from 'src/app/config/constants';
+import { SimilarityResult } from 'src/app/models/similarity-result.model';
+import { SimilarityService } from 'src/app/services/similarity.service';
+import { getErrorResponseMessage } from 'src/app/utils/utils';
 
 @Component({
     selector: 'app-similarity-result',
@@ -27,7 +27,7 @@ export class SimilarityResultComponent implements OnInit {
     ngOnInit(): void {
     }
 
-    deleteSimilarityResult(similarityResultId: number): void {
+    deleteSimilarityResult(similarityResult: SimilarityResult): void {
         let confirmation: boolean = confirm("Do you really want to delete?");
 
         if (!confirmation) {
@@ -36,7 +36,7 @@ export class SimilarityResultComponent implements OnInit {
 
         this.deleting = true;
         
-        this.similarityService.deleteSimilarityResult(this.examId, similarityResultId)
+        this.similarityService.deleteSimilarityResult(this.examId, similarityResult.id)
             .pipe(finalize(() => this.deleting = false))
             .subscribe(() => {
                 this.deletedEmitter.emit();

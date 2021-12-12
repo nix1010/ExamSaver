@@ -36,7 +36,9 @@ namespace ExamSaver.Services
 
         public IList<SimilarityResultDTO> GetSimilarityResults(string token, int examId)
         {
-            return GetSimilarityResultsQuery(token, examId)
+            CheckRequestValidity(token, examId);
+
+            return GetSimilarityResultsQuery(examId)
                 .OrderByDescending(similarityResult => similarityResult.Submitted)
                 .Select(similarityResult => SimilarityResultDTO.FromEntity(similarityResult))
                 .ToList();
@@ -44,13 +46,15 @@ namespace ExamSaver.Services
 
         public void DeleteSimilarityResult(string token, int examId, int similarityResultId)
         {
-            SimilarityResult similarityResult = GetSimilarityResultsQuery(token, examId)
+            CheckRequestValidity(token, examId);
+
+            SimilarityResult similarityResult = GetSimilarityResultsQuery(examId)
                 .Where(similarityResult => similarityResult.Id == similarityResultId)
                 .FirstOrDefault();
 
             if (similarityResult == null)
             {
-                throw new NotFoundException("Similarity result is not found");
+                throw new NotFoundException($"Similarity result with id '{similarityResultId}' is not found");
             }
 
             databaseContext.SimilarityResults.Remove(similarityResult);
@@ -58,22 +62,20 @@ namespace ExamSaver.Services
             databaseContext.SaveChanges();
         }
 
-        private IQueryable<SimilarityResult> GetSimilarityResultsQuery(string token, int examId)
+        private IQueryable<SimilarityResult> GetSimilarityResultsQuery(int examId)
         {
-            int userId = userService.GetUserIdFromToken(token);
-
-            Exam exam = examService.GetExamEntity(token, examId, SubjectRelationType.TEACHING);
-
-            examService.CheckUserTeachesSubject(userId, exam.SubjectId);
-
-            return databaseContext.SimilarityResults
+            return databaseContext
+                .SimilarityResults
                 .Where(similarityResult => similarityResult.ExamId == examId);
         }
 
         public SimilarityRunResultDTO PerformSimilarityCheck(string token, int examId, SimilarityRequestDTO similarityRequestDTO)
         {
+            CheckRequestValidity(token, examId);
+
             string language = GetLanguageFromExtension(similarityRequestDTO.FileExtension);
-            List<StudentExam> examStudents = examService.GetExamStudentsQuery(token, examId).ToList();
+
+            List<StudentExam> examStudents = examService.GetStudentExamsQuery(examId).ToList();
 
             if (examStudents.Count < 2)
             {
@@ -143,6 +145,15 @@ namespace ExamSaver.Services
                     similarityCheckLocks.TryRemove(examId, out object _);
                 }
             }
+        }
+
+        private void CheckRequestValidity(string token, int examId)
+        {
+            int userId = userService.GetUserIdFromToken(token);
+
+            Exam exam = examService.GetExam(examId);
+
+            examService.CheckUserTeachesSubject(userId, exam.SubjectId);
         }
 
         private void SetFilePaths(StringBuilder argumentBuilder, string studentExamFileExtractedDirectoryPath, string fileExtension)

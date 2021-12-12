@@ -1,0 +1,46 @@
+<div class="similarity" *ngIf="show">
+    <div class="similarity-check card mt-5">
+        <h5 class="mb-3">Similarity check</h5>
+        <form #form>
+            <div class="form-group mb-3">
+                <label for="fileExtension">File extension:</label>
+                <select class="form-select" id="fileExtension" name="fileExtension"
+                    [(ngModel)]="similarityRequest.fileExtension" required>
+                    <option *ngFor="let fileExtension of FILE_EXTENSIONS" [ngValue]="fileExtension">
+                        .{{ fileExtension }}
+                    </option>
+                </select>
+                <div class="invalid-feedback">File extension must be provided</div>
+            </div>
+            <div class="form-group">
+                <label for="comment">Comment:</label>
+                <input type="text" id="comment" name="comment" class="form-control" placeholder="Optional"
+                    [(ngModel)]="similarityRequest.comment" />
+            </div>
+            <div class="similarity-check-button mt-4">
+                <button class="btn btn-primary btn-sm" [disabled]="showSimilarityRunningSpinner"
+                    (click)="performSimilarityCheck()">
+                    Perform similarity check
+                </button>
+                <div class="similarity-check-spinner" *ngIf="showSimilarityRunningSpinner">
+                    <app-load-spinner [size]="'small'"></app-load-spinner>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="mt-5" *ngIf="similarityResults.length > 0">
+        <h6>Similarity results
+            <small class="results-availability">
+                (Available for 14 days)
+            </small>
+            :
+        </h6>
+        <div class="list-group">
+            <div *ngFor="let similarityResult of similarityResults" class="list-group-item">
+                <app-similarity-result [examId]="examId" [similarityResult]="similarityResult"
+                    (deleted)="deletedSimilarityResult()" (error)="errorMessage = $event">
+                </app-similarity-result>
+            </div>
+        </div>
+    </div>
+</div>

@@ -93,12 +93,22 @@ namespace ExamSaver.Controllers
             return NoContent();
         }
 
+        [Route("holding/{examId}")]
+        [HttpDelete]
+        [Authorize(Roles = RoleType.PROFESSOR)]
+        public IActionResult DeleteExam([FromRoute] int examId)
+        {
+            examService.DeleteExam(Util.GetJWTToken(Request.Headers), examId);
+
+            return NoContent();
+        }
+
         [Route("holding/{examId}/students")]
         [HttpGet]
         [Authorize(Roles = RoleType.PROFESSOR)]
-        public IList<StudentExamDTO> GetExamStudents([FromRoute] int examId)
+        public IList<StudentExamDTO> GetStudentExams([FromRoute] int examId)
         {
-            return examService.GetExamStudents(Util.GetJWTToken(Request.Headers), examId);
+            return examService.GetStudentExams(Util.GetJWTToken(Request.Headers), examId);
         }
 
         [Route("holding/{examId}/students/similarity")]
@@ -118,7 +128,7 @@ namespace ExamSaver.Controllers
         }
 
         [Route("holding/{examId}/students/similarity/{similarityResultId}")]
-        [HttpGet]
+        [HttpDelete]
         [Authorize(Roles = RoleType.PROFESSOR)]
         public IActionResult DeleteSimilarityResult([FromRoute] int examId, [FromRoute] int similarityResultId)
         {

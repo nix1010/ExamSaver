@@ -91,13 +91,13 @@ export class AddUpdateExamComponent implements OnInit {
         if (this.update) {
             this.examService.updateExam(this.examId, this.exam)
                 .pipe(finalize(() => this.submitProcess = false))
-                .subscribe((_response: any) => this.submitProcessSuccess = true,
+                .subscribe(() => this.submitProcessSuccess = true,
                     (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
         }
         else {
             this.examService.addExam(this.exam)
                 .pipe(finalize(() => this.submitProcess = false))
-                .subscribe((_response: any) => this.submitProcessSuccess = true,
+                .subscribe(() => this.submitProcessSuccess = true,
                     (err: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(err));
         }
 

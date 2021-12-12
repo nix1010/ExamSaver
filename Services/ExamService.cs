@@ -32,7 +32,7 @@ namespace ExamSaver.Services
         {
             int userId = userService.GetUserIdFromToken(token);
 
-            CheckExamAddValidity(examDTO, userId);
+            CheckExamAddValidity(userId, examDTO);
 
             databaseContext.Add(new Exam()
             {
@@ -48,16 +48,9 @@ namespace ExamSaver.Services
         {
             int userId = userService.GetUserIdFromToken(token);
 
-            Exam exam = databaseContext
-                .Exams
-                .Find(examId);
+            Exam exam = GetExam(examId);
 
-            if (exam == null)
-            {
-                throw new NotFoundException($"Exam with id '{examId}' is not found");
-            }
-
-            CheckExamUpdateValidity(examDTO, userId);
+            CheckExamUpdateValidity(userId, examDTO);
 
             exam.StartTime = examDTO.StartTime;
             exam.EndTime = examDTO.EndTime;
@@ -67,9 +60,29 @@ namespace ExamSaver.Services
             databaseContext.SaveChanges();
         }
 
-        private void CheckExamAddValidity(ExamDTO examDTO, int userId)
+        public void DeleteExam(string token, int examId)
         {
-            CheckExamUpdateValidity(examDTO, userId);
+            int userId = userService.GetUserIdFromToken(token);
+
+            Exam exam = GetExam(examId);
+
+            CheckUserTeachesSubject(userId, exam.SubjectId);
+
+            List<StudentExam> studentExams = GetStudentExamsQuery(examId).ToList();
+
+            foreach (StudentExam studentExam in studentExams)
+            {
+                fileService.DeleteStudentExamFile(studentExam);
+            }
+
+            databaseContext.Exams.Remove(exam);
+
+            databaseContext.SaveChanges();
+        }
+
+        private void CheckExamAddValidity(int userId, ExamDTO examDTO)
+        {
+            CheckExamUpdateValidity(userId, examDTO);
 
             Exam exam = databaseContext
                 .Exams
@@ -84,7 +97,7 @@ namespace ExamSaver.Services
             }
         }
 
-        private void CheckExamUpdateValidity(ExamDTO examDTO, int userId)
+        private void CheckExamUpdateValidity(int userId, ExamDTO examDTO)
         {
             CheckUserTeachesSubject(userId, examDTO.SubjectId);
 
@@ -109,14 +122,7 @@ namespace ExamSaver.Services
                 throw new UserNotFoundException("Authenticated user is not a student");
             }
 
-            Exam exam = databaseContext
-                .Exams
-                .FirstOrDefault(exam => exam.Id == examId);
-
-            if (exam == null)
-            {
-                throw new NotFoundException($"Exam with id '{examId}' is not found");
-            }
+            Exam exam = GetExam(examId);
 
             CheckExamSubmitValidity(form, exam, student);
 
@@ -156,21 +162,11 @@ namespace ExamSaver.Services
 
         private void CheckExamSubmitValidity(IFormCollection form, Exam exam, Student student)
         {
+            CheckUserAttendsSubject(student.Id, exam.SubjectId);
+
             if (form.Files.Count == 0 || form.Files.Count > 1)
             {
                 throw new BadRequestException("One file must be provided");
-            }
-
-            UserSubject userSubject = databaseContext
-                .UsersSubjects
-                .Where(userSubject => userSubject.UserId == student.Id
-                                   && userSubject.SubjectId == exam.SubjectId
-                                   && userSubject.SubjectRelation == SubjectRelationType.ATTENDING)
-                .FirstOrDefault();
-
-            if (userSubject == null)
-            {
-                throw new BadRequestException($"Student with index '{student.Index}' doesn't attend to subject '{exam.Subject.Name}'");
             }
 
             if (exam.StartTime > DateTime.Now)
@@ -186,54 +182,57 @@ namespace ExamSaver.Services
 
         public PagedList<ExamDTO> GetHoldingExams(string token, int page)
         {
-            return GetExams(token, SubjectRelationType.TEACHING, page);
+            int userId = userService.GetUserIdFromToken(token);
+
+            return GetExams(userId, SubjectRelationType.TEACHING, page);
         }
 
         public ExamDTO GetHoldingExam(string token, int examId)
         {
-            return GetExam(token, examId, SubjectRelationType.TEACHING);
+            int userId = userService.GetUserIdFromToken(token);
+
+            Exam exam = GetExam(examId);
+
+            CheckUserTeachesSubject(userId, exam.SubjectId);
+
+            return ExamDTO.FromEntity(exam);
         }
 
         public PagedList<ExamDTO> GetTakingExams(string token, int page)
         {
-            return GetExams(token, SubjectRelationType.ATTENDING, page);
+            int userId = userService.GetUserIdFromToken(token);
+
+            return GetExams(userId, SubjectRelationType.ATTENDING, page);
         }
 
         public ExamDTO GetTakingExam(string token, int examId)
         {
-            return GetExam(token, examId, SubjectRelationType.ATTENDING);
+            int userId = userService.GetUserIdFromToken(token);
+
+            Exam exam = GetExam(examId);
+
+            CheckUserAttendsSubject(userId, exam.SubjectId);
+
+            return ExamDTO.FromEntity(exam);
         }
 
-        public ExamDTO GetExam(string token, int examId, SubjectRelationType subjectRelationType)
+        public Exam GetExam(int examId)
         {
-            return ExamDTO.FromEntity(GetExamEntity(token, examId, subjectRelationType));
-        }
-
-        public Exam GetExamEntity(string token, int examId, SubjectRelationType subjectRelationType)
-        {
-            Exam exam = GetExamsQuery(token, subjectRelationType)
+            Exam exam = databaseContext.Exams
+                .Include(exam => exam.Subject)
                 .Where(exam => exam.Id == examId)
                 .FirstOrDefault();
 
             if (exam == null)
             {
-                throw new NotFoundException($"Exam with id '{examId}' is not found for the authenticated user");
+                throw new NotFoundException($"Exam with id '{examId}' is not found");
             }
 
             return exam;
         }
 
-        public PagedList<ExamDTO> GetExams(string token, SubjectRelationType subjectRelationType, int page = 1)
+        private PagedList<ExamDTO> GetExams(int userId, SubjectRelationType subjectRelationType, int page = 1)
         {
-            return GetExamsQuery(token, subjectRelationType)
-                .OrderByDescending(exam => exam.StartTime)
-                .Select(exam => ExamDTO.FromEntity(exam))
-                .ToPagedList(page);
-        }
-
-        public IQueryable<Exam> GetExamsQuery(string token, SubjectRelationType subjectRelationType)
-        {
-            int userId = userService.GetUserIdFromToken(token);
             DateTime now = DateTime.Now;
 
             return databaseContext
@@ -249,45 +248,66 @@ namespace ExamSaver.Services
                                  && selection.userSubject.SubjectRelation == subjectRelationType
                                  && (subjectRelationType == SubjectRelationType.TEACHING
                                     || selection.exam.StartTime <= now && selection.exam.EndTime >= now))
-                .Select(selection => selection.exam);
+                .Select(selection => selection.exam)
+                .OrderByDescending(exam => exam.StartTime)
+                .Select(exam => ExamDTO.FromEntity(exam))
+                .ToPagedList(page);
         }
 
-        public IList<StudentExamDTO> GetExamStudents(string token, int examId)
+        public IList<StudentExamDTO> GetStudentExams(string token, int examId)
         {
-            return GetExamStudentsQuery(token, examId)
+            int userId = userService.GetUserIdFromToken(token);
+
+            Exam exam = GetExam(examId);
+
+            CheckUserTeachesSubject(userId, exam.SubjectId);
+
+            return GetStudentExamsQuery(examId)
                 .Select(studentExam => StudentExamDTO.FromEntity(studentExam))
                 .ToList();
         }
 
         public StudentExamDTO GetStudentExam(string token, int examId, int studentId)
         {
-            return StudentExamDTO.FromEntity(GetStudentExamEntity(token, examId, studentId));
+            int userId = userService.GetUserIdFromToken(token);
+
+            return StudentExamDTO.FromEntity(GetStudentExam(userId, examId, studentId));
         }
 
         public IList<FileInfoDTO> GetStudentExamFileTree(string token, int examId, int studentId, string fileTreePath)
         {
-            StudentExam studentExam = GetStudentExamEntity(token, examId, studentId);
+            int userId = userService.GetUserIdFromToken(token);
+
+            StudentExam studentExam = GetStudentExam(userId, examId, studentId);
 
             return fileService.GetFileTree(fileTreePath, studentExam);
         }
 
         public FileDTO GetStudentExamFileContent(string token, int examId, int studentId, string fileTreePath)
         {
-            StudentExam studentExam = GetStudentExamEntity(token, examId, studentId);
+            int userId = userService.GetUserIdFromToken(token);
+
+            StudentExam studentExam = GetStudentExam(userId, examId, studentId);
 
             return fileService.GetFileContent(fileTreePath, studentExam);
         }
 
         public PhysicalFileResult GetStudentExamFile(string token, int examId, int studentId)
         {
-            StudentExam studentExam = GetStudentExamEntity(token, examId, studentId);
+            int userId = userService.GetUserIdFromToken(token);
+
+            StudentExam studentExam = GetStudentExam(userId, examId, studentId);
 
             return fileService.GetFile(studentExam);
         }
 
-        private StudentExam GetStudentExamEntity(string token, int examId, int studentId)
+        private StudentExam GetStudentExam(int userId, int examId, int studentId)
         {
-            StudentExam studentExam = GetExamStudentsQuery(token, examId)
+            Exam exam = GetExam(examId);
+
+            CheckUserTeachesSubject(userId, exam.SubjectId);
+
+            StudentExam studentExam = GetStudentExamsQuery(examId)
                 .Where(studentExam => studentExam.StudentId == studentId)
                 .FirstOrDefault();
 
@@ -299,19 +319,8 @@ namespace ExamSaver.Services
             return studentExam;
         }
 
-        public IQueryable<StudentExam> GetExamStudentsQuery(string token, int examId)
+        public IQueryable<StudentExam> GetStudentExamsQuery(int examId)
         {
-            int userId = userService.GetUserIdFromToken(token);
-
-            Exam exam = databaseContext.Exams.Find(examId);
-
-            if (exam == null)
-            {
-                throw new NotFoundException($"Exam with id '{examId}' doesn't exist");
-            }
-
-            CheckUserTeachesSubject(userId, exam.SubjectId);
-
             return databaseContext
                 .StudentsExams
                 .Include(studentExam => studentExam.Student)
@@ -319,19 +328,34 @@ namespace ExamSaver.Services
                 .Where(studentExam => studentExam.ExamId == examId);
         }
 
+        public void CheckUserAttendsSubject(int userId, int subjectId)
+        {
+            UserSubject userSubject = GetUserSubject(userId, subjectId, SubjectRelationType.ATTENDING);
+
+            if (userSubject == null)
+            {
+                throw new BadRequestException($"Authenticated user doesn't attend subject with id '{subjectId}'");
+            }
+        }
+
         public void CheckUserTeachesSubject(int userId, int subjectId)
         {
-            UserSubject userSubject = databaseContext
-               .UsersSubjects
-               .Where(userSubject => userSubject.UserId == userId
-                                  && userSubject.SubjectId == subjectId
-                                  && userSubject.SubjectRelation == SubjectRelationType.TEACHING)
-               .FirstOrDefault();
+            UserSubject userSubject = GetUserSubject(userId, subjectId, SubjectRelationType.TEACHING);
 
             if (userSubject == null)
             {
                 throw new BadRequestException($"Authenticated user doesn't teach subject with id '{subjectId}'");
             }
+        }
+
+        private UserSubject GetUserSubject(int userId, int subjectId, SubjectRelationType subjectRelationType)
+        {
+            return databaseContext
+               .UsersSubjects
+               .Where(userSubject => userSubject.UserId == userId
+                                  && userSubject.SubjectId == subjectId
+                                  && userSubject.SubjectRelation == subjectRelationType)
+               .FirstOrDefault();
         }
     }
 }

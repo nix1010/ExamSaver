@@ -207,6 +207,14 @@ namespace ExamSaver.Services
             }
         }
 
+        public void DeleteStudentExamFile(StudentExam studentExam)
+        {
+            string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(studentExam.Student, studentExam.ExamId);
+            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
+
+            DeleteDirectoryAndContents(studentExamDirectoryPath);
+        }
+
         public string GetFileExtension(IFormFile file)
         {
             string fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');

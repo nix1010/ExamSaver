@@ -76,6 +76,15 @@ export class ExamsComponent implements OnInit, OnDestroy {
                 (error: HttpErrorResponse) => this.errorMessage = getErrorResponseMessage(error));
     }
 
+    onDeleted(): void {
+        this.errorMessage = null;
+        this.getExams();
+    }
+
+    onDeleteError(error: HttpErrorResponse): void {
+        this.errorMessage = getErrorResponseMessage(error);
+    }
+
     getExamsByRole(): Observable<HttpResponse<Exam[]>> {
         if (this.role === Role.PROFESSOR) {
             return this.examService.getHoldingExams(this.page?.currentPage);
@@ -113,6 +122,11 @@ export class ExamsComponent implements OnInit, OnDestroy {
     }
 
     pageChange(): void {
-        this.router.navigate([getExamsUri(this.role)], { queryParams: { page: this.page.currentPage } });
+        this.router.navigate([getExamsUri(this.role)],
+            {
+                queryParams: {
+                    page: this.page.currentPage
+                }
+            });
     }
 }

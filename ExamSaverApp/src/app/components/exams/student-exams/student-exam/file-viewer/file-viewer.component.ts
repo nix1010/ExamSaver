@@ -2,10 +2,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { finalize } from 'rxjs/operators';
+import { FileContent } from 'src/app/models/file-content.model';
 import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
 import { getErrorResponseMessage, getFormattedFileSize } from 'src/app/utils/utils';
-import { FileContent } from './../../../../models/file-content.model';
 
 
 @Component({

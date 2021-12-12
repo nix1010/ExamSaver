@@ -1,0 +1,36 @@
+a {
+    text-decoration: none;
+    color: black;
+}
+
+.content {
+    border-radius: 5px;
+    background-color: white;
+    padding: 15px;
+    box-shadow: 7px 7px 12px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .exam-link:hover {
+        .subject-name {
+            text-decoration: underline;
+        }
+    }
+
+    .subject-name {
+        font-size: 1.1rem;
+    }
+
+    .duration {
+        font-size: 0.75rem;
+    }
+
+    .options {
+        font-size: 1.3em;
+
+        .delete-exam {
+            cursor: pointer;
+        }
+    }
+}

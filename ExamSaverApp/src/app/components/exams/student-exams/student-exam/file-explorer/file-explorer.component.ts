@@ -3,10 +3,10 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
 import { finalize } from 'rxjs/operators';
+import { FileInfo } from 'src/app/models/file-info.model';
+import { ExamService } from 'src/app/services/exam.service';
 import { StudentExamService } from 'src/app/services/student-exam.service';
 import { equalUris, getErrorResponseMessage, getFormattedFileSize, unsubscribeFrom } from 'src/app/utils/utils';
-import { FileInfo } from '../../../../models/file-info.model';
-import { ExamService } from '../../../../services/exam.service';
 
 @Component({
     selector: 'app-file-explorer',

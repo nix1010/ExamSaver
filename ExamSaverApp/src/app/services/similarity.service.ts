@@ -15,7 +15,7 @@ export class SimilarityService {
     }
 
     deleteSimilarityResult(examId: number, similarityResultId: number): Observable<any> {
-        return this.httpClient.get(`exams/holding/${examId}/students/similarity/${similarityResultId}`);
+        return this.httpClient.delete(`exams/holding/${examId}/students/similarity/${similarityResultId}`);
     }
 
     runSimilarityCheck(examId: number, similarityRequest: SimilarityRequest): Observable<SimilarityRunResult> {

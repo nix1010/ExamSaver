@@ -1,19 +1,18 @@
-import { DashboardComponent } from './components/dashboard/dashboard.component';
-import { StudentExamComponent } from './components/exams/student-exam/student-exam.component';
-import { AuthGuardService } from './services/auth-guard.service';
-import { StudentListComponent } from './components/exams/student-list/student-list.component';
-import { ExamListComponent } from './components/exams/exam-list/exam-list.component';
-import { FileViewerComponent } from './components/exams/student-exam/file-viewer/file-viewer.component';
-import { FileUploadComponent } from './components/exams/file-upload/file-upload.component';
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 import { ErrorPageComponent } from './components/error-pages/error-page/error-page.component';
 import { AddUpdateExamComponent } from './components/exams/add-update-exam/add-update-exam.component';
 import { ExamsComponent } from './components/exams/exams.component';
+import { FileUploadComponent } from './components/exams/file-upload/file-upload.component';
+import { FileExplorerComponent } from './components/exams/student-exams/student-exam/file-explorer/file-explorer.component';
+import { FileViewerComponent } from './components/exams/student-exams/student-exam/file-viewer/file-viewer.component';
+import { StudentExamComponent } from './components/exams/student-exams/student-exam/student-exam.component';
+import { StudentExamsComponent } from './components/exams/student-exams/student-exams.component';
 import { LoginComponent } from './components/login/login.component';
 import { Role } from './models/role.model';
+import { AuthGuardService } from './services/auth-guard.service';
 import { RoleGuardService } from './services/role-guard.service';
-import { FileExplorerComponent } from './components/exams/student-exam/file-explorer/file-explorer.component';
 
 
 const routes: Routes = [
@@ -69,7 +68,7 @@ const routes: Routes = [
             },
             {
                 path: 'holding/:examId/students',
-                component: StudentListComponent,
+                component: StudentExamsComponent,
                 canActivate: [RoleGuardService],
                 data: {
                     roles: [Role.PROFESSOR]

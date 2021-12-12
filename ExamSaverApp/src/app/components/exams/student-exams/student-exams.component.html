@@ -1,0 +1,47 @@
+<app-load-spinner *ngIf="showSpinner"></app-load-spinner>
+<div *ngIf="errorMessage" class="banner-alert alert alert-danger fade show w-100 text-center">
+    {{ errorMessage }}
+</div>
+<div *ngIf="similarityRunMessage" class="banner-alert alert alert-warning fade show w-100 text-center">
+    {{ similarityRunResult.runMessage }}
+</div>
+<div class="container wrapper" *ngIf="showContent">
+    <div class="row mt-5">
+        <div class="col">
+            <h4>{{ exam.subjectName }}</h4>
+            <div class="date">
+                {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
+            </div>
+            <div class="duration">
+                {{ exam.startTime | date: DISPLAY_TIME_FORMAT }} - {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+            </div>
+            <app-similarity-check [examId]="examId" [show]="examStudents.length > 1" (run)="onSimilarityCheckRun()"
+                (result)="onSimilarityCheckResult($event)" (error)="onSimilarityCheckError($event)">
+            </app-similarity-check>
+        </div>
+        <div class="col mt-4 students-list">
+            <div *ngIf="examStudents.length > 0 else noStudents">
+                <h6>Students:</h6>
+                <div class="list-group">
+                    <a *ngFor="let examStudent of examStudents"
+                        [routerLink]="'/exams/holding/' + examStudent.examId + '/students/' + examStudent.studentId + '/tree'"
+                        class="list-group-item list-group-item-action">
+                        <div class="student">
+                            <div class="name">
+                                {{ examStudent.firstName }} {{ examStudent.lastName }}, {{ examStudent.index }}
+                            </div>
+                            <div class="submit-time" [title]="examStudent.uploadTime | date: DISPLAY_DATE_FORMAT">
+                                {{ examStudent.uploadTime | date: DISPLAY_TIME_FORMAT }}
+                            </div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <ng-template #noStudents>
+                <div class="no-content">
+                    No students have submitted work for this exam
+                </div>
+            </ng-template>
+        </div>
+    </div>
+</div>

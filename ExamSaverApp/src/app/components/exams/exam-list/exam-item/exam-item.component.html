@@ -1,0 +1,30 @@
+<div class="card mb-3">
+    <div class="content">
+        <a [routerLink]="getExamUri(exam)" class="exam-link">
+            <div class="description">
+                <div class="subject-name mb-2">
+                    <b>{{ exam.subjectName }}</b>
+                </div>
+                <div class="mb-1">
+                    {{ exam.startTime | date: DISPLAY_DATE_FORMAT }}
+                </div>
+                <div class="duration">
+                    {{ exam.startTime | date: DISPLAY_TIME_FORMAT }}
+                    -
+                    {{ exam.endTime | date: DISPLAY_TIME_FORMAT }}
+                </div>
+            </div>
+        </a>
+        <div class="options" *ngIf="role === Role.PROFESSOR">
+            <a [routerLink]="'/exams/holding/' + exam.id + '/update'" title="Update exam">
+                <i class="fas fa-edit"></i>
+            </a>
+            <div class="delete-exam ml-2">
+                <app-load-spinner *ngIf="deleting else deleteIcon;"></app-load-spinner>
+                <ng-template #deleteIcon>
+                    <i class="fas fa-trash-alt" (click)="deleteExam(exam)" title="Delete exam"></i>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+</div>
