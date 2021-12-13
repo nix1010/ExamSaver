@@ -14,12 +14,11 @@ namespace ExamSaver.Models.Entity
         [Column("user_id")]
         [ForeignKey("User")]
         public int Id { get; set; }
-        
         public User User { get; set; }
+
         [Column("index")]
-        
         public string Index { get; set; }
-        
+
         public ICollection<StudentExam> Exams { get; set; }
     }
 }

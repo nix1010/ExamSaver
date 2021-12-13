@@ -32,11 +32,6 @@ namespace ExamSaver.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder
-                .Entity<Role>()
-                .Property(r => r.Name)
-                .HasConversion<string>();
-
-            modelBuilder
                 .Entity<UserSubject>()
                 .HasKey(us => new { us.UserId, us.SubjectId });
 
