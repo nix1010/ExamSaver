@@ -107,7 +107,7 @@ namespace ExamSaver.Services
             }
         }
 
-        public void SubmitExam(string token, int examId, IFormCollection form)
+        public void SubmitWork(string token, int examId, IFormCollection form)
         {
             int userId = userService.GetUserIdFromToken(token);
 

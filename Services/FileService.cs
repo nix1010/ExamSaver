@@ -164,7 +164,7 @@ namespace ExamSaver.Services
         {
             string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(student, exam.Id);
             string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
-            string examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}.zip");
+            string examFilePath = Path.Combine(studentExamDirectoryPath, $"{studentResourceIdentifier}{Constant.STUDENT_EXAM_FILE_EXTENSION}");
 
             if (!Directory.Exists(studentExamDirectoryPath))
             {
@@ -175,7 +175,7 @@ namespace ExamSaver.Services
                 DeleteExistingContent(studentExamDirectoryPath);
             }
 
-            if (Equals(GetFileExtension(file), ".zip"))
+            if (Equals(GetFileExtension(file), Constant.STUDENT_EXAM_FILE_EXTENSION))
             {
                 using FileStream fileStream = new FileStream(examFilePath, FileMode.Create);
                 file.CopyTo(fileStream);
@@ -203,8 +203,8 @@ namespace ExamSaver.Services
 
         public void DeleteStudentExamFile(StudentExam studentExam)
         {
-            string studentResourceIdentifier = Util.GetStudentExamResourceIdentifier(studentExam.Student, studentExam.ExamId);
-            string studentExamDirectoryPath = Path.Combine(appSettings.ExamsDirectoryPath, studentResourceIdentifier);
+            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamDirectoryPath = Path.GetDirectoryName(studentExamFilePath);
 
             DeleteDirectoryAndContents(studentExamDirectoryPath);
         }

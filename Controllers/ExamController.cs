@@ -46,9 +46,9 @@ namespace ExamSaver.Controllers
         [Route("taking/{examId}")]
         [HttpPost]
         [Authorize(Roles = RoleType.STUDENT)]
-        public IActionResult UploadExam([FromRoute] int examId, [FromForm] IFormCollection form)
+        public IActionResult SubmitWork([FromRoute] int examId, [FromForm] IFormCollection form)
         {
-            examService.SubmitExam(Util.GetJWTToken(Request.Headers), examId, form);
+            examService.SubmitWork(Util.GetJWTToken(Request.Headers), examId, form);
 
             return Created(string.Empty, null);
         }
