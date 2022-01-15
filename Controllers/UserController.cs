@@ -1,5 +1,5 @@
 ﻿using ExamSaver.Models.API;
-using ExamSaver.Services;
+using ExamSaver.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +9,9 @@ namespace ExamSaver.Controllers
     [Route("users")]
     public class UserController : ControllerBase
     {
-        private readonly UserService userService;
+        private readonly IUserService userService;
 
-        public UserController(UserService userService)
+        public UserController(IUserService userService)
         {
             this.userService = userService;
         }

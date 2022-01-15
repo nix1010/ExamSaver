@@ -5,5 +5,5 @@ export class StudentExam {
     lastName: string;
     index: string;
     uploadTime: Date;
-    examPath: string;
+    examFilePath: string;
 }

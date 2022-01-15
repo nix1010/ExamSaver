@@ -4,6 +4,7 @@ using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
+using ExamSaver.Services.Interfaces;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly DatabaseContext databaseContext;
         private readonly AppSettings appSettings;

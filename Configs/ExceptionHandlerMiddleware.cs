@@ -34,6 +34,7 @@ namespace ExamSaver.Configs
                 HttpStatusCode httpStatusCode = error switch
                 {
                     UserNotFoundException _ => HttpStatusCode.Unauthorized,
+                    UnauthenticatedException _ => HttpStatusCode.Unauthorized,
                     BadRequestException _ => HttpStatusCode.BadRequest,
                     NotFoundException _ => HttpStatusCode.NotFound,
                     _ => HttpStatusCode.InternalServerError,

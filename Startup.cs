@@ -2,6 +2,7 @@ using ExamSaver.Configs;
 using ExamSaver.Data;
 using ExamSaver.Models;
 using ExamSaver.Services;
+using ExamSaver.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -56,11 +57,11 @@ namespace ExamSaver
 
             services.AddDbContext<DatabaseContext>(ServiceLifetime.Scoped);
 
-            services.AddScoped<UserService>();
-            services.AddScoped<ExamService>();
-            services.AddScoped<FileService>();
-            services.AddScoped<SubjectService>();
-            services.AddScoped<SimilarityService>();
+            services.AddScoped<IUserService, UserService>();
+            services.AddScoped<IExamService, ExamService>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ISubjectService, SubjectService>();
+            services.AddScoped<ISimilarityService, SimilarityService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -76,7 +77,7 @@ namespace ExamSaver
             app.UseRouting();
 
             app.UseAuthentication();
-            
+
             app.UseAuthorization();
 
             app.UseCors(options =>

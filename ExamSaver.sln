@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30523.141
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSaver", "ExamSaver.csproj", "{B79727E6-5285-424E-8C60-7C3F38746945}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ExamSaver", "ExamSaver.csproj", "{B79727E6-5285-424E-8C60-7C3F38746945}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExamSaver.UnitTests", "ExamSaver.UnitTests\ExamSaver.UnitTests.csproj", "{14CFD393-C850-4723-AD6E-71C22C51D471}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{B79727E6-5285-424E-8C60-7C3F38746945}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B79727E6-5285-424E-8C60-7C3F38746945}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B79727E6-5285-424E-8C60-7C3F38746945}.Release|Any CPU.Build.0 = Release|Any CPU
+		{14CFD393-C850-4723-AD6E-71C22C51D471}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{14CFD393-C850-4723-AD6E-71C22C51D471}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{14CFD393-C850-4723-AD6E-71C22C51D471}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{14CFD393-C850-4723-AD6E-71C22C51D471}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

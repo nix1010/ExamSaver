@@ -1,28 +1,23 @@
 ﻿using ExamSaver.Data;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
-using System;
+using ExamSaver.Services.Interfaces;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
-    public class SubjectService
+    public class SubjectService : ISubjectService
     {
         private readonly DatabaseContext databaseContext;
-        private readonly UserService userService;
 
-        public SubjectService(DatabaseContext databaseContext, UserService userService)
+        public SubjectService(DatabaseContext databaseContext)
         {
             this.databaseContext = databaseContext;
-            this.userService = userService;
         }
 
-        public IList<SubjectDTO> GetTeachingSubjects(string token)
+        public IList<SubjectDTO> GetTeachingSubjects(int userId)
         {
-            int userId = userService.GetUserIdFromToken(token);
-
             return databaseContext
                     .Subjects
                     .Join(

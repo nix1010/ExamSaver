@@ -29,9 +29,12 @@ namespace ExamSaver.Utils
 
         public static string GetJWTToken(IHeaderDictionary headerDictionary)
         {
-            headerDictionary.TryGetValue("Authorization", out StringValues token);
+            if (headerDictionary.TryGetValue("Authorization", out StringValues token))
+            {
+                return token.ToString().Replace("Bearer", "").Trim();
+            }
 
-            return token.ToString().Replace("Bearer", "").Trim();
+            throw new UnauthenticatedException("Authentication token is not found");
         }
 
         public static string GetStudentExamResourceIdentifier(Student student, int examId)

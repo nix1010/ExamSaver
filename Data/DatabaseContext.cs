@@ -1,5 +1,4 @@
-﻿using ExamSaver.Configs;
-using ExamSaver.Models.Entity;
+﻿using ExamSaver.Models.Entity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
@@ -9,10 +8,12 @@ namespace ExamSaver.Data
     {
         private readonly IConfiguration configuration;
 
-        public DatabaseContext(DbContextOptions<DatabaseContext> options, IConfiguration configuration) : base(options)
+        public DatabaseContext(DbContextOptions<DatabaseContext> contextOptions, IConfiguration configuration) : base(contextOptions)
         {
             this.configuration = configuration;
         }
+
+        public DatabaseContext() { }
 
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
@@ -23,12 +24,19 @@ namespace ExamSaver.Data
         public DbSet<UserSubject> UsersSubjects { get; set; }
         public DbSet<SimilarityResult> SimilarityResults { get; set; }
 
-        
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            //TODO Remove false
+            if (configuration != null && false)
+            {
+                optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
+            }
+            else
+            {
+                optionsBuilder.UseInMemoryDatabase("test_database");
+            }
         }
-        
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder

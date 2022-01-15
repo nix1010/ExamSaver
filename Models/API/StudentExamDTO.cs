@@ -14,7 +14,7 @@ namespace ExamSaver.Models.API
         public string LastName { get; set; }
         public string Index { get; set; }
         public DateTime UploadTime { get; set; }
-        public string ExamPath { get; set; }
+        public string ExamFilePath { get; set; }
 
         public static StudentExamDTO FromEntity(StudentExam studentExam)
         {
@@ -26,7 +26,7 @@ namespace ExamSaver.Models.API
                 LastName = studentExam.Student.User.LastName,
                 Index = studentExam.Student.Index,
                 UploadTime = studentExam.UploadTime,
-                ExamPath = studentExam.ExamPath
+                ExamFilePath = studentExam.ExamFilePath
             };
         }
     }

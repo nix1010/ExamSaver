@@ -1,25 +1,22 @@
 ﻿using ExamSaver.Configs;
-using ExamSaver.Data;
 using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
+using ExamSaver.Services.Interfaces;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
-using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net.Http.Headers;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace ExamSaver.Services
 {
-    public class FileService
+    public class FileService : IFileService
     {
         private readonly AppSettings appSettings;
 
@@ -30,7 +27,7 @@ namespace ExamSaver.Services
 
         public IList<FileInfoDTO> GetFileTree(string fileTreePath, StudentExam studentExam)
         {
-            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamFilePath = studentExam.ExamFilePath;
 
             CheckFileExists(studentExamFilePath);
 
@@ -73,7 +70,7 @@ namespace ExamSaver.Services
 
         public FileDTO GetFileContent(string fileTreePath, StudentExam studentExam)
         {
-            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamFilePath = studentExam.ExamFilePath;
 
             CheckFileExists(studentExamFilePath);
 
@@ -98,7 +95,7 @@ namespace ExamSaver.Services
 
         public PhysicalFileResult GetFile(StudentExam studentExam)
         {
-            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamFilePath = studentExam.ExamFilePath;
 
             CheckFileExists(studentExamFilePath);
 
@@ -110,7 +107,7 @@ namespace ExamSaver.Services
 
         public string ExtractZipArchive(StudentExam studentExam)
         {
-            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamFilePath = studentExam.ExamFilePath;
             string studentExamFileExtractedDirectoryPath = GetStudentExamFileExtractedDirectoryPath(studentExam);
 
             CheckFileExists(studentExamFilePath);
@@ -124,8 +121,8 @@ namespace ExamSaver.Services
 
         public string GetStudentExamFileExtractedDirectoryPath(StudentExam studentExam)
         {
-            string studentExamFileName = Path.GetFileNameWithoutExtension(studentExam.ExamPath);
-            string studentExamDirectoryPath = Path.GetDirectoryName(studentExam.ExamPath);
+            string studentExamFileName = Path.GetFileNameWithoutExtension(studentExam.ExamFilePath);
+            string studentExamDirectoryPath = Path.GetDirectoryName(studentExam.ExamFilePath);
             string studentExamFileExtractedDirectoryPath = Path.Combine(studentExamDirectoryPath, studentExamFileName);
 
             return studentExamFileExtractedDirectoryPath;
@@ -203,7 +200,7 @@ namespace ExamSaver.Services
 
         public void DeleteStudentExamFile(StudentExam studentExam)
         {
-            string studentExamFilePath = studentExam.ExamPath;
+            string studentExamFilePath = studentExam.ExamFilePath;
             string studentExamDirectoryPath = Path.GetDirectoryName(studentExamFilePath);
 
             DeleteDirectoryAndContents(studentExamDirectoryPath);

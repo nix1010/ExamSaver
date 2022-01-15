@@ -1,9 +1,8 @@
 ﻿using ExamSaver.Models;
 using ExamSaver.Models.API;
-using ExamSaver.Services;
+using ExamSaver.Services.Interfaces;
 using ExamSaver.Utils;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 
@@ -14,17 +13,21 @@ namespace ExamSaver.Controllers
     [Authorize(Roles = RoleType.PROFESSOR)]
     public class SubjectController : ControllerBase
     {
-        private readonly SubjectService subjectService;
+        private readonly ISubjectService subjectService;
+        private readonly IUserService userService;
 
-        public SubjectController(SubjectService subjectService)
+        public SubjectController(ISubjectService subjectService, IUserService userService)
         {
             this.subjectService = subjectService;
+            this.userService = userService;
         }
 
         [HttpGet]
         public IList<SubjectDTO> GetTeachingSubjects()
         {
-            return subjectService.GetTeachingSubjects(Util.GetJWTToken(Request.Headers));
+            int userId = userService.GetUserIdFromToken(Util.GetJWTToken(Request.Headers));
+
+            return subjectService.GetTeachingSubjects(userId);
         }
     }
 }

@@ -4,6 +4,7 @@ using ExamSaver.Exceptions;
 using ExamSaver.Models;
 using ExamSaver.Models.API;
 using ExamSaver.Models.Entity;
+using ExamSaver.Services.Interfaces;
 using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Concurrent;
@@ -15,28 +16,26 @@ using System.Text;
 
 namespace ExamSaver.Services
 {
-    public class SimilarityService
+    public class SimilarityService : ISimilarityService
     {
         private static readonly ConcurrentDictionary<int, object> similarityCheckLocks = new ConcurrentDictionary<int, object>();
 
-        private readonly ExamService examService;
-        private readonly FileService fileService;
-        private readonly UserService userService;
         private readonly DatabaseContext databaseContext;
+        private readonly IExamService examService;
+        private readonly IFileService fileService;
         private readonly AppSettings appSettings;
 
-        public SimilarityService(ExamService examService, FileService fileService, UserService userService, DatabaseContext databaseContext, IOptions<AppSettings> optionsMonitor)
+        public SimilarityService(DatabaseContext databaseContext, IExamService examService, IFileService fileService, IOptions<AppSettings> optionsMonitor)
         {
+            this.databaseContext = databaseContext;
             this.examService = examService;
             this.fileService = fileService;
-            this.userService = userService;
-            this.databaseContext = databaseContext;
             this.appSettings = optionsMonitor.Value;
         }
 
-        public IList<SimilarityResultDTO> GetSimilarityResults(string token, int examId)
+        public IList<SimilarityResultDTO> GetSimilarityResults(int userId, int examId)
         {
-            CheckRequestValidity(token, examId);
+            CheckRequestValidity(userId, examId);
 
             return GetSimilarityResultsQuery(examId)
                 .OrderByDescending(similarityResult => similarityResult.Submitted)
@@ -44,9 +43,9 @@ namespace ExamSaver.Services
                 .ToList();
         }
 
-        public void DeleteSimilarityResult(string token, int examId, int similarityResultId)
+        public void DeleteSimilarityResult(int userId, int examId, int similarityResultId)
         {
-            CheckRequestValidity(token, examId);
+            CheckRequestValidity(userId, examId);
 
             SimilarityResult similarityResult = GetSimilarityResultsQuery(examId)
                 .Where(similarityResult => similarityResult.Id == similarityResultId)
@@ -69,9 +68,9 @@ namespace ExamSaver.Services
                 .Where(similarityResult => similarityResult.ExamId == examId);
         }
 
-        public SimilarityRunResultDTO PerformSimilarityCheck(string token, int examId, SimilarityRequestDTO similarityRequestDTO)
+        public SimilarityRunResultDTO PerformSimilarityCheck(int userId, int examId, SimilarityRequestDTO similarityRequestDTO)
         {
-            CheckRequestValidity(token, examId);
+            CheckRequestValidity(userId, examId);
 
             string language = GetLanguageFromExtension(similarityRequestDTO.FileExtension);
 
@@ -147,10 +146,8 @@ namespace ExamSaver.Services
             }
         }
 
-        private void CheckRequestValidity(string token, int examId)
+        private void CheckRequestValidity(int userId, int examId)
         {
-            int userId = userService.GetUserIdFromToken(token);
-
             Exam exam = examService.GetExam(examId);
 
             examService.CheckUserTeachesSubject(userId, exam.SubjectId);

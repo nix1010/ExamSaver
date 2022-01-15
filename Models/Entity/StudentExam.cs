@@ -24,6 +24,6 @@ namespace ExamSaver.Models.Entity
         public DateTime UploadTime { get; set; }
         
         [Column("exam_path")]
-        public string ExamPath { get; set; }
+        public string ExamFilePath { get; set; }
     }
 }
