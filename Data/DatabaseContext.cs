@@ -26,8 +26,7 @@ namespace ExamSaver.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //TODO Remove false
-            if (configuration != null && false)
+            if (configuration != null)
             {
                 optionsBuilder.UseSqlServer(configuration.GetConnectionString("DefaultConnection"));
             }
