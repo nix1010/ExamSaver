@@ -1,6 +1,8 @@
 {
     "/api/*": {
-        "target": "http://localhost:59106",
+        "target": {
+            "port": "59106"
+        },
         "secure": false,
         "logLevel": "info"
     }
