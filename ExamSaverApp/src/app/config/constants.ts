@@ -1,6 +1,4 @@
 export const URI_PREFIX = 'api';
-export const HOST = window.location.hostname;
-export const PORT = '59106';
 export const USER_AUTHENTICATION_TOKEN_KEY = 'USER_AUTHENTICATION_TOKEN_KEY';
 export const LOGIN_ABSOLUTE_ROUTE = '/login';
 export const INPUT_DATE_TIME_FORMAT = 'yyyy-MM-ddTHH:mm';

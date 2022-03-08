@@ -2,7 +2,7 @@ import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { JwtHelperService } from "@auth0/angular-jwt";
 import { Observable } from "rxjs";
-import { map } from "rxjs/operators";
+import { tap } from "rxjs/operators";
 import { AuthenticationResponse } from 'src/app/models/authentication-response.model';
 import { USER_AUTHENTICATION_TOKEN_KEY as AUTHENTICATED_USER_KEY } from '../config/constants';
 import { AuthenticatedUser } from "../models/authenticated-user.model";
@@ -23,9 +23,8 @@ export class UserService {
 
     authenticate(user: User): Observable<AuthenticationResponse> {
         return this.httpClient.post<AuthenticationResponse>('users/authenticate', user)
-            .pipe(map((authenticationResponse: AuthenticationResponse) => {
+            .pipe(tap((authenticationResponse: AuthenticationResponse) => {
                 this.setAuthenticatedUser(authenticationResponse);
-                return authenticationResponse;
             }));
     }
 

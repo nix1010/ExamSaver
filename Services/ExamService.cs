@@ -172,8 +172,6 @@ namespace ExamSaver.Services
 
             CheckUserTeachesSubject(userId, exam.SubjectId);
 
-            CheckExamActive(exam);
-
             return ExamDTO.FromEntity(exam);
         }
 
