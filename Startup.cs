@@ -76,18 +76,18 @@ namespace ExamSaver
 
             app.UseRouting();
 
-            app.UseAuthentication();
-
-            app.UseAuthorization();
-
             app.UseCors(options =>
                 options
-                .SetIsOriginAllowed(origin => true)
+                .SetIsOriginAllowed(origin => false)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .WithExposedHeaders("Content-Disposition")
                 .WithExposedHeaders("X-Pagination")
             );
+
+            app.UseAuthentication();
+
+            app.UseAuthorization();
 
             app.UseMiddleware<ExceptionHandlerMiddleware>();
 
