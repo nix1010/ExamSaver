@@ -78,7 +78,7 @@ namespace ExamSaver
 
             app.UseCors(options =>
                 options
-                .SetIsOriginAllowed(origin => false)
+                .SetIsOriginAllowed(origin => true)
                 .AllowAnyMethod()
                 .AllowAnyHeader()
                 .WithExposedHeaders("Content-Disposition")
