@@ -22,19 +22,19 @@ export class SimilarityCheckComponent implements OnInit {
 
     @ViewChild('form')
     public formElement: ElementRef<any>;
-    
+
     public showSimilarityRunningSpinner: boolean = false;
     public similarityResults: SimilarityResult[] = [];
     public similarityRequest: SimilarityRequest = new SimilarityRequest();
 
     FILE_EXTENSIONS = FILE_EXTENSIONS;
-    
+
     constructor(
         private similarityService: SimilarityService
     ) { }
 
     ngOnInit(): void {
-        this.similarityService.getSimilarityResults(this.examId)
+        this.getSimilarityResults();
     }
 
     performSimilarityCheck(): void {
@@ -49,15 +49,16 @@ export class SimilarityCheckComponent implements OnInit {
         this.similarityService.runSimilarityCheck(this.examId, this.similarityRequest)
             .pipe(finalize(() => this.showSimilarityRunningSpinner = false))
             .subscribe((similarityRunResult: SimilarityRunResult) => {
-                this.showSimilarityRunningSpinner = true;
-
                 this.resultEmitter.emit(similarityRunResult.runMessage);
 
-                this.similarityService.getSimilarityResults(this.examId)
-                    .pipe(finalize(() => this.showSimilarityRunningSpinner = false))
-                    .subscribe((similarityResults: SimilarityResult[]) => this.similarityResults = similarityResults,
-                        (error: HttpErrorResponse) => this.errorEmitter.emit(error));
+                this.getSimilarityResults();
             },
+                (error: HttpErrorResponse) => this.errorEmitter.emit(error));
+    }
+
+    getSimilarityResults(): void {
+        this.similarityService.getSimilarityResults(this.examId)
+            .subscribe((similarityResults: SimilarityResult[]) => this.similarityResults = similarityResults,
                 (error: HttpErrorResponse) => this.errorEmitter.emit(error));
     }
 
